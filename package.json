@@ -1,0 +1,36 @@
+{
+  "name": "@eshop/source",
+  "version": "0.0.0",
+  "license": "MIT",
+  "scripts": {},
+  "private": true,
+  "dependencies": {
+    "axios": "^1.6.0",
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "@nx/docker": "23.0.0",
+    "@nx/esbuild": "23.0.0",
+    "@nx/jest": "23.0.0",
+    "@nx/js": "23.0.0",
+    "@nx/node": "23.0.0",
+    "@nx/workspace": "23.0.0",
+    "@swc/helpers": "~0.5.18",
+    "@swc/jest": "~0.2.38",
+    "@types/express": "^5.0.0",
+    "@types/jest": "~30.0.0",
+    "@types/node": "^22.0.0",
+    "esbuild": "^0.27.0",
+    "jest": "~30.3.0",
+    "jest-environment-node": "~30.3.0",
+    "jest-util": "~30.3.0",
+    "nx": "23.0.0",
+    "ts-jest": "^29.4.0",
+    "ts-node": "10.9.1",
+    "tslib": "^2.3.0",
+    "typescript": "~5.9.2"
+  },
+  "workspaces": [
+    "apps/*"
+  ]
+}
