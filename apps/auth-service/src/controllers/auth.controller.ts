@@ -1,7 +1,7 @@
 import {NextFunction, Request, Response } from "express";
 import {validateRegistrationData} from "../utils/auth.helper";
-import prisma from "../../../../packages/libs/prisma";
-import { ValidationError } from "../../../../packages/error-handler";
+import prisma from "@packages/libs/prisma";
+import { ValidationError } from "@packages/error-handler";
 import { checkOtpRestrictions, sendOtp, trackOtpRequest } from "../utils/auth.helper";
 
 
