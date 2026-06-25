@@ -3,6 +3,7 @@ import { ValidationError } from "@packages/error-handler";
 import { sendEmail } from "./sendMail";
 import redis from "@packages/libs/redis";
 import { NextFunction } from "express";
+import prisma from "@packages/libs/prisma";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -71,5 +72,7 @@ export const checkOtpRestrictions = async(email: string, next: NextFunction) => 
 
       await redis.del(`otp:${email}`, failedAttemptsKey); // Clear OTP and failed attempts on successful verification
    };
+
+  
 
 

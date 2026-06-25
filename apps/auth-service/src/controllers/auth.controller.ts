@@ -1,9 +1,11 @@
 import {NextFunction, Request, Response } from "express";
 import {validateRegistrationData} from "../utils/auth.helper";
 import prisma from "@packages/libs/prisma";
-import { ValidationError } from "@packages/error-handler";
+import { AuthError, ValidationError } from "@packages/error-handler";
 import { checkOtpRestrictions, sendOtp, trackOtpRequest, verifyOtp } from "../utils/auth.helper";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import { setCookie } from "../utils/cookies/setCookie";
 
 
 export const userRegistration = async (req: Request, res: Response, next: NextFunction) => {
@@ -64,7 +66,47 @@ export const verifyUser = async (req: Request, res: Response, next: NextFunction
    catch (error) {
       return next(error);
    }
-}
+};
+
+export const loginUser = async (req: Request, res: Response, next: NextFunction) => {
+   try {
+      const {email, password} = req.body;
+      if(!email || !password) {
+         return next(new ValidationError("Missing required fields for login"));
+      }
+      const user = await prisma.users.findUnique({where: {email}});
+
+      if(!user) {
+         return next(new AuthError("User with this email does not exist"));
+      }
+
+      const isMatch = await bcrypt.compare(password, user.password!);
+
+      if(!isMatch) {
+         return next(new AuthError("Invalid password"));
+      }
+
+      const accessToken=jwt.sign({id: user.id, role:"user"}, process.env.ACCESS_TOKEN_SECRET as string, {expiresIn: "15m"});
+
+      const refreshToken=jwt.sign({id: user.id, role:"user"}, process.env.REFRESH_TOKEN_SECRET as string, {expiresIn: "7d"});
+
+      setCookie(res, "refresh_Token", refreshToken);
+      setCookie(res, "access_Token", accessToken);
+
+      res.status(200).json({
+         message: "User logged in successfully",
+         user: {id: user.id, name: user.name, email: user.email}
+      });
+   }
+   catch (error) {
+      return next(error);
+   }
+};
+
+
+
+
+
 
 
    
