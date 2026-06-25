@@ -2,7 +2,8 @@ import {NextFunction, Request, Response } from "express";
 import {validateRegistrationData} from "../utils/auth.helper";
 import prisma from "@packages/libs/prisma";
 import { ValidationError } from "@packages/error-handler";
-import { checkOtpRestrictions, sendOtp, trackOtpRequest } from "../utils/auth.helper";
+import { checkOtpRestrictions, sendOtp, trackOtpRequest, verifyOtp } from "../utils/auth.helper";
+import bcrypt from "bcryptjs";
 
 
 export const userRegistration = async (req: Request, res: Response, next: NextFunction) => {
@@ -47,7 +48,18 @@ export const verifyUser = async (req: Request, res: Response, next: NextFunction
          return next(new ValidationError("User with this email already exists"));
       }
 
-      await verifyOtp();
+      await verifyOtp(email, otp, next);
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      await prisma.users.create({
+         data: {
+            name,email,password: hashedPassword
+         }
+      });
+
+      res.status(201).json({
+         success: true,
+         message: "User verified and registered successfully"});
    }
    catch (error) {
       return next(error);
