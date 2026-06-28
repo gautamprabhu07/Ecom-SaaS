@@ -3,6 +3,7 @@
 import './global.css'
 import Header from '../shared/widgets/header/header'
 import { Inter } from 'next/font/google'
+import Providers from './providers'
 
 export const metadata = {
   title: 'Eshop',
@@ -46,8 +47,10 @@ export default function RootLayout({
           antialiased
         `}
       >
+      <Providers>
         <Header />
         {children}
+        </Providers>
       </body>
     </html>
   )
