@@ -1,9 +1,12 @@
+'use client';
 import React from 'react'
 import Link from 'next/link'
 import { Search, CircleUserRound, ShoppingCartIcon, Heart } from 'lucide-react'
 import HeaderBottom from './header-bottom'
+import useUser from '../../../hooks/useUser';
 
 const Header = () => {
+  const {user, isLoading}=useUser();
   return (
     <div className="bg-gray-800 text-white w-full">
       <div className="container mx-auto px-4 py-3 flex items-center gap-6">
@@ -28,10 +31,20 @@ const Header = () => {
         {/* Nav Icons */}
         <div className="flex items-center gap-5 shrink-0">
           {/* Account */}
+          {!isLoading && user ? (
+            <>
+            <Link href="/profile" className="flex flex-col items-center gap-0.5 hover:text-amber-400 transition">
+            <CircleUserRound className=" h-5" /></Link>
+            <Link href="/profile">
+            <span className="text-xs leading-none">Hello{" "}</span>
+            <span className="text-xs leading-none">{user?.name?.split(" ")[0]}</span>
+            </Link>
+            </>):(
+              <>
           <Link href="/login" className="flex flex-col items-center gap-0.5 hover:text-amber-400 transition">
             <CircleUserRound className="w-5 h-5" />
-            <span className="text-xs leading-none">Sign in</span>
-          </Link>
+            <span className="text-xs leading-none">{isLoading?"...": "Sign in"}</span>
+          </Link></>)}
 
           {/* Wishlist */}
           <Link href="/wishlist" className="relative flex flex-col items-center gap-0.5 hover:text-amber-400 transition">

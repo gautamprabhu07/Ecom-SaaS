@@ -187,7 +187,11 @@ const ForgotPassword = () => {
               </button>
               <p className="text-sm text-gray-500">
                 {canResend
-                  ? <button className="text-blue-600 hover:underline">Resend OTP</button>
+                  ? <button  onClick={() => {
+    if (userEmail) {
+      requestOtpMutation.mutate({ email: userEmail });
+    }
+  }} className="text-blue-600 hover:underline">Resend OTP</button>
                   : `Resend OTP in ${timer}s`
                 }
               </p>
@@ -205,7 +209,7 @@ const ForgotPassword = () => {
 
                 <button
                   type="submit"
-                  disabled={resetPasswordMutation.isPending}>
+                  disabled={resetPasswordMutation.isPending} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg text-sm transition">
                     {resetPasswordMutation.isPending ? "Resetting..." : "Reset Password"}
                   </button>
                   {serverError && <p className="text-red-500 text-xs mt-1">{serverError}</p>}

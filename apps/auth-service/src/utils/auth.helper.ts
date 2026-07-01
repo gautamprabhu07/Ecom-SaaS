@@ -91,7 +91,10 @@ export const handleforgotPassword = async (req: Request, res: Response, next: Ne
 
       await sendOtp(user.name, email,"forgot-password-user-mail");
 
-      res
+      return res.status(200).json({
+  success: true,
+  message: "OTP sent successfully",
+});
    }
    catch (error) {
       next(error);
