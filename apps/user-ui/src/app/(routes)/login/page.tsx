@@ -4,6 +4,8 @@ import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import Link from 'next/link'
 import GoogleIcon from '../googleicon'
+import axios, {AxiosError} from 'axios'
+import { useMutation } from '@tanstack/react-query'
 
 type FormData = {
   email: string;
@@ -18,7 +20,30 @@ const Login = () => {
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>();
 
-  const onsubmit = (data: FormData) => {};
+  const loginMutation = useMutation({
+    mutationFn: async (data: FormData) => {
+      const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/login-user`,
+      data,
+      {
+        withCredentials: true, // important if your backend sets cookies
+      }
+    );
+      return response.data;
+    },
+    onSuccess: (data) => {
+      setServerError(null);
+      router.push('/');
+    },
+    onError: (error: AxiosError) => {
+      const errorMessage= (error.response?.data as { message: string })?.message || 'Invalid credentials ';
+      setServerError(errorMessage);
+    },
+  });
+
+  const onsubmit = (data: FormData) => {
+    loginMutation.mutate(data);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -107,9 +132,10 @@ const Login = () => {
 
             <button
               type="submit"
+              disabled={loginMutation.isPending}
               className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg text-sm transition"
             >
-              Login
+              {loginMutation.isPending ? "Logging In..." : "Login"}
             </button>
           </form>
         </div>

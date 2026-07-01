@@ -4,6 +4,8 @@ import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import Link from 'next/link'
 import GoogleIcon from '../googleicon'
+import axios, {AxiosError} from 'axios'
+import { useMutation } from '@tanstack/react-query'
 
 type FormData = {
   name: string;
@@ -13,7 +15,6 @@ type FormData = {
 
 const SignUp = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const [serverError, setServerError] = useState<string | null>(null);
   const [canResend, setCanResend] = useState(true);
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [timer, setTimer] = useState(60);
@@ -24,7 +25,52 @@ const SignUp = () => {
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>();
 
-  const onsubmit = (data: FormData) => {};
+  const startResendTimer = () => {
+    const interval = setInterval(() => {
+      setTimer((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          setCanResend(true);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+  console.log("NEXT_PUBLIC_SERVER_URL", process.env.NEXT_PUBLIC_SERVER_URL);
+
+const signupMutation = useMutation({
+  mutationFn: async (data: FormData) => {
+    const response = await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/user-registration`, data);
+    return response.data;
+  },
+  onSuccess: (_, formData) => {
+    setUserData(formData);
+    setShowOtp(true);
+    setCanResend(false);
+    setTimer(60);
+    startResendTimer();
+  }
+});
+
+const verifyOtpMutation = useMutation({
+  mutationFn: async () => {
+    if(!userData) return;
+    const response = await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/verify-user`, {
+      ...userData,
+      otp: otp.join(""),
+
+    });
+    return response.data;
+  },
+  onSuccess: () => {
+    router.push("/login");
+  },}); 
+
+
+  const onsubmit = (data: FormData) => {
+    signupMutation.mutate(data);
+  };
 
   const handleOtpChange = (index: number, value: string) => {
     if (!/^[0-9]?$/.test(value)) return;
@@ -42,7 +88,11 @@ const SignUp = () => {
     }
   };
 
-  const resendOtp = () => {};
+  const resendOtp = () => {
+    if(userData) {
+      signupMutation.mutate(userData);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -124,13 +174,13 @@ const SignUp = () => {
                 {errors.password && <p className="text-red-500 text-xs mt-1">{String(errors.password.message)}</p>}
               </div>
 
-              {serverError && <p className="text-red-500 text-sm">{serverError}</p>}
 
               <button
                 type="submit"
+                disabled={signupMutation.isPending}
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg text-sm transition"
               >
-                Sign Up
+                {signupMutation.isPending ? "Signing Up..." : "Sign Up"}
               </button>
             </form>
           ) : (
@@ -151,17 +201,23 @@ const SignUp = () => {
                 ))}
               </div>
               <button
-                onClick={resendOtp}
+                onClick={() => verifyOtpMutation.mutate()}
+                disabled={verifyOtpMutation.isPending}
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg text-sm transition mb-3"
               >
-                Verify OTP
+                {verifyOtpMutation.isPending ? "Verifying..." : "Verify OTP"}
               </button>
               <p className="text-sm text-gray-500">
                 {canResend
-                  ? <button className="text-blue-600 hover:underline">Resend OTP</button>
+                  ? <button 
+                  onClick={resendOtp}
+                  className="text-blue-600 hover:underline">Resend OTP</button>
                   : `Resend OTP in ${timer}s`
                 }
               </p>
+              {
+                verifyOtpMutation?.isError && verifyOtpMutation.error instanceof AxiosError && (<p>{verifyOtpMutation.error.response?.data?.message || verifyOtpMutation.error.message}</p>)
+              }
             </div>
           )}
         </div>
