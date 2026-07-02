@@ -1,11 +1,12 @@
 "use client";
 import React, { useState, useRef } from "react";
-import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
 import axios, { AxiosError } from "axios";
 import { useMutation } from "@tanstack/react-query";
 import { countries } from "../../../utils/countries";
+import CreateShop from "apps/seller-ui/src/shared/modules/auth/createshop";
+import Stripelogo from "../../../utils/stripelogo";
 
 const SignUp = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -17,7 +18,6 @@ const SignUp = () => {
   const [sellerData, setSellerData] = useState<FormData | null>(null);
   const [sellerId, setSellerId] = useState("");
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-  const router = useRouter();
 
   const {
     register,
@@ -37,7 +37,6 @@ const SignUp = () => {
       });
     }, 1000);
   };
-  console.log("NEXT_PUBLIC_SERVER_URL", process.env.NEXT_PUBLIC_SERVER_URL);
 
   const signupMutation = useMutation({
     mutationFn: async (data: FormData) => {
@@ -61,76 +60,87 @@ const SignUp = () => {
       if (!sellerData) return;
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/api/verify-seller`,
-        {
-          ...sellerData,
-          otp: otp.join(""),
-        },
+        { ...sellerData, otp: otp.join("") },
       );
       return response.data;
     },
     onSuccess: (data) => {
-      setSellerId(data?.seller?._id);
+      setSellerId(data?.seller?.id);
       setActiveStep(2);
     },
   });
 
-  const onsubmit = (data: any) => {
-    signupMutation.mutate(data);
-  };
+  const onsubmit = (data: any) => signupMutation.mutate(data);
 
   const handleOtpChange = (index: number, value: string) => {
     if (!/^[0-9]?$/.test(value)) return;
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
-    if (value && index < inputRefs.current.length - 1) {
+    if (value && index < inputRefs.current.length - 1)
       inputRefs.current[index + 1]?.focus();
-    }
   };
 
   const handleOtpKeyDown = (
     index: number,
     e: React.KeyboardEvent<HTMLInputElement>,
   ) => {
-    if (e.key === "Backspace" && !otp[index] && index > 0) {
+    if (e.key === "Backspace" && !otp[index] && index > 0)
       inputRefs.current[index - 1]?.focus();
-    }
   };
 
   const resendOtp = () => {
-    if (sellerData) {
-      signupMutation.mutate(sellerData);
+    if (sellerData) signupMutation.mutate(sellerData);
+  };
+
+  const connectstripe = async () => {
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/create-stripe-link`,
+        { sellerId },
+      );
+
+      if (response.data && response.data.url) {
+        window.location.href = response.data.url;
+      }
+    } catch (error) {
+      console.error("Error connecting Stripe:", error);
     }
   };
 
   return (
-    <div>
-      {/*Stepper*/}
-      <div>
-        <div />
+    <div className="min-h-screen bg-gray-50 py-10 px-4">
+      {/* Stepper */}
+      <div className="flex items-center justify-center gap-4 mb-8">
         {[1, 2, 3].map((step) => (
-          <div key={step}>
+          <div key={step} className="flex items-center gap-2">
             <div
-              className={`${activeStep === step ? "bg-blue-600 text-white" : "bg-gray-300 text-gray-600"}`}
+              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${activeStep === step ? "bg-blue-600 text-white" : "bg-gray-300 text-gray-600"}`}
             >
               {step}
             </div>
-            <span />
-            {step === 1
-              ? "Create Account"
-              : step === 2
-                ? "Setup Shop"
-                : "Connect Bank"}
+            <span className="text-sm text-gray-600">
+              {step === 1
+                ? "Create Account"
+                : step === 2
+                  ? "Setup Shop"
+                  : "Connect Bank"}
+            </span>
+            {step < 3 && <div className="w-8 h-px bg-gray-300" />}
           </div>
         ))}
       </div>
-      {/* Steps content*/}
-      <div>
+
+      {/* Step Content */}
+      <div className="bg-white rounded-2xl shadow-md w-full max-w-md mx-auto p-8">
         {activeStep === 1 && (
           <>
             {!showOtp ? (
               <form onSubmit={handleSubmit(onsubmit)} className="space-y-4">
-                <h3>Create Account</h3>
+                <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                  Create Account
+                </h3>
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Name
@@ -171,44 +181,56 @@ const SignUp = () => {
                   )}
                 </div>
 
-                <label>Phone number</label>
-                <input
-                  type="tel"
-                  placeholder="80738*****"
-                  {...register("phone_number", {
-                    required: "Phone number is required",
-                    pattern: {
-                      value: /^[0-9]{10}$/,
-                      message: "Invalid phone number",
-                    },
-                    minLength: {
-                      value: 10,
-                      message: "Phone number must be 10 digits",
-                    },
-                  })}
-                />
-                {errors.phone_number && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {String(errors.phone_number.message)}
-                  </p>
-                )}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Phone number
+                  </label>
+                  <input
+                    type="tel"
+                    placeholder="80738*****"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    {...register("phone_number", {
+                      required: "Phone number is required",
+                      pattern: {
+                        value: /^[0-9]{10}$/,
+                        message: "Invalid phone number",
+                      },
+                      minLength: {
+                        value: 10,
+                        message: "Phone number must be 10 digits",
+                      },
+                    })}
+                  />
+                  {errors.phone_number && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {String(errors.phone_number.message)}
+                    </p>
+                  )}
+                </div>
 
-                <label>Country</label>
-                <select
-                  {...register("country", { required: "Country is required" })}
-                >
-                  <option value="">Select your country</option>
-                  {countries.map((country) => (
-                    <option key={country.code} value={country.name}>
-                      {country.name}
-                    </option>
-                  ))}
-                </select>
-                {errors.country && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {String(errors.country.message)}
-                  </p>
-                )}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Country
+                  </label>
+                  <select
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    {...register("country", {
+                      required: "Country is required",
+                    })}
+                  >
+                    <option value="">Select your country</option>
+                    {countries.map((country) => (
+                      <option key={country.code} value={country.name}>
+                        {country.name}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.country && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {String(errors.country.message)}
+                    </p>
+                  )}
+                </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -252,12 +274,12 @@ const SignUp = () => {
                 </button>
                 {signupMutation?.isError &&
                   signupMutation.error instanceof AxiosError && (
-                    <p>
+                    <p className="text-red-500 text-sm text-center">
                       {signupMutation.error.response?.data?.message ||
                         signupMutation.error.message}
                     </p>
                   )}
-                <p>
+                <p className="text-sm text-gray-500 text-center">
                   Already have an account?{" "}
                   <Link href="/login" className="text-blue-600 hover:underline">
                     Login
@@ -306,7 +328,7 @@ const SignUp = () => {
                 </p>
                 {verifyOtpMutation?.isError &&
                   verifyOtpMutation.error instanceof AxiosError && (
-                    <p>
+                    <p className="text-red-500 text-sm mt-2">
                       {verifyOtpMutation.error.response?.data?.message ||
                         verifyOtpMutation.error.message}
                     </p>
@@ -314,6 +336,25 @@ const SignUp = () => {
               </div>
             )}
           </>
+        )}
+
+        {activeStep === 2 && (
+          <CreateShop sellerId={sellerId} setActiveStep={setActiveStep} />
+        )}
+
+        {activeStep === 3 && (
+          <div className="text-center">
+            <h3 className="text-xl font-semibold text-gray-800 mb-6">
+              Withdraw Method
+            </h3>
+            <button
+              onClick={connectstripe}
+              className="flex items-center justify-center gap-2 mx-auto bg-[#635BFF] hover:bg-[#4f46e5] text-white font-medium px-6 py-2.5 rounded-lg text-sm transition"
+            >
+              Connect Stripe
+              <Stripelogo />
+            </button>
+          </div>
         )}
       </div>
     </div>

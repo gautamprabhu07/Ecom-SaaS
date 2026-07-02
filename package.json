@@ -33,6 +33,7 @@
     "react-hook-form": "^7.80.0",
     "react-hot-toast": "^2.6.0",
     "save-dev": "^0.0.1-security",
+    "stripe": "^22.3.0",
     "swagger-autogen": "^2.23.7",
     "swagger-ui-express": "^5.0.1"
   },

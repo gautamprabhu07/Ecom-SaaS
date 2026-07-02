@@ -6,7 +6,11 @@ import { checkOtpRestrictions, sendOtp, trackOtpRequest, verifyOtp } from "../ut
 import bcrypt from "bcryptjs";
 import jwt, { JsonWebTokenError } from "jsonwebtoken";
 import { setCookie } from "../utils/cookies/setCookie";
+import Stripe from "stripe";
 
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+   apiVersion: "2026-06-24.dahlia",
+});
 
 export const userRegistration = async (req: Request, res: Response, next: NextFunction) => {
    
@@ -282,9 +286,96 @@ export const createShop = async (req: Request, res: Response, next: NextFunction
 
 
 //create stripe connect account link
+export const createStripeConnectLink = async (req: Request, res: Response, next: NextFunction) => {
+   try {
+      const {sellerId} = req.body;
+      if(!sellerId) {
+         return next(new ValidationError("Missing required field: sellerId"));
+      }
 
+      const seller = await prisma.sellers.findUnique({where: {id: sellerId}});
 
-   
+      if(!seller) {
+         return next(new ValidationError("Seller not found"));
+      }
 
-   
-   
+      const account = await stripe.accounts.create({
+         type: "express",
+         country: "IN",
+         email: seller?.email,
+         capabilities: {
+            card_payments: {requested: true},
+            transfers: {requested: true},
+         },
+      });
+
+      await prisma.sellers.update({
+         where: {id: sellerId},
+         data: {stripeId: account.id}
+      });
+
+      const accountLink = await stripe.accountLinks.create({
+         account: account.id,
+         refresh_url: `${process.env.CLIENT_URL}/pending`,
+         return_url: `${process.env.CLIENT_URL}/success`,
+         type: "account_onboarding",
+      });
+
+      res.json({
+         success: true,
+         url: accountLink.url,
+      });
+   }
+   catch (error) {
+      return next(error);
+   }
+}; 
+
+//login seller
+export const loginSeller = async (req: Request, res: Response, next: NextFunction) => {
+   try {
+      const {email, password} = req.body;
+
+      if(!email || !password) {
+         return next(new ValidationError("Missing required fields for login"));
+      }
+
+      const seller = await prisma.sellers.findUnique({where: {email}});
+
+      if(!seller) {
+         return next(new AuthError("Seller with this email does not exist"));
+      }
+
+      const isMatch= await bcrypt.compare(password, seller.password!);
+
+      if(!isMatch) {
+         return next(new AuthError("Invalid password"));
+      }
+
+      const accessToken=jwt.sign({id: seller.id, role:"seller"}, process.env.ACCESS_TOKEN_SECRET as string, {expiresIn: "15m"});
+
+      const refreshToken=jwt.sign({id: seller.id, role:"seller"}, process.env.REFRESH_TOKEN_SECRET as string, {expiresIn: "7d"});
+
+      setCookie(res, "seller_refresh_token", refreshToken);
+      setCookie(res, "seller_access_token", accessToken);
+
+      res.status(200).json({
+         message: "Seller logged in successfully",
+         seller: {id: seller.id, name: seller.name, email: seller.email}
+      });
+   }
+   catch (error) {
+      return next(error);
+   }
+};
+
+//get logged in seller details
+export const getSeller = async (req: Request, res: Response, next: NextFunction) => {
+   try {
+      const seller=req.seller;
+      res.status(200).json({success:true, seller});
+   }
+   catch (error) {
+      return next(error);
+   }
+};
