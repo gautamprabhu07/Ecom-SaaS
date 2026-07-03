@@ -1,15 +1,15 @@
 "use client";
-import React, { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { useForm } from 'react-hook-form'
-import Link from 'next/link'
-import axios, {AxiosError} from 'axios'
-import { useMutation } from '@tanstack/react-query'
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import Link from "next/link";
+import axios, { AxiosError } from "axios";
+import { useMutation } from "@tanstack/react-query";
 
 type FormData = {
   email: string;
   password: string;
-}
+};
 
 const Login = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -17,25 +17,31 @@ const Login = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const router = useRouter();
 
-  const { register, handleSubmit, formState: { errors } } = useForm<FormData>();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>();
 
   const loginMutation = useMutation({
     mutationFn: async (data: FormData) => {
       const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/login-user`,
-      data,
-      {
-        withCredentials: true, // important if your backend sets cookies
-      }
-    );
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/login-user`,
+        data,
+        {
+          withCredentials: true, // important if your backend sets cookies
+        },
+      );
       return response.data;
     },
     onSuccess: (data) => {
       setServerError(null);
-      router.push('/');
+      router.push("/");
     },
     onError: (error: AxiosError) => {
-      const errorMessage= (error.response?.data as { message: string })?.message || 'Invalid credentials ';
+      const errorMessage =
+        (error.response?.data as { message: string })?.message ||
+        "Invalid credentials ";
       setServerError(errorMessage);
     },
   });
@@ -55,13 +61,15 @@ const Login = () => {
       {/* Card */}
       <div className="flex items-center justify-center py-12 px-4">
         <div className="bg-white rounded-2xl shadow-md w-full max-w-md p-8">
-          <h3 className="text-xl font-semibold text-gray-800 mb-1">Login to Eshop</h3>
+          <h3 className="text-xl font-semibold text-gray-800 mb-1">
+            Login to Eshop
+          </h3>
           <p className="text-sm text-gray-500 mb-6">
             Don't have an account?{" "}
-            <Link href="/signup" className="text-blue-600 hover:underline">Sign up</Link>
+            <Link href="/signup" className="text-blue-600 hover:underline">
+              Sign up
+            </Link>
           </p>
-
-          
 
           {/* Divider */}
           <div className="flex items-center gap-3 mb-5">
@@ -72,21 +80,32 @@ const Login = () => {
 
           <form onSubmit={handleSubmit(onsubmit)} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Email
+              </label>
               <input
                 type="email"
                 placeholder="support@gautam.com"
                 className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 {...register("email", {
                   required: "Email is required",
-                  pattern: { value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i, message: "Invalid email address" }
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: "Invalid email address",
+                  },
                 })}
               />
-              {errors.email && <p className="text-red-500 text-xs mt-1">{String(errors.email.message)}</p>}
+              {errors.email && (
+                <p className="text-red-500 text-xs mt-1">
+                  {String(errors.email.message)}
+                </p>
+              )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Password
+              </label>
               <div className="relative">
                 <input
                   type={passwordVisible ? "text" : "password"}
@@ -94,7 +113,10 @@ const Login = () => {
                   className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 pr-16"
                   {...register("password", {
                     required: "Password is required",
-                    minLength: { value: 6, message: "Password must be at least 6 characters long" }
+                    minLength: {
+                      value: 6,
+                      message: "Password must be at least 6 characters long",
+                    },
                   })}
                 />
                 <button
@@ -105,7 +127,11 @@ const Login = () => {
                   {passwordVisible ? "Hide" : "Show"}
                 </button>
               </div>
-              {errors.password && <p className="text-red-500 text-xs mt-1">{String(errors.password.message)}</p>}
+              {errors.password && (
+                <p className="text-red-500 text-xs mt-1">
+                  {String(errors.password.message)}
+                </p>
+              )}
             </div>
 
             <div className="flex items-center justify-between">
@@ -118,12 +144,17 @@ const Login = () => {
                 />
                 Remember me
               </label>
-              <Link href="/forgot-password" className="text-sm text-blue-600 hover:underline">
+              <Link
+                href="/forgot-password"
+                className="text-sm text-blue-600 hover:underline"
+              >
                 Forgot password?
               </Link>
             </div>
 
-            {serverError && <p className="text-red-500 text-sm">{serverError}</p>}
+            {serverError && (
+              <p className="text-red-500 text-sm">{serverError}</p>
+            )}
 
             <button
               type="submit"
@@ -137,6 +168,6 @@ const Login = () => {
       </div>
     </div>
   );
-}
+};
 
 export default Login;

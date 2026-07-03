@@ -214,7 +214,7 @@ export const registerSeller = async (req: Request, res: Response, next: NextFunc
       res.status(200).json({message: "OTP sent to your email for verification. Please check your inbox."});
    }
    catch (error) {
-      return next(error);
+      next(error);
    }
 };
 
@@ -238,7 +238,7 @@ export const verifySeller = async (req: Request, res: Response, next: NextFuncti
 
       const seller = await prisma.sellers.create({
          data: {
-            name,email,password: hashedPassword, phone_number, country
+            name,email, phone_number, country,password: hashedPassword
          }
       });
 
@@ -248,7 +248,7 @@ export const verifySeller = async (req: Request, res: Response, next: NextFuncti
       });
    }
    catch (error) {
-      return next(error);
+      next(error);
    }
 };
 
@@ -261,7 +261,7 @@ export const createShop = async (req: Request, res: Response, next: NextFunction
          return next(new ValidationError("Missing required fields for shop creation"));
       }
 
-      const shopData={
+      const shopData:any={
          name, bio, address, opening_hours, website, category, sellerId
       };
 
@@ -276,11 +276,10 @@ export const createShop = async (req: Request, res: Response, next: NextFunction
       res.status(201).json({
          sucess:true,
          shop,
-         message: "Shop created successfully",
       });
    }
    catch (error) {
-      return next(error);
+      next(error);
    }
 };
 

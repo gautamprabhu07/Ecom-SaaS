@@ -18,21 +18,23 @@ const CreateShop = ({
   } = useForm();
 
   const shopCreateMutation = useMutation({
-    mutationFn: async (data: any) => {
+    mutationFn: async (data: FormData) => {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/api/create-shop`,
         data,
-        {
-          withCredentials: true,
-        },
       );
       return response.data;
     },
-    onSuccess: () => setActiveStep(3),
+    onSuccess: () => {
+      setActiveStep(3);
+    },
   });
 
-  const onSubmit = async (data: any) =>
-    shopCreateMutation.mutate({ ...data, sellerId });
+  const onSubmit = async (data: any) => {
+    const shopData = { ...data, sellerId };
+    console.log("Shop Data:", shopData);
+    shopCreateMutation.mutate(shopData);
+  };
 
   const countWords = (text: string) => text.trim().split(/\s+/).length;
 
@@ -135,10 +137,9 @@ const CreateShop = ({
 
       <button
         type="submit"
-        disabled={shopCreateMutation.isPending}
         className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg text-sm transition"
       >
-        {shopCreateMutation.isPending ? "Creating Shop..." : "Create Shop"}
+        Create
       </button>
     </form>
   );

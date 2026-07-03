@@ -15,7 +15,7 @@ router.post("/reset-password-user", resetUserPassword);
 router.post("/verify-forgot-password-user", verifyUserForgotPassword);
 router.post("/seller-registration", registerSeller);
 router.post("/verify-seller", verifySeller);
-router.post("/create-shop", isAuthenticated, isSeller, createShop);
+router.post("/create-shop", createShop);
 router.post("/create-stripe-link",createStripeConnectLink);
 router.post("/login-seller", loginSeller);
 router.get("/logged-in-seller",isAuthenticated, isSeller,  getSeller);
