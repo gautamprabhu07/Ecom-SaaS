@@ -1,3 +1,4 @@
+//Path: apps/auth-service/src/controllers/auth.controller.ts
 import {NextFunction, Request, Response } from "express";
 import {handleforgotPassword, validateRegistrationData, verifyForgotPasswordOtp} from "../utils/auth.helper";
 import prisma from "@packages/libs/prisma";
@@ -300,7 +301,7 @@ export const createStripeConnectLink = async (req: Request, res: Response, next:
 
       const account = await stripe.accounts.create({
          type: "express",
-         country: "IN",
+         country: "US",
          email: seller?.email,
          capabilities: {
             card_payments: {requested: true},
@@ -315,13 +316,12 @@ export const createStripeConnectLink = async (req: Request, res: Response, next:
 
       const accountLink = await stripe.accountLinks.create({
          account: account.id,
-         refresh_url: `${process.env.CLIENT_URL}/pending`,
-         return_url: `${process.env.CLIENT_URL}/success`,
+         refresh_url: `http://localhost:3000/pending`,
+         return_url: `http://localhost:3000/success`,
          type: "account_onboarding",
       });
 
       res.json({
-         success: true,
          url: accountLink.url,
       });
    }
@@ -364,7 +364,7 @@ export const loginSeller = async (req: Request, res: Response, next: NextFunctio
       });
    }
    catch (error) {
-      return next(error);
+      next(error);
    }
 };
 
@@ -375,6 +375,6 @@ export const getSeller = async (req: Request, res: Response, next: NextFunction)
       res.status(200).json({success:true, seller});
    }
    catch (error) {
-      return next(error);
+      next(error);
    }
 };

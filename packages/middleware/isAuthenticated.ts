@@ -4,8 +4,7 @@ import prisma from "@packages/libs/prisma";
 
 const isAuthenticated = async (req: Request, res: Response, next: NextFunction) => {
    try {
-      console.log("Cookies:", req.cookies);
-console.log("Authorization:", req.headers.authorization);
+      
 
       const token = req.cookies["access_token"] || 
       req.cookies["seller_access_token"]

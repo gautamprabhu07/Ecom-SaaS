@@ -1,3 +1,4 @@
+//Path: apps/seller-ui/src/app/%28routes%29/signup/page.tsx
 "use client";
 import React, { useState, useRef } from "react";
 import { useForm } from "react-hook-form";
@@ -100,7 +101,7 @@ const SignUp = () => {
         { sellerId },
       );
 
-      if (response.data && response.data.url) {
+      if (response.data.url) {
         window.location.href = response.data.url;
       }
     } catch (error) {

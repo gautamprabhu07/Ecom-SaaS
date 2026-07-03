@@ -1,3 +1,4 @@
+//Path: apps/auth-service/src/routes/auth.router.ts
 import express, {Router} from "express";
 import { loginUser, userRegistration, verifyUser, verifyUserForgotPassword,refreshTokenUser, resetUserPassword, forgotPassword, getUser, registerSeller, verifySeller, createShop, createStripeConnectLink, loginSeller, getSeller } from "../controllers/auth.controller";
 import isAuthenticated from "@packages/middleware/isAuthenticated";
@@ -18,7 +19,7 @@ router.post("/verify-seller", verifySeller);
 router.post("/create-shop", createShop);
 router.post("/create-stripe-link",createStripeConnectLink);
 router.post("/login-seller", loginSeller);
-router.get("/logged-in-seller",isAuthenticated, isSeller,  getSeller);
+router.get("/logged-in-seller",isAuthenticated, isSeller, getSeller);
 
 
 export default router;
