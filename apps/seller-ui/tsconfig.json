@@ -28,11 +28,12 @@
       ]
     },
     "outDir": "dist",
-    "rootDir": "src",
+    "rootDir": "../../",
     "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo"
   },
   "include": [
     "src/**/*.ts",
+    "../../packages/**/*.tsx",
     "src/**/*.tsx",
     "src/**/*.js",
     "src/**/*.jsx",

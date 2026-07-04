@@ -91,6 +91,9 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
          return next(new AuthError("Invalid password"));
       }
 
+      res.clearCookie("seller_access_token");
+      res.clearCookie("seller_refresh_token");
+
       const accessToken=jwt.sign({id: user.id, role:"user"}, process.env.ACCESS_TOKEN_SECRET as string, {expiresIn: "15m"});
 
       const refreshToken=jwt.sign({id: user.id, role:"user"}, process.env.REFRESH_TOKEN_SECRET as string, {expiresIn: "7d"});
@@ -109,9 +112,11 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
 };
 
 //refresh token user
-export const refreshTokenUser = async (req: Request, res: Response, next: NextFunction) => {
+export const refreshToken = async (req: any, res: Response, next: NextFunction) => {
    try {
-      const refreshToken = req.cookies.refresh_Token;
+      const refreshToken = req.cookies["refresh_token"] || 
+      req.cookies["seller_refresh_token"]
+      || req.headers.authorization?.split(" ")[1];
       if(!refreshToken) {
          return new ValidationError("Refresh token not found");
       }
@@ -120,15 +125,30 @@ export const refreshTokenUser = async (req: Request, res: Response, next: NextFu
 
       if(!decoded || !decoded.id || !decoded.role) { return new JsonWebTokenError("Invalid refresh token"); }
 
-      const user= await prisma.users.findUnique({where: {id: decoded.id}});
-      
-      if(!user) {
-         return next(new AuthError("User not found"));
+      let account;
+      if(decoded.role === "user") {
+         account = await prisma.users.findUnique({where: {id: decoded.id}});
+      }
+      else if(decoded.role === "seller") {
+         account = await prisma.sellers.findUnique({where: {id: decoded.id},
+            include: {
+               shop: true,
+            }});
+      }
+
+      if(!account) {
+         return new AuthError("User not found");
       }
 
       const newAccessToken=jwt.sign({id: decoded.id, role:decoded.role}, process.env.ACCESS_TOKEN_SECRET as string, {expiresIn: "15m"});
 
-      setCookie(res, "access_Token", newAccessToken);
+      if(decoded.role === "user") {
+         setCookie(res, "access_token", newAccessToken);
+      }else if(decoded.role === "seller") {
+         setCookie(res, "seller_access_token", newAccessToken);
+      }
+
+      req.role = decoded.role;
       return res.status(200).json({success:true, message: "Access token refreshed successfully"});
 
    }
@@ -350,6 +370,9 @@ export const loginSeller = async (req: Request, res: Response, next: NextFunctio
       if(!isMatch) {
          return next(new AuthError("Invalid password"));
       }
+
+      res.clearCookie("access_token");
+      res.clearCookie("refresh_token");
 
       const accessToken=jwt.sign({id: seller.id, role:"seller"}, process.env.ACCESS_TOKEN_SECRET as string, {expiresIn: "15m"});
 

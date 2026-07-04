@@ -1,6 +1,6 @@
 //Path: apps/auth-service/src/routes/auth.router.ts
 import express, {Router} from "express";
-import { loginUser, userRegistration, verifyUser, verifyUserForgotPassword,refreshTokenUser, resetUserPassword, forgotPassword, getUser, registerSeller, verifySeller, createShop, createStripeConnectLink, loginSeller, getSeller } from "../controllers/auth.controller";
+import { loginUser, userRegistration, verifyUser, verifyUserForgotPassword,refreshToken, resetUserPassword, forgotPassword, getUser, registerSeller, verifySeller, createShop, createStripeConnectLink, loginSeller, getSeller } from "../controllers/auth.controller";
 import isAuthenticated from "@packages/middleware/isAuthenticated";
 import { isSeller } from "@packages/middleware/authorizeRoles";
 
@@ -9,7 +9,7 @@ const router: Router = express.Router();
 router.post("/user-registration", userRegistration);
 router.post("/verify-user", verifyUser);
 router.post("/login-user", loginUser);
-router.post("/refresh-token-user", refreshTokenUser);
+router.post("/refresh-token", refreshToken);
 router.get("/logged-in-user",isAuthenticated, getUser);
 router.post("/forgot-password-user", forgotPassword);
 router.post("/reset-password-user", resetUserPassword);
