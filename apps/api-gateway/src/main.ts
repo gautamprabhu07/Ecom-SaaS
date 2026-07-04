@@ -12,6 +12,7 @@ import swaggerUi from 'swagger-ui-express';
 import axios from 'axios';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
+import initializeSiteConfig from './libs/initializeSiteConfig';
 
 const app = express();
 
@@ -45,10 +46,21 @@ app.get('/gateway-health', (req, res) => {
   res.send({ message: 'Welcome to api-gateway!' });
 });
 
+app.use("/product", proxy("http://localhost:6002"));
 app.use("/", proxy("http://localhost:6001"));
+
 
 const port = process.env.PORT || 8080;
 const server = app.listen(port, () => {
-  console.log(`Listening at http://localhost:${port}/api`);
+
+  try
+  {
+    initializeSiteConfig();
+    console.log("Site configuration initialized successfully.");
+  }
+  catch(error)
+  {
+    console.error("Failed to initialize site configuration.");
+  }
 });
 server.on('error', console.error);

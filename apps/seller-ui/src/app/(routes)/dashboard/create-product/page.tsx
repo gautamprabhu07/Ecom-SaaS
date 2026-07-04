@@ -1,12 +1,22 @@
 "use client";
 import { ChevronRight } from "lucide-react";
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
+import axiosInstance from "../../../../utils/axiosInstance";
+import { Controller, useForm } from "react-hook-form";
 import ImagePlaceholder from "../../../../shared/components/image-placeholder";
 import Input from "../../../../../../../packages/components/input";
 import ColorSelector from "../../../../../../../packages/components/colorselector";
 import CustomSpecifications from "packages/components/custom-specifications";
 import CustomProperties from "packages/components/custom-properties";
+import RichTextEditor from "packages/components/rick-text-editor";
+import Sizeselector from "packages/components/size-selector";
+
+const selectClass =
+  "w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500";
+const labelClass = "block text-sm font-medium text-gray-700 mb-1";
+const errorClass = "text-red-500 text-xs mt-1";
 
 const Page = () => {
   const {
@@ -22,6 +32,29 @@ const Page = () => {
   const [isChanged, setIsChanged] = useState(false);
   const [images, setImages] = useState<(File | null)[]>([null]);
   const [loading, setLoading] = useState(false);
+
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["categories"],
+    queryFn: async () => {
+      try {
+        const res = await axiosInstance.get("/product/api/get-categories");
+        return res.data;
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    },
+    staleTime: 5 * 60 * 1000,
+    retry: 2,
+  });
+
+  const categories = data?.categories || [];
+  const subcategoriesData = data?.subcategories || [];
+  const selectedCategory = watch("category");
+  const regularPrice = watch("regularPrice");
+  const subcategories = useMemo(
+    () => (selectedCategory ? subcategoriesData[selectedCategory] || [] : []),
+    [selectedCategory, subcategoriesData],
+  );
 
   const onSubmit = (data: any) => console.log(data);
 
@@ -48,6 +81,8 @@ const Page = () => {
     });
     setValue("images", images);
   };
+
+  const handleSaveDraft = () => {};
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -100,128 +135,324 @@ const Page = () => {
           </div>
 
           {/* Right - Product details */}
-          <div className="flex-1 bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+          <div className="flex-1 bg-white rounded-xl border border-gray-200 p-6 space-y-5">
+            <Input
+              label="Product Title"
+              placeholder="Input Product *"
+              {...register("title", { required: "Product title is required" })}
+            />
+            {errors.title && (
+              <p className={errorClass}>{String(errors.title.message)}</p>
+            )}
+
             <div>
               <Input
-                label="Product Title"
-                placeholder="Input Product *"
-                {...register("title", {
-                  required: "Product title is required",
+                type="textarea"
+                rows={7}
+                cols={10}
+                label="Product Description *(Max 150 words)"
+                placeholder="Input Product Description"
+                {...register("description", {
+                  required: "Product description is required",
+                  validate: (value) =>
+                    value.trim().split(/\s+/).length <= 150 ||
+                    "Description must be less than 150 words",
                 })}
               />
-              {errors.title && (
-                <p className="text-red-500 text-xs mt-1">
-                  {String(errors.title.message)}
+              {errors.description && (
+                <p className={errorClass}>
+                  {errors.description.message as string}
                 </p>
               )}
+            </div>
+
+            <div>
+              <Input
+                label="Tags *"
+                placeholder="apple, flagship"
+                {...register("tags", {
+                  required: "Separate related product tags with commas",
+                })}
+              />
+              {errors.tags && (
+                <p className={errorClass}>{String(errors.tags.message)}</p>
+              )}
+            </div>
+
+            <div>
+              <Input
+                label="Warranty *"
+                placeholder="Input warranty period"
+                {...register("warranty", {
+                  required: "Warranty period is required",
+                })}
+              />
+              {errors.warranty && (
+                <p className={errorClass}>{String(errors.warranty.message)}</p>
+              )}
+            </div>
+
+            <div>
+              <Input
+                label="Slug *"
+                placeholder="Input product slug"
+                {...register("slug", {
+                  required: "Product slug is required",
+                  pattern: {
+                    value: /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
+                    message:
+                      "Slug can only contain lowercase letters, numbers, and hyphens",
+                  },
+                  minLength: {
+                    value: 3,
+                    message: "Slug must be at least 3 characters long",
+                  },
+                  maxLength: {
+                    value: 50,
+                    message: "Slug cannot exceed 50 characters",
+                  },
+                })}
+              />
+              {errors.slug && (
+                <p className={errorClass}>{String(errors.slug.message)}</p>
+              )}
+            </div>
+
+            <div>
+              <Input
+                label="Brand"
+                placeholder="Input product brand"
+                {...register("brand", {
+                  required: "Product brand is required",
+                })}
+              />
+              {errors.brand && (
+                <p className={errorClass}>{String(errors.brand.message)}</p>
+              )}
+            </div>
+
+            <ColorSelector control={control} errors={errors} />
+            <CustomSpecifications control={control} errors={errors} />
+            <CustomProperties control={control} errors={errors} />
+
+            {/* Cash on Delivery */}
+            <div>
+              <label className={labelClass}>Cash on Delivery</label>
+              <select
+                className={selectClass}
+                {...register("cod", { required: "Please select an option" })}
+                defaultValue="yes"
+              >
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+              </select>
+            </div>
+
+            {/* Category */}
+            <div>
+              <label className={labelClass}>Category *</label>
+              {isLoading ? (
+                <p className="text-sm text-gray-500">Loading categories...</p>
+              ) : isError ? (
+                <p className="text-sm text-red-500">Error loading categories</p>
+              ) : (
+                <Controller
+                  name="category"
+                  control={control}
+                  rules={{ required: "Category is required" }}
+                  render={({ field }) => (
+                    <select {...field} className={selectClass}>
+                      <option value="">Select a category</option>
+                      {categories.map((category: string) => (
+                        <option key={category} value={category}>
+                          {category}
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                />
+              )}
+              {errors.category && (
+                <p className={errorClass}>{String(errors.category.message)}</p>
+              )}
+            </div>
+
+            {/* Subcategory */}
+            <div>
+              <label className={labelClass}>Subcategory *</label>
+              {isLoading ? (
+                <p className="text-sm text-gray-500">
+                  Loading subcategories...
+                </p>
+              ) : isError ? (
+                <p className="text-sm text-red-500">
+                  Error loading subcategories
+                </p>
+              ) : (
+                <Controller
+                  name="subcategory"
+                  control={control}
+                  rules={{ required: "Subcategory is required" }}
+                  render={({ field }) => (
+                    <select {...field} className={selectClass}>
+                      <option value="">Select a subcategory</option>
+                      {selectedCategory &&
+                        subcategories[selectedCategory]?.map((sub: string) => (
+                          <option key={sub} value={sub}>
+                            {sub}
+                          </option>
+                        ))}
+                    </select>
+                  )}
+                />
+              )}
+              {errors.subcategory && (
+                <p className={errorClass}>
+                  {String(errors.subcategory.message)}
+                </p>
+              )}
+            </div>
+
+            {/* Detailed Description */}
+            <div>
+              <label className={labelClass}>
+                Detailed Description * (Max 100 words)
+              </label>
+              <Controller
+                name="detailedDescription"
+                control={control}
+                rules={{
+                  required: "Detailed description is required",
+                  validate: (value) =>
+                    value
+                      .trim()
+                      .split(/\s+/)
+                      .filter((w: string) => w).length <= 100 ||
+                    "Detailed description must be less than 100 words",
+                }}
+                render={({ field }) => (
+                  <RichTextEditor
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
+                )}
+              />
+              {errors.detailedDescription && (
+                <p className={errorClass}>
+                  {String(errors.detailedDescription.message)}
+                </p>
+              )}
+            </div>
+
+            {/* Video URL */}
+            <div>
+              <Input
+                label="Video URL"
+                placeholder="Input product video URL"
+                {...register("videoUrl", {
+                  pattern: {
+                    value:
+                      /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/,
+                    message: "Please enter a valid YouTube URL",
+                  },
+                })}
+              />
+              {errors.videoUrl && (
+                <p className={errorClass}>{String(errors.videoUrl.message)}</p>
+              )}
+            </div>
+
+            {/* Prices */}
+            <div className="grid grid-cols-2 gap-4">
               <div>
                 <Input
-                  type="textarea"
-                  rows={7}
-                  cols={10}
-                  label="Product Description *(Max 150 words)"
-                  placeholder="Input Product Description"
-                  {...register("description", {
-                    required: "Product description is required",
-                    validate: (value) => {
-                      const wordCount = value.trim().split(/\s+/).length;
-                      return (
-                        wordCount <= 150 ||
-                        "Description must be less than 150 words"
-                      );
+                  label="Regular Price *"
+                  placeholder="0.00"
+                  {...register("regularPrice", {
+                    valueAsNumber: true,
+                    min: { value: 1, message: "Must be a positive number" },
+                    validate: (v) => !isNaN(v) || "Must be a number",
+                  })}
+                />
+                {errors.regularPrice && (
+                  <p className={errorClass}>
+                    {String(errors.regularPrice.message)}
+                  </p>
+                )}
+              </div>
+              <div>
+                <Input
+                  label="Sale Price"
+                  placeholder="0.00"
+                  {...register("salePrice", {
+                    required: "Sale price is required",
+                    valueAsNumber: true,
+                    min: { value: 0, message: "Must be a positive number" },
+                    validate: (v) => {
+                      if (isNaN(v)) return "Must be a number";
+                      if (regularPrice && v > regularPrice)
+                        return "Cannot exceed regular price";
+                      return true;
                     },
                   })}
                 />
-                {errors.description && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {errors.description.message as string}
+                {errors.salePrice && (
+                  <p className={errorClass}>
+                    {String(errors.salePrice.message)}
                   </p>
                 )}
               </div>
-              <div>
-                <Input
-                  label="Tags *"
-                  placeholder="apple, flagship"
-                  {...register("tags", {
-                    required: "Seperate related product tags with commas",
-                  })}
-                />
-                {errors.tags && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {String(errors.tags.message)}
-                  </p>
-                )}
-              </div>
+            </div>
 
-              <div>
-                <Input
-                  label="Warranty *"
-                  placeholder="Input warranty period"
-                  {...register("warranty", {
-                    required: "Warranty period is required",
-                  })}
-                />
-                {errors.warranty && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {String(errors.warranty.message)}
-                  </p>
-                )}
-              </div>
+            {/* Stock */}
+            <div>
+              <Input
+                label="Stock *"
+                placeholder="Input product stock"
+                {...register("stock", {
+                  required: "Stock is required",
+                  valueAsNumber: true,
+                  min: { value: 0, message: "Must be non-negative" },
+                  max: { value: 1000, message: "Cannot exceed 1000" },
+                  validate: (v) => {
+                    if (isNaN(v)) return "Must be a number";
+                    if (!Number.isInteger(v)) return "Must be an integer";
+                    return true;
+                  },
+                })}
+              />
+              {errors.stock && (
+                <p className={errorClass}>{String(errors.stock.message)}</p>
+              )}
+            </div>
 
-              <div>
-                <Input
-                  label="Slug *"
-                  placeholder="Input product slug"
-                  {...register("slug", {
-                    required: "Product slug is required",
-                    pattern: {
-                      value: /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
-                      message:
-                        "Slug can only contain lowercase letters, numbers, and hyphens",
-                    },
-                    minLength: {
-                      value: 3,
-                      message: "Slug must be at least 3 characters long",
-                    },
-                    maxLength: {
-                      value: 50,
-                      message: "Slug cannot exceed 50 characters",
-                    },
-                  })}
-                />
-                {errors.slug && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {String(errors.slug.message)}
-                  </p>
-                )}
-              </div>
+            <Sizeselector control={control} errors={errors} />
 
-              <div>
-                <Input
-                  label="Brand"
-                  placeholder="Input product brand"
-                  {...register("brand", {
-                    required: "Product brand is required",
-                  })}
-                />
-                {errors.brand && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {String(errors.brand.message)}
-                  </p>
-                )}
-              </div>
+            {/* Discount codes */}
+            <div>
+              <label className={labelClass}>
+                Select Discount Codes (optional)
+              </label>
+            </div>
 
-              <div>
-                <ColorSelector control={control} errors={errors} />
-              </div>
-
-              <div>
-                <CustomSpecifications control={control} errors={errors} />
-              </div>
-
-              <div>
-                <CustomProperties control={control} errors={errors} />
-              </div>
+            {/* Action buttons */}
+            <div className="flex gap-3 pt-2">
+              {isChanged && (
+                <button
+                  type="button"
+                  onClick={handleSaveDraft}
+                  className="flex-1 border border-gray-300 text-gray-700 font-medium py-2.5 rounded-lg text-sm hover:bg-gray-50 transition"
+                >
+                  Save Draft
+                </button>
+              )}
+              <button
+                type="submit"
+                disabled={loading}
+                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg text-sm transition disabled:opacity-60"
+              >
+                {loading ? "Creating..." : "Create Product"}
+              </button>
             </div>
           </div>
         </div>
