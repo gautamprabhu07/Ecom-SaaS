@@ -11,6 +11,7 @@
   },
   "private": true,
   "dependencies": {
+    "@imagekit/nodejs": "^7.9.1",
     "@prisma/client": "^6.16.3",
     "@tanstack/react-query": "^5.101.1",
     "@types/cors": "^2.8.19",

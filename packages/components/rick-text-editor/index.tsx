@@ -1,8 +1,15 @@
 // Path: packages/components/rich-text-editor/index.tsx
 "use client";
 import React from "react";
-import ReactQuill from "react-quill-new";
+import dynamic from "next/dynamic";
 import "react-quill-new/dist/quill.snow.css";
+
+const ReactQuill = dynamic(() => import("react-quill-new"), {
+  ssr: false,
+  loading: () => (
+    <div className="min-h-[160px] border border-gray-300 rounded-lg bg-gray-50 animate-pulse" />
+  ),
+});
 
 const modules = {
   toolbar: [
@@ -21,7 +28,6 @@ const formats = [
   "underline",
   "strike",
   "list",
-  "bullet",
   "link",
 ];
 

@@ -98,6 +98,7 @@ const SidebarWrapper = () => {
                 href="/dashboard/all-events"
               />
             </SidebarMenu>
+            q{" "}
             <SidebarMenu title="Controllers">
               <SidebarItem
                 isActive={activeSidebar === "/dashboard/inbox"}
@@ -120,10 +121,10 @@ const SidebarWrapper = () => {
             </SidebarMenu>
             <SidebarMenu title="Extras">
               <SidebarItem
-                isActive={activeSidebar === "/dashboard/discount-codes"}
+                isActive={activeSidebar === "/dashboard/discountCodes"}
                 title="Discount Codes"
                 icon={<TicketPercent size={26} color="currentColor" />}
-                href="/dashboard/discount-codes"
+                href="/dashboard/discountCodes"
               />
               <SidebarItem
                 isActive={activeSidebar === "/dashboard/logout"}

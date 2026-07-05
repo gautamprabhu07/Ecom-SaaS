@@ -1,5 +1,5 @@
 "use client";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Wand, X } from "lucide-react";
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
@@ -12,11 +12,18 @@ import CustomSpecifications from "packages/components/custom-specifications";
 import CustomProperties from "packages/components/custom-properties";
 import RichTextEditor from "packages/components/rick-text-editor";
 import Sizeselector from "packages/components/size-selector";
+import Image from "next/image";
+import { enhancements } from "../../../../utils/AI.enhancements";
 
 const selectClass =
   "w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500";
 const labelClass = "block text-sm font-medium text-gray-700 mb-1";
 const errorClass = "text-red-500 text-xs mt-1";
+
+interface UploadedImage {
+  fieldId: string;
+  file_url: string;
+}
 
 const Page = () => {
   const {
@@ -30,8 +37,12 @@ const Page = () => {
 
   const [openImageModal, setOpenImageModal] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
-  const [images, setImages] = useState<(File | null)[]>([null]);
+  const [activeEffect, setActiveEffect] = useState<string | null>(null);
+  const [selected, setSelected] = useState("");
+  const [pictureUploadingLoader, setPictureUploadingLoader] = useState(false);
+  const [images, setImages] = useState<(UploadedImage | null)[]>([null]);
   const [loading, setLoading] = useState(false);
+  const [processing, setProcessing] = useState(false);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["categories"],
@@ -47,6 +58,14 @@ const Page = () => {
     retry: 2,
   });
 
+  const { data: discountCodes = [], isLoading: discountLoading } = useQuery({
+    queryKey: ["shop-discounts"],
+    queryFn: async () => {
+      const res = await axiosInstance.get("/product/api/get-discount-codes");
+      return res?.data?.discountCodes || [];
+    },
+  });
+
   const categories = data?.categories || [];
   const subcategoriesData = data?.subcategories || [];
   const selectedCategory = watch("category");
@@ -58,28 +77,81 @@ const Page = () => {
 
   const onSubmit = (data: any) => console.log(data);
 
-  const handleImageChange = (file: File | null, index: number) => {
-    const updatedImages = [...images];
-    updatedImages[index] = file;
-    if (index === images.length - 1 && images.length < 8)
-      updatedImages.push(null);
-    setImages(updatedImages);
-    setValue("images", updatedImages);
+  const convertFileToBase64 = (file: File) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
+  const handleImageChange = async (file: File | null, index: number) => {
+    if (!file) return;
+    setPictureUploadingLoader(true);
+    try {
+      const fileName = await convertFileToBase64(file);
+
+      const response = await axiosInstance.post(
+        "/product/api/upload-product-image",
+        { fileName },
+      );
+      const uploadedImage: UploadedImage = {
+        fieldId: response.data.fileId,
+        file_url: response.data.file_url,
+      };
+      const updateImages = [...images];
+
+      updateImages[index] = uploadedImage;
+      if (index === images.length - 1 && images.length < 8) {
+        updateImages.push(null);
+      }
+
+      setImages(updateImages);
+      setValue("images", updateImages);
+    } catch (error) {
+      console.error("Error uploading image:", error);
+    } finally {
+      setPictureUploadingLoader(false);
+    }
   };
 
   const handleRemoveImage = (index: number) => {
-    setImages((prevImages) => {
-      let updatedImages = [...prevImages];
-      if (index === -1) {
-        updatedImages[0] = null;
-      } else {
-        updatedImages.splice(index, 1);
+    try {
+      const updatedImages = [...images];
+      const imageToDelete = updatedImages[index];
+      if (imageToDelete && typeof imageToDelete === "object") {
+        axiosInstance.delete("/product/api/delete-product-image", {
+          data: { fileId: imageToDelete.fieldId! },
+        });
       }
-      if (!updatedImages.includes(null) && updatedImages.length < 8)
+
+      updatedImages.splice(index, 1);
+
+      if (!updatedImages.includes(null) && updatedImages.length < 8) {
         updatedImages.push(null);
-      return updatedImages;
-    });
-    setValue("images", images);
+      }
+
+      setImages(updatedImages);
+      setValue("images", updatedImages);
+    } catch (error) {
+      console.error("Error removing image:", error);
+    }
+  };
+
+  const applyTransformation = async (transformation: string) => {
+    if (!selected || processing) return;
+    setProcessing(true);
+    setActiveEffect(transformation);
+
+    try {
+      const transformedImageUrl = `${selected}?tr=${transformation}`;
+      setSelected(transformedImageUrl);
+    } catch (error) {
+      console.error("Error applying transformation:", error);
+    } finally {
+      setProcessing(false);
+    }
   };
 
   const handleSaveDraft = () => {};
@@ -107,10 +179,13 @@ const Page = () => {
               {images?.length > 0 && (
                 <ImagePlaceholder
                   setOpenImageModal={setOpenImageModal}
+                  pictureUploadingLoader={pictureUploadingLoader}
                   size="765 x 850"
                   small={false}
+                  images={images}
                   index={0}
                   onImageChange={handleImageChange}
+                  setSelectedImage={setSelected}
                   onRemove={handleRemoveImage}
                 />
               )}
@@ -123,9 +198,12 @@ const Page = () => {
                 >
                   <ImagePlaceholder
                     setOpenImageModal={setOpenImageModal}
+                    pictureUploadingLoader={pictureUploadingLoader}
                     size="765 x 850"
                     small
                     index={index + 1}
+                    images={images}
+                    setSelectedImage={setSelected}
                     onImageChange={handleImageChange}
                     onRemove={handleRemoveImage}
                   />
@@ -433,6 +511,40 @@ const Page = () => {
               <label className={labelClass}>
                 Select Discount Codes (optional)
               </label>
+              {discountLoading ? (
+                <p className="text-sm text-gray-500">
+                  Loading discount codes...
+                </p>
+              ) : (
+                <div className="flex flex-wrap gap-2 mt-1">
+                  {discountCodes?.map((code: any) => {
+                    const isSelected = (watch("discountCodes") || []).includes(
+                      code.id,
+                    );
+                    return (
+                      <button
+                        key={code.id}
+                        type="button"
+                        onClick={() => {
+                          const currentSelection = watch("discountCodes") || [];
+                          const updatedSelection = currentSelection?.includes(
+                            code.id,
+                          )
+                            ? currentSelection.filter(
+                                (id: string) => id !== code.id,
+                              )
+                            : [...currentSelection, code.id];
+                          setValue("discountCodes", updatedSelection);
+                        }}
+                        className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition ${isSelected ? "bg-blue-600 text-white border-blue-600" : "bg-white text-gray-600 border-gray-300 hover:border-blue-400"}`}
+                      >
+                        {code?.public_name} ({code.discountValue}
+                        {code.discountType === "percentage" ? "%" : "$"})
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
 
             {/* Action buttons */}
@@ -455,6 +567,42 @@ const Page = () => {
               </button>
             </div>
           </div>
+
+          {openImageModal && (
+            <div>
+              <div>
+                <div>
+                  <h2>Enhance Product Image</h2>
+                  <X onClick={() => setOpenImageModal(!openImageModal)} />
+                </div>
+                <div>
+                  <Image
+                    src={selected}
+                    alt="product-image"
+                    layout="fill"
+                    objectFit="contain"
+                  />
+                </div>
+                {selected && (
+                  <div>
+                    <h3>AI enhancements</h3>
+                    <div>
+                      {enhancements?.map(({ label, effect }) => (
+                        <button
+                          key={effect}
+                          onClick={() => applyTransformation(effect)}
+                          disabled={processing}
+                        >
+                          <Wand />
+                          {label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </form>
     </div>

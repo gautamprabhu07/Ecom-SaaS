@@ -1,3 +1,4 @@
+//Path: apps/product-service/src/main.ts
 import express from 'express';
 import cors from 'cors';
 import { errorMiddleware } from '@packages/error-handler/error-middleware';

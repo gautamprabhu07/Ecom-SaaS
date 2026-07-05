@@ -8,6 +8,9 @@ const ImagePlaceholder = ({
   small,
   onImageChange,
   onRemove,
+  setSelectedImage,
+  pictureUploadingLoader,
+  images,
   defaultImage = null,
   index = null,
   setOpenImageModal,
@@ -16,7 +19,10 @@ const ImagePlaceholder = ({
   small?: boolean;
   onImageChange: (file: File | null, index: number) => void;
   onRemove: (index: number) => void;
+  images: any;
+  pictureUploadingLoader: boolean;
   defaultImage?: string | null;
+  setSelectedImage: (e: string) => void;
   index?: any;
   setOpenImageModal: (v: boolean) => void;
 }) => {
@@ -53,6 +59,7 @@ const ImagePlaceholder = ({
           />
           <div className="absolute top-1.5 right-1.5 flex gap-1">
             <button
+              disabled={pictureUploadingLoader}
               type="button"
               onClick={() => onRemove?.(index!)}
               className="p-1 bg-white rounded-full shadow hover:bg-red-50"
@@ -61,7 +68,11 @@ const ImagePlaceholder = ({
             </button>
             <button
               type="button"
-              onClick={() => setOpenImageModal(true)}
+              disabled={pictureUploadingLoader}
+              onClick={() => {
+                setOpenImageModal(true);
+                setSelectedImage(images[index].file_url);
+              }}
               className="p-1 bg-white rounded-full shadow hover:bg-blue-50"
             >
               <WandSparkles size={14} className="text-blue-500" />

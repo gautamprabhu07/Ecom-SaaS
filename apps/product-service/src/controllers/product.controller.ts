@@ -1,7 +1,9 @@
+//Path: apps/product-service/src/controllers/product.controller.ts
 import { NextFunction } from "express";
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
-
+import { toFile } from "@imagekit/nodejs";
+import imagekit from "@packages/libs/imagekit";
 const prisma = new PrismaClient();
 
 
@@ -38,7 +40,7 @@ export const createDiscountCode = async (req: any, res: Response, next: NextFunc
          data: {
             public_name,
             discountType,
-            discountValue,
+            discountValue: parseFloat(discountValue),
             discountCode,
             sellerId: req.seller.id
          },
@@ -98,4 +100,48 @@ export const deleteDiscountCode = async (req: any, res: Response, next: NextFunc
    catch (error) {
       return next(error);
    }
+};
+
+//upload product image
+export const uploadProductImage = async (req: any, res: Response, next: NextFunction) => {
+  try {
+    const { fileName: base64Data } = req.body;
+
+    // Strip the data URL prefix (data:image/jpeg;base64,...)
+    const base64String = base64Data.replace(/^data:image\/\w+;base64,/, "");
+    const buffer = Buffer.from(base64String, "base64");
+
+    const response = await imagekit.files.upload({
+      file: await toFile(buffer, `product-${Date.now()}.jpg`),
+      fileName: `product-${Date.now()}.jpg`,
+      folder: "/products",
+    });
+
+    res.status(200).json({
+      file_url: response.url,
+      fileId: response.fileId,
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+//delete product image
+export const deleteProductImage = async (req: any, res: Response, next: NextFunction) => {
+  try {
+    const { fileId } = req.body;
+
+    if (!fileId) {
+      return res.status(400).json({ message: "fileId is required" });
+    }
+
+    const response = await imagekit.files.delete(fileId);
+
+    res.status(200).json({
+      success: true,
+      response,
+    });
+  } catch (error) {
+    return next(error);
+  }
 };
