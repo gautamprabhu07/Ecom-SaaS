@@ -1,3 +1,4 @@
+//Path: apps/api-gateway/src/libs/initializeSiteConfig.ts
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();

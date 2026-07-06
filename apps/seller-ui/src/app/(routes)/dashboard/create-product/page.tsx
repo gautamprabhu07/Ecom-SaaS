@@ -14,6 +14,8 @@ import RichTextEditor from "packages/components/rick-text-editor";
 import Sizeselector from "packages/components/size-selector";
 import Image from "next/image";
 import { enhancements } from "../../../../utils/AI.enhancements";
+import { useRouter } from "next/navigation";
+import { toast } from "react-hot-toast";
 
 const selectClass =
   "w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500";
@@ -21,7 +23,7 @@ const labelClass = "block text-sm font-medium text-gray-700 mb-1";
 const errorClass = "text-red-500 text-xs mt-1";
 
 interface UploadedImage {
-  fieldId: string;
+  fileId: string;
   file_url: string;
 }
 
@@ -43,6 +45,7 @@ const Page = () => {
   const [images, setImages] = useState<(UploadedImage | null)[]>([null]);
   const [loading, setLoading] = useState(false);
   const [processing, setProcessing] = useState(false);
+  const router = useRouter();
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["categories"],
@@ -67,15 +70,25 @@ const Page = () => {
   });
 
   const categories = data?.categories || [];
-  const subcategoriesData = data?.subcategories || [];
+  const subcategoriesData = data?.subCategories || [];
   const selectedCategory = watch("category");
-  const regularPrice = watch("regularPrice");
+  const regularPrice = watch("regular_price");
   const subcategories = useMemo(
     () => (selectedCategory ? subcategoriesData[selectedCategory] || [] : []),
     [selectedCategory, subcategoriesData],
   );
 
-  const onSubmit = (data: any) => console.log(data);
+  const onSubmit = async (data: any) => {
+    try {
+      setLoading(true);
+      await axiosInstance.post("/product/api/create-product", data);
+      router.push("/dashboard/all-products");
+    } catch (error: any) {
+      toast.error(error?.data?.message || "Failed to create product");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const convertFileToBase64 = (file: File) => {
     return new Promise((resolve, reject) => {
@@ -97,7 +110,7 @@ const Page = () => {
         { fileName },
       );
       const uploadedImage: UploadedImage = {
-        fieldId: response.data.fileId,
+        fileId: response.data.fileId,
         file_url: response.data.file_url,
       };
       const updateImages = [...images];
@@ -122,7 +135,7 @@ const Page = () => {
       const imageToDelete = updatedImages[index];
       if (imageToDelete && typeof imageToDelete === "object") {
         axiosInstance.delete("/product/api/delete-product-image", {
-          data: { fileId: imageToDelete.fieldId! },
+          data: { fileId: imageToDelete.fileId! },
         });
       }
 
@@ -230,7 +243,7 @@ const Page = () => {
                 cols={10}
                 label="Product Description *(Max 150 words)"
                 placeholder="Input Product Description"
-                {...register("description", {
+                {...register("short_description", {
                   required: "Product description is required",
                   validate: (value) =>
                     value.trim().split(/\s+/).length <= 150 ||
@@ -318,7 +331,9 @@ const Page = () => {
               <label className={labelClass}>Cash on Delivery</label>
               <select
                 className={selectClass}
-                {...register("cod", { required: "Please select an option" })}
+                {...register("cashOnDelivery", {
+                  required: "Please select an option",
+                })}
                 defaultValue="yes"
               >
                 <option value="yes">Yes</option>
@@ -368,14 +383,14 @@ const Page = () => {
                 </p>
               ) : (
                 <Controller
-                  name="subcategory"
+                  name="subCategory"
                   control={control}
                   rules={{ required: "Subcategory is required" }}
                   render={({ field }) => (
                     <select {...field} className={selectClass}>
                       <option value="">Select a subcategory</option>
                       {selectedCategory &&
-                        subcategories[selectedCategory]?.map((sub: string) => (
+                        subcategories.map((sub: string) => (
                           <option key={sub} value={sub}>
                             {sub}
                           </option>
@@ -384,9 +399,9 @@ const Page = () => {
                   )}
                 />
               )}
-              {errors.subcategory && (
+              {errors.subCategory && (
                 <p className={errorClass}>
-                  {String(errors.subcategory.message)}
+                  {String(errors.subCategory.message)}
                 </p>
               )}
             </div>
@@ -397,7 +412,7 @@ const Page = () => {
                 Detailed Description * (Max 100 words)
               </label>
               <Controller
-                name="detailedDescription"
+                name="detailed_description"
                 control={control}
                 rules={{
                   required: "Detailed description is required",
@@ -427,7 +442,7 @@ const Page = () => {
               <Input
                 label="Video URL"
                 placeholder="Input product video URL"
-                {...register("videoUrl", {
+                {...register("video_url", {
                   pattern: {
                     value:
                       /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/,
@@ -446,7 +461,7 @@ const Page = () => {
                 <Input
                   label="Regular Price *"
                   placeholder="0.00"
-                  {...register("regularPrice", {
+                  {...register("regular_price", {
                     valueAsNumber: true,
                     min: { value: 1, message: "Must be a positive number" },
                     validate: (v) => !isNaN(v) || "Must be a number",
@@ -462,7 +477,7 @@ const Page = () => {
                 <Input
                   label="Sale Price"
                   placeholder="0.00"
-                  {...register("salePrice", {
+                  {...register("sale_price", {
                     required: "Sale price is required",
                     valueAsNumber: true,
                     min: { value: 0, message: "Must be a positive number" },
@@ -569,13 +584,23 @@ const Page = () => {
           </div>
 
           {openImageModal && (
-            <div>
-              <div>
-                <div>
-                  <h2>Enhance Product Image</h2>
-                  <X onClick={() => setOpenImageModal(!openImageModal)} />
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+              <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl p-6">
+                {/* Header */}
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold text-gray-800">
+                    Enhance Product Image
+                  </h2>
+                  <button
+                    onClick={() => setOpenImageModal(false)}
+                    className="text-gray-400 hover:text-gray-600 transition"
+                  >
+                    <X size={20} />
+                  </button>
                 </div>
-                <div>
+
+                {/* Image preview */}
+                <div className="relative w-full h-[340px] rounded-xl overflow-hidden border border-gray-200 bg-gray-50 mb-4">
                   <Image
                     src={selected}
                     alt="product-image"
@@ -583,17 +608,27 @@ const Page = () => {
                     objectFit="contain"
                   />
                 </div>
+
+                {/* AI Enhancements */}
                 {selected && (
                   <div>
-                    <h3>AI enhancements</h3>
-                    <div>
+                    <h3 className="text-sm font-medium text-gray-700 mb-2">
+                      AI Enhancements
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
                       {enhancements?.map(({ label, effect }) => (
                         <button
                           key={effect}
                           onClick={() => applyTransformation(effect)}
                           disabled={processing}
+                          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium border transition
+                  ${
+                    activeEffect === effect
+                      ? "bg-blue-600 text-white border-blue-600"
+                      : "bg-white text-gray-600 border-gray-300 hover:border-blue-400"
+                  } disabled:opacity-50`}
                         >
-                          <Wand />
+                          <Wand size={14} />
                           {label}
                         </button>
                       ))}
