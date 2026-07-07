@@ -1,15 +1,12 @@
 //Path: apps/product-service/src/controllers/product.controller.ts
 import { NextFunction } from "express";
 import { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Prisma } from "@prisma/client";
 import { toFile } from "@imagekit/nodejs";
 import imagekit from "@packages/libs/imagekit";
 import { ValidationError } from "@packages/error-handler";
+
 const prisma = new PrismaClient();
-
-
-
-
 
 //get product categories
 export const getProductCategories = async (req: Request, res: Response, next: NextFunction) => {
@@ -334,3 +331,68 @@ export const restoreProduct = async (req: any, res: Response, next: NextFunction
       return next(error);
    }
 };
+
+//get seller stripe information
+
+
+
+
+//get all products
+export const getAllProducts = async (req: Request, res: Response, next: NextFunction) => {
+   try {
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 20;
+      const skip = (page - 1) * limit;
+      const type = req.query.type;
+
+      const baseFilter = {
+         OR: [
+            { starting_date: { equals: null } },
+      { starting_date: { isSet: false } },
+         ],
+      };
+
+      const orderBy: Prisma.productsOrderByWithRelationInput =
+         type === "latest"
+            ? { createdAt: "desc" as Prisma.SortOrder }
+            : { totalSales: "desc" as Prisma.SortOrder };
+
+      const [products, total, top10Products] = await Promise.all([
+         prisma.products.findMany({
+            skip,
+            take: limit,
+            include: {
+               images: true,
+               Shop: true,
+            },
+            where: baseFilter,
+            orderBy,
+         }),
+         prisma.products.count({
+            where: baseFilter,
+         }),
+         prisma.products.findMany({
+            take: 10,
+            include: {
+               images: true,
+               Shop: true,
+            },
+            where: baseFilter,
+            orderBy: { totalSales: "desc" },
+         }),
+      ]);
+
+      res.status(200).json({
+         products,
+         top10By: type === "latest" ? "latest" : "topSales",
+         top10Products,
+         total,
+         currentPage: page,
+         totalPages: Math.ceil(total / limit),
+      });
+   }
+   catch (error) {
+      next(error);
+   }
+};
+

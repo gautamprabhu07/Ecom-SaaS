@@ -42,7 +42,9 @@
     "stripe": "^22.3.0",
     "styled-components": "^6.4.3",
     "swagger-autogen": "^2.23.7",
-    "swagger-ui-express": "^5.0.1"
+    "swagger-ui-express": "^5.0.1",
+    "ua-parser-js": "^2.0.10",
+    "zustand": "^5.0.14"
   },
   "devDependencies": {
     "@nx/docker": "23.0.0",

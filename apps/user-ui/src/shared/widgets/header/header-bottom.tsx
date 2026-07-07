@@ -1,26 +1,36 @@
-'use client';
-import { AlignLeft, ChevronDown,  CircleUserRound, ShoppingCartIcon, Heart } from 'lucide-react';
-import Link from 'next/link';
-import { NavItem, navItems } from '../../../configs/constants';
-import React, { useEffect, useState } from 'react'
-import useUser from '../../../hooks/useUser';
+"use client";
+import {
+  AlignLeft,
+  ChevronDown,
+  CircleUserRound,
+  ShoppingCartIcon,
+  Heart,
+} from "lucide-react";
+import Link from "next/link";
+import { NavItem, navItems } from "../../../configs/constants";
+import React, { useEffect, useState } from "react";
+import useUser from "../../../hooks/useUser";
+import { useStore } from "apps/user-ui/src/store";
 
 const HeaderBottom = () => {
   const [show, setShow] = useState(false);
   const [isSticky, setIsSticky] = useState(false);
-  const {user, isLoading}=useUser();
-  console.log("user",user);
+  const wishlist = useStore((state: any) => state.wishlist);
+  const cart = useStore((state: any) => state.cart);
+  const { user, isLoading } = useUser();
+  console.log("user", user);
 
   useEffect(() => {
     const handleScroll = () => setIsSticky(window.scrollY > 100);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
-    <div className={`bg-gray-700 text-white w-full ${isSticky ? 'fixed top-0 left-0 z-50 shadow-lg' : ''}`}>
+    <div
+      className={`bg-gray-700 text-white w-full ${isSticky ? "fixed top-0 left-0 z-50 shadow-lg" : ""}`}
+    >
       <div className="container mx-auto px-4 py-2 flex items-center gap-6">
-
         {/* All Categories Dropdown */}
         <div className="relative shrink-0">
           <div
@@ -29,7 +39,9 @@ const HeaderBottom = () => {
           >
             <AlignLeft className="w-5 h-5" />
             <span className="text-sm font-medium">All Categories</span>
-            <ChevronDown className={`w-4 h-4 transition-transform ${show ? 'rotate-180' : ''}`} />
+            <ChevronDown
+              className={`w-4 h-4 transition-transform ${show ? "rotate-180" : ""}`}
+            />
           </div>
 
           {show && (
@@ -55,41 +67,64 @@ const HeaderBottom = () => {
         {/* Sticky Search + Icons */}
         {isSticky && (
           <div className="flex items-center gap-5 shrink-0">
-          {/* Account */}
-          {!isLoading && user ? (
-            <>
-            <Link href="/profile" className="flex flex-col items-center gap-0.5 hover:text-amber-400 transition">
-            <CircleUserRound className=" h-5" /></Link>
-            <Link href="/profile">
-            <span className="text-xs leading-none">Hello{" "}</span>
-            <span className="text-xs leading-none">{user?.name?.split(" ")[0]}</span>
-            </Link>
-            </>):(
+            {/* Account */}
+            {!isLoading && user ? (
               <>
-          <Link href="/login" className="flex flex-col items-center gap-0.5 hover:text-amber-400 transition">
-            <CircleUserRound className="w-5 h-5" />
-            <span className="text-xs leading-none">{isLoading?"...": "Sign in"}</span>
-          </Link></>)}
+                <Link
+                  href="/profile"
+                  className="flex flex-col items-center gap-0.5 hover:text-amber-400 transition"
+                >
+                  <CircleUserRound className=" h-5" />
+                </Link>
+                <Link href="/profile">
+                  <span className="text-xs leading-none">Hello </span>
+                  <span className="text-xs leading-none">
+                    {user?.name?.split(" ")[0]}
+                  </span>
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="flex flex-col items-center gap-0.5 hover:text-amber-400 transition"
+                >
+                  <CircleUserRound className="w-5 h-5" />
+                  <span className="text-xs leading-none">
+                    {isLoading ? "..." : "Sign in"}
+                  </span>
+                </Link>
+              </>
+            )}
 
-          {/* Wishlist */}
-          <Link href="/wishlist" className="relative flex flex-col items-center gap-0.5 hover:text-amber-400 transition">
-            <Heart className="w-5 h-5" />
-            <span className="text-xs leading-none">Wishlist</span>
-            <span className="absolute -top-1.5 -right-2 bg-blue-500 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full">0</span>
-          </Link>
+            {/* Wishlist */}
+            <Link
+              href="/wishlist"
+              className="relative flex flex-col items-center gap-0.5 hover:text-amber-400 transition"
+            >
+              <Heart className="w-5 h-5" />
+              <span className="text-xs leading-none">Wishlist</span>
+              <span className="absolute -top-1.5 -right-2 bg-blue-500 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full">
+                {wishlist.length}
+              </span>
+            </Link>
 
-          {/* Cart */}
-          <Link href="/cart" className="relative flex flex-col items-center gap-0.5 hover:text-amber-400 transition">
-            <ShoppingCartIcon className="w-5 h-5" />
-            <span className="text-xs leading-none">Cart</span>
-            <span className="absolute -top-1.5 -right-2 bg-blue-500 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full">9</span>
-          </Link>
-        </div>
+            {/* Cart */}
+            <Link
+              href="/cart"
+              className="relative flex flex-col items-center gap-0.5 hover:text-amber-400 transition"
+            >
+              <ShoppingCartIcon className="w-5 h-5" />
+              <span className="text-xs leading-none">Cart</span>
+              <span className="absolute -top-1.5 -right-2 bg-blue-500 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full">
+                {cart?.length}
+              </span>
+            </Link>
+          </div>
         )}
-
       </div>
     </div>
   );
-}
+};
 
 export default HeaderBottom;
