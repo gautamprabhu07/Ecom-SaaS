@@ -363,7 +363,11 @@ export const getAllProducts = async (req: Request, res: Response, next: NextFunc
             take: limit,
             include: {
                images: true,
-               Shop: true,
+               Shop: {
+                  include: {
+                     avatar: true,
+                  },
+               },
             },
             where: baseFilter,
             orderBy,
@@ -375,7 +379,11 @@ export const getAllProducts = async (req: Request, res: Response, next: NextFunc
             take: 10,
             include: {
                images: true,
-               Shop: true,
+               Shop: {
+                  include: {
+                     avatar: true,
+                  },
+               },
             },
             where: baseFilter,
             orderBy: { totalSales: "desc" },

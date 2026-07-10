@@ -6,6 +6,9 @@ import Ratings from "../../ratings";
 import { Heart, MapPin, ShoppingCartIcon, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useStore } from "apps/user-ui/src/store";
+import useLocationTracking from "apps/user-ui/src/hooks/useLocationTracking";
+import useDeviceTracking from "apps/user-ui/src/hooks/useDeviceTracking";
+import useUser from "apps/user-ui/src/hooks/useUser";
 
 const ProductDetailsCard = ({
   data,
@@ -27,9 +30,9 @@ const ProductDetailsCard = ({
   const addToCart = useStore((state: any) => state.addToCart);
   const addToWishlist = useStore((state: any) => state.addToWishlist);
   const removeFromWishlist = useStore((state: any) => state.removeFromWishlist);
-  const user = useStore((state: any) => state.user);
-  const location = useStore((state: any) => state.location);
-  const deviceInfo = useStore((state: any) => state.deviceInfo);
+  const user = useUser();
+  const location = useLocationTracking();
+  const deviceInfo = useDeviceTracking();
   const wishlist = useStore((state: any) => state.wishlist);
   const cart = useStore((state: any) => state.cart);
   const estimatedDelivery = new Date();
@@ -57,12 +60,14 @@ const ProductDetailsCard = ({
           {/* Images */}
           <div className="w-64 shrink-0 space-y-2">
             <div className="relative h-64 rounded-xl overflow-hidden border border-gray-200 bg-gray-50">
-              <Image
-                src={data?.images[0]?.[activeImage]?.url}
-                alt="product"
-                layout="fill"
-                objectFit="contain"
-              />
+              {data?.images?.[activeImage]?.url && (
+                <Image
+                  src={data.images[activeImage].url}
+                  alt="product"
+                  layout="fill"
+                  objectFit="contain"
+                />
+              )}
             </div>
             <div className="grid grid-cols-4 gap-1.5">
               {data?.images?.map((image: any, index: number) => (
@@ -87,12 +92,14 @@ const ProductDetailsCard = ({
             {/* Seller */}
             <div className="flex items-center gap-2 pb-3 border-b border-gray-100">
               <div className="relative w-8 h-8 rounded-full overflow-hidden border border-gray-200">
-                <Image
-                  src={data?.Shop?.avatar}
-                  alt="shop"
-                  layout="fill"
-                  objectFit="cover"
-                />
+                {data?.Shop?.avatar?.url && (
+                  <Image
+                    src={data.Shop.avatar.url}
+                    alt="shop"
+                    layout="fill"
+                    objectFit="cover"
+                  />
+                )}
               </div>
               <div>
                 <Link

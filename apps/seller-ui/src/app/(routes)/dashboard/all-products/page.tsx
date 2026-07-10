@@ -1,3 +1,4 @@
+//Path: apps/seller-ui/src/app/%28routes%29/dashboard/all-products/page.tsx
 "use client";
 import React from "react";
 import {
