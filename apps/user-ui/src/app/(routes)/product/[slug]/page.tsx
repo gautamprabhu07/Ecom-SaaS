@@ -2,6 +2,7 @@
 import React from "react";
 import { Metadata } from "next";
 import axiosInstance from "../../../../utils/axiosInstance";
+import ProductDetails from "apps/user-ui/src/shared/modules/product/product-details";
 
 async function fetchProductDetails(slug: string) {
   const res = await axiosInstance.get(`/product/api/get-product/${slug}`);
@@ -39,9 +40,7 @@ export async function generateMetadata({
 const Page = async ({ params }: { params: Promise<{ slug: string }> }) => {
   const { slug } = await params;
   const productDetails = await fetchProductDetails(slug);
-  console.log("Product Details:", productDetails);
-  //   return (<ProductDetails productDetails={productDetails} />);
-  return <>{console.log(productDetails)}</>;
+  return <ProductDetails productDetails={productDetails} />;
 };
 
 export default Page;
