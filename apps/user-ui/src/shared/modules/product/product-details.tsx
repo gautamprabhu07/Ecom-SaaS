@@ -1,3 +1,4 @@
+//Path: apps/user-ui/src/shared/modules/product/product-details.tsx
 "use client";
 import {
   ChevronLeft,
@@ -9,7 +10,7 @@ import {
   ShoppingCartIcon,
   WalletMinimal,
 } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import InnerImageZoom from "react-inner-image-zoom";
 import Image from "next/image";
 import Ratings from "../../components/ratings";
@@ -18,6 +19,8 @@ import { useStore } from "../../../store";
 import useUser from "apps/user-ui/src/hooks/useUser";
 import useLocationTracking from "apps/user-ui/src/hooks/useLocationTracking";
 import useDeviceTracking from "apps/user-ui/src/hooks/useDeviceTracking";
+import ProductCard from "../../components/section/cards/product-card";
+import axiosInstance from "apps/user-ui/src/utils/axiosInstance";
 
 const ProductDetails = ({ productDetails }: { productDetails: any }) => {
   const { user } = useUser();
@@ -46,6 +49,13 @@ const ProductDetails = ({ productDetails }: { productDetails: any }) => {
     (item: any) => item.id === productDetails?.id,
   );
 
+  const [priceRange, setPriceRange] = useState([
+    productDetails?.sale_price,
+    1199,
+  ]);
+
+  const [reccommendedProducts, setReccommendedProducts] = useState([]);
+
   const prevImage = () => {
     if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
@@ -64,6 +74,27 @@ const ProductDetails = ({ productDetails }: { productDetails: any }) => {
       productDetails?.regular_price) *
       100,
   );
+
+  const fetchFilteredProducts = async () => {
+    try {
+      const query = new URLSearchParams();
+
+      query.set("priceRange", priceRange.join(","));
+      query.set("page", "1");
+      query.set("limit", "5");
+
+      const res = await axiosInstance.get(
+        `/product/api/get-filtered-products?${query.toString()}`,
+      );
+      setReccommendedProducts(res.data.products);
+    } catch (error) {
+      console.error("Error fetching filtered products:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchFilteredProducts();
+  }, [priceRange]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -348,6 +379,43 @@ const ProductDetails = ({ productDetails }: { productDetails: any }) => {
               Go to Store
             </Link>
           </div>
+        </div>
+      </div>
+
+      {/* Description + Reviews */}
+      <div className="mt-10 grid grid-cols-1 gap-6">
+        <div className="bg-white border border-gray-200 rounded-xl p-6">
+          <h3 className="text-lg font-semibold text-gray-800 mb-3">
+            Product details of {productDetails?.title}
+          </h3>
+          <div
+            className="prose prose-sm max-w-none text-gray-600"
+            dangerouslySetInnerHTML={{
+              __html: productDetails?.detailed_description,
+            }}
+          ></div>
+        </div>
+
+        <div
+          id="reviews"
+          className="bg-white border border-gray-200 rounded-xl p-6"
+        >
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">
+            Rating and Reviews
+          </h3>
+          <p className="text-sm text-gray-500">No Reviews available yet</p>
+        </div>
+      </div>
+
+      {/* You may also like */}
+      <div className="mt-10">
+        <h3 className="text-lg font-semibold text-gray-800 mb-4">
+          You may also like...
+        </h3>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+          {reccommendedProducts?.map((i: any) => (
+            <ProductCard key={i.id} product={i} />
+          ))}
         </div>
       </div>
     </div>
