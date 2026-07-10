@@ -16,7 +16,7 @@ router.delete('/delete-product/:productId', isAuthenticated, deleteProduct);
 router.put('/restore-product/:productId', isAuthenticated, restoreProduct);
 router.get('/get-all-products', getAllProducts);
 router.get('/get-product/:slug', getProductDetails);
-router.get('/get-filtered-events', getFilteredEvents);
+router.get('/get-filtered-offers', getFilteredEvents);
 router.get('/get-filtered-products', getFilteredProducts);
 router.get('/get-filtered-shops', getFilteredShops);
 router.get('/search-products', searchProducts);
