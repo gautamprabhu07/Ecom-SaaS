@@ -30,7 +30,7 @@ const ProductDetailsCard = ({
   const addToCart = useStore((state: any) => state.addToCart);
   const addToWishlist = useStore((state: any) => state.addToWishlist);
   const removeFromWishlist = useStore((state: any) => state.removeFromWishlist);
-  const user = useUser();
+  const { user } = useUser();
   const location = useLocationTracking();
   const deviceInfo = useDeviceTracking();
   const wishlist = useStore((state: any) => state.wishlist);

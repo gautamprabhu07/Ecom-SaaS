@@ -404,3 +404,27 @@ export const getAllProducts = async (req: Request, res: Response, next: NextFunc
    }
 };
 
+//get product details
+export const getProductDetails = async (req: Request, res: Response, next: NextFunction) => {
+   try {
+      const slug = req.params.slug;
+      console.log("Looking up product with slug:", JSON.stringify(slug)); // temp debug
+
+      const product = await prisma.products.findUnique({
+         where: { slug },
+         include: { images: true, Shop: true },
+      });
+
+      if (!product) {
+         console.log("No product matched this slug"); // temp debug
+         return next(new Error("Product not found."));
+      }
+
+      res.status(201).json({ success: true, product });
+   }
+   catch (error) {
+      next(error);
+   }
+};
+
+

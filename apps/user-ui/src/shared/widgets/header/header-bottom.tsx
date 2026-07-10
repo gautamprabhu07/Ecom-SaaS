@@ -1,3 +1,4 @@
+//Path: apps/user-ui/src/shared/widgets/header/header-bottom.tsx
 "use client";
 import {
   AlignLeft,
@@ -18,7 +19,6 @@ const HeaderBottom = () => {
   const wishlist = useStore((state: any) => state.wishlist);
   const cart = useStore((state: any) => state.cart);
   const { user, isLoading } = useUser();
-  console.log("user", user);
 
   useEffect(() => {
     const handleScroll = () => setIsSticky(window.scrollY > 100);

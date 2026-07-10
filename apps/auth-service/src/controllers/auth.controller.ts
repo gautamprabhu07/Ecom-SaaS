@@ -98,8 +98,8 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
 
       const refreshToken=jwt.sign({id: user.id, role:"user"}, process.env.REFRESH_TOKEN_SECRET as string, {expiresIn: "7d"});
 
-      setCookie(res, "refresh_Token", refreshToken);
-      setCookie(res, "access_Token", accessToken);
+      setCookie(res, "refresh_token", refreshToken);
+      setCookie(res, "access_token", accessToken);
 
       res.status(200).json({
          message: "User logged in successfully",

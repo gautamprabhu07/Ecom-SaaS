@@ -18,7 +18,7 @@ const ProductCard = ({
 }) => {
   const [timeLeft, setTimeLeft] = useState("");
   const [open, setOpen] = useState(false);
-  const user = useUser();
+  const { user } = useUser();
   const location = useLocationTracking();
   const deviceInfo = useDeviceTracking();
   const addToWishlist = useStore((state: any) => state.addToWishlist);
@@ -82,7 +82,11 @@ const ProductCard = ({
                 size={15}
                 fill={isWishlisted ? "red" : "transparent"}
                 stroke="red"
-                onClick={() =>
+                onClick={() => {
+                  if (!user?.id)
+                    console.log(
+                      "No user - wishlist click won't fire kafka event",
+                    );
                   isWishlisted
                     ? removeFromWishlist(product.id, user, location, deviceInfo)
                     : addToWishlist(
@@ -90,8 +94,8 @@ const ProductCard = ({
                         user,
                         location,
                         deviceInfo,
-                      )
-                }
+                      );
+                }}
               />
             ),
             action: () => {},

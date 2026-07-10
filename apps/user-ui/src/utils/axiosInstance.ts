@@ -1,3 +1,4 @@
+//Path: apps/user-ui/src/utils/axiosInstance.ts
 import axios from "axios";
 
 const axiosInstance = axios.create({
@@ -9,9 +10,9 @@ let isRefreshing = false;
 let refreshSubscribers: (() => void)[] = [];
 
 const handlelogout = () => {
-   if(window.location.pathname !== "/login") {
-      window.location.href = "/login";
-   }
+  if (window.location.pathname !== "/login") {
+    window.location.href = "/login";
+  }
 };
 
 const subscribeTokenRefresh = (cb: () => void) => {
@@ -24,37 +25,40 @@ const onRefreshSuccess = () => {
 };
 
 axiosInstance.interceptors.response.use(
-   (config) => config,
-   (error) => Promise.reject(error)
-);
-
-axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
 
-    //prevent infinite loop
-      if (error.response?.status === 401 && !originalRequest._retry) {
-         if(!isRefreshing) {
-            return new Promise((resolve) => { subscribeTokenRefresh( () => resolve(axiosInstance(originalRequest))); });
-          }
-         originalRequest._retry = true;
-         isRefreshing = true;
-      try {
-         await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}/auth/api/refresh-token`, {}, {withCredentials: true});
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
 
-         isRefreshing = false;
-         onRefreshSuccess();
-         return axiosInstance(originalRequest);
+      if (isRefreshing) {
+        return new Promise((resolve) => {
+          subscribeTokenRefresh(() => resolve(axiosInstance(originalRequest)));
+        });
       }
-         
-      catch(error) {
-         isRefreshing = false;
-         refreshSubscribers = [];
-         handlelogout();
-         return Promise.reject(error);
-      }}
-   return Promise.reject(error);
-  });
 
-  export default axiosInstance;
+      isRefreshing = true;
+      try {
+        await axios.post(
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/refresh-token`,
+          {},
+          { withCredentials: true },
+        );
+
+        isRefreshing = false;
+        onRefreshSuccess();
+        return axiosInstance(originalRequest);
+      } catch (refreshError) {
+        isRefreshing = false;
+        refreshSubscribers = [];
+        handlelogout();
+        return Promise.reject(refreshError);
+      }
+    }
+
+    return Promise.reject(error);
+  },
+);
+
+export default axiosInstance;

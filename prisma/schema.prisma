@@ -153,3 +153,29 @@ model products {
   totalSales Int @default(0)
 
 }
+
+model userAnalytics {
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId       String    @unique @db.ObjectId
+  lastVisited  DateTime?
+  lastTrained  DateTime?
+  actions      Json[]
+  country      String?
+  city         String?
+  device       String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model productAnalytics {
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  productId    String    @unique @db.ObjectId
+  shopId       String?   @db.ObjectId
+  views        Int       @default(0)
+  cartAdds     Int       @default(0)
+  wishlistAdds Int       @default(0)
+  purchases    Int       @default(0)
+  lastViewedAt DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}

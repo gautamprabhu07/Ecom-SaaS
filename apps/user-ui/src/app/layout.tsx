@@ -1,21 +1,21 @@
 // Theme: Archway — Root layout wiring DM Serif Display + Inter; warm off-white page canvas
-
-import './global.css'
-import Header from '../shared/widgets/header/header'
-import { Inter } from 'next/font/google'
-import Providers from './providers'
+//Path: apps/user-ui/src/app/layout.tsx
+import "./global.css";
+import Header from "../shared/widgets/header/header";
+import { Inter } from "next/font/google";
+import Providers from "./providers";
 
 export const metadata = {
-  title: 'Eshop',
-  description: 'Multi-vendor marketplace',
-}
+  title: "Eshop",
+  description: "Multi-vendor marketplace",
+};
 
 const inter = Inter({
-  subsets: ['latin'],
-  weight: ['400', '500', '600'],
-  variable: '--font-inter',
-  display: 'swap',
-})
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-inter",
+  display: "swap",
+});
 
 /*
  * DM Serif Display is loaded via <link> in global.css (or add it here
@@ -34,7 +34,7 @@ const inter = Inter({
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html lang="en">
@@ -47,11 +47,11 @@ export default function RootLayout({
           antialiased
         `}
       >
-      <Providers>
-        <Header />
-        {children}
+        <Providers>
+          <Header />
+          {children}
         </Providers>
       </body>
     </html>
-  )
+  );
 }
