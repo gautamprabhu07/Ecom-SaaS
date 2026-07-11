@@ -1,3 +1,4 @@
+//path: apps/seller-ui/src/utils/axiosInstance.tsx
 import axios from "axios";
 
 const axiosInstance = axios.create({

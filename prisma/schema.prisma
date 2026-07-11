@@ -12,8 +12,8 @@ model images {
   file_id String
   url     String
 
-  userId  String? @unique @db.ObjectId
-  shopId  String? @unique @db.ObjectId
+  userId  String? @db.ObjectId
+  shopId  String? @db.ObjectId
 
   users   users?  @relation(fields: [userId], references: [id])
   shops   shops?  @relation(fields: [shopId], references: [id])
@@ -26,9 +26,10 @@ model users {
   name      String
   email     String   @unique
   password  String?
-  following String[]
+  following String[] @db.ObjectId
+  followingShops shops[] @relation("ShopFollowers", fields: [following], references: [id])
 
-  avatar    images?
+  avatar    images[]
   shopReviews   shopReviews[]
 
   createdAt DateTime @default(now())
@@ -57,7 +58,7 @@ model shops {
   bio           String?
   category      String
 
-  avatar        images?
+  avatar        images[]
   coverBanner   String?
 
   address       String
@@ -66,6 +67,9 @@ model shops {
 
   socialLinks   Json[]
   products products[]
+
+  followerIds   String[]       @db.ObjectId
+  followers     users[]        @relation("ShopFollowers", fields: [followerIds], references: [id])
 
   ratings       Float          @default(0)
   reviews       shopReviews[]

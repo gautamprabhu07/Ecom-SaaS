@@ -165,7 +165,7 @@ export const createProduct = async (req: any, res: Response, next: NextFunction)
    category,
    colors=[],
    sizes=[],
-   discountCodes,
+   discountCodes=[],
    stock,
    sale_price,
    regular_price,
@@ -603,8 +603,9 @@ export const getFilteredShops = async (req: Request, res: Response, next: NextFu
             skip,
             take: parsedLimit,
             include: {
-               seller: true,
-               followers: true,
+               sellers: true,
+               avatar: true,
+               followers: { select: { id: true } },
                products: true,
             },
          }),
@@ -705,6 +706,69 @@ export const topShops = async (req: Request, res: Response, next: NextFunction) 
       const top10Shops = enrichedShops.sort((a, b) => b.totalSales - a.totalSales).slice(0, 10);
 
       res.status(200).json({shops: top10Shops });
+   }
+   catch (error) {
+      return next(error);
+   }
+};
+
+//follow a shop
+export const followShop = async (req: any, res: Response, next: NextFunction) => {
+   try {
+      const { shopId } = req.body;
+      const userId = req.user?.id;
+
+      if (!userId) {
+         return next(new ValidationError("You must be logged in to follow a shop."));
+      }
+      if (!shopId) {
+         return next(new ValidationError("shopId is required."));
+      }
+
+      const shop = await prisma.shops.findUnique({ where: { id: shopId } });
+      if (!shop) {
+         return next(new Error("Shop not found."));
+      }
+
+      await prisma.users.update({
+         where: { id: userId },
+         data: {
+            followingShops: {
+               connect: { id: shopId },
+            },
+         },
+      });
+
+      return res.status(200).json({ success: true, message: "Shop followed successfully." });
+   }
+   catch (error) {
+      return next(error);
+   }
+};
+
+//unfollow a shop
+export const unfollowShop = async (req: any, res: Response, next: NextFunction) => {
+   try {
+      const { shopId } = req.body;
+      const userId = req.user?.id;
+
+      if (!userId) {
+         return next(new ValidationError("You must be logged in to unfollow a shop."));
+      }
+      if (!shopId) {
+         return next(new ValidationError("shopId is required."));
+      }
+
+      await prisma.users.update({
+         where: { id: userId },
+         data: {
+            followingShops: {
+               disconnect: { id: shopId },
+            },
+         },
+      });
+
+      return res.status(200).json({ success: true, message: "Shop unfollowed successfully." });
    }
    catch (error) {
       return next(error);

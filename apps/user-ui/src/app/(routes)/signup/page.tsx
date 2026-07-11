@@ -1,17 +1,18 @@
+//path: apps/user-ui/src/app/%28routes%29/signup/page.tsx
 "use client";
-import React, { useState, useRef } from 'react'
-import { useRouter } from 'next/navigation'
-import { useForm } from 'react-hook-form'
-import Link from 'next/link'
-import GoogleIcon from '../googleicon'
-import axios, {AxiosError} from 'axios'
-import { useMutation } from '@tanstack/react-query'
+import React, { useState, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import Link from "next/link";
+import GoogleIcon from "../googleicon";
+import axios, { AxiosError } from "axios";
+import { useMutation } from "@tanstack/react-query";
 
 type FormData = {
   name: string;
   email: string;
   password: string;
-}
+};
 
 const SignUp = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -23,7 +24,11 @@ const SignUp = () => {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const router = useRouter();
 
-  const { register, handleSubmit, formState: { errors } } = useForm<FormData>();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>();
 
   const startResendTimer = () => {
     const interval = setInterval(() => {
@@ -39,34 +44,39 @@ const SignUp = () => {
   };
   console.log("NEXT_PUBLIC_SERVER_URL", process.env.NEXT_PUBLIC_SERVER_URL);
 
-const signupMutation = useMutation({
-  mutationFn: async (data: FormData) => {
-    const response = await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/user-registration`, data);
-    return response.data;
-  },
-  onSuccess: (_, formData) => {
-    setUserData(formData);
-    setShowOtp(true);
-    setCanResend(false);
-    setTimer(60);
-    startResendTimer();
-  }
-});
+  const signupMutation = useMutation({
+    mutationFn: async (data: FormData) => {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/user-registration`,
+        data,
+      );
+      return response.data;
+    },
+    onSuccess: (_, formData) => {
+      setUserData(formData);
+      setShowOtp(true);
+      setCanResend(false);
+      setTimer(60);
+      startResendTimer();
+    },
+  });
 
-const verifyOtpMutation = useMutation({
-  mutationFn: async () => {
-    if(!userData) return;
-    const response = await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/verify-user`, {
-      ...userData,
-      otp: otp.join(""),
-
-    });
-    return response.data;
-  },
-  onSuccess: () => {
-    router.push("/login");
-  },}); 
-
+  const verifyOtpMutation = useMutation({
+    mutationFn: async () => {
+      if (!userData) return;
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/verify-user`,
+        {
+          ...userData,
+          otp: otp.join(""),
+        },
+      );
+      return response.data;
+    },
+    onSuccess: () => {
+      router.push("/login");
+    },
+  });
 
   const onsubmit = (data: FormData) => {
     signupMutation.mutate(data);
@@ -82,14 +92,17 @@ const verifyOtpMutation = useMutation({
     }
   };
 
-  const handleOtpKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleOtpKeyDown = (
+    index: number,
+    e: React.KeyboardEvent<HTMLInputElement>,
+  ) => {
     if (e.key === "Backspace" && !otp[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
   };
 
   const resendOtp = () => {
-    if(userData) {
+    if (userData) {
       signupMutation.mutate(userData);
     }
   };
@@ -105,10 +118,14 @@ const verifyOtpMutation = useMutation({
       {/* Card */}
       <div className="flex items-center justify-center py-12 px-4">
         <div className="bg-white rounded-2xl shadow-md w-full max-w-md p-8">
-          <h3 className="text-xl font-semibold text-gray-800 mb-1">Sign Up to Eshop</h3>
+          <h3 className="text-xl font-semibold text-gray-800 mb-1">
+            Sign Up to Eshop
+          </h3>
           <p className="text-sm text-gray-500 mb-6">
             Already have an account?{" "}
-            <Link href="/login" className="text-blue-600 hover:underline">Login</Link>
+            <Link href="/login" className="text-blue-600 hover:underline">
+              Login
+            </Link>
           </p>
 
           {/* Google */}
@@ -127,32 +144,49 @@ const verifyOtpMutation = useMutation({
           {!showOtp ? (
             <form onSubmit={handleSubmit(onsubmit)} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Name
+                </label>
                 <input
                   type="text"
                   placeholder="Enter your name"
                   className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   {...register("name", { required: "Name is required" })}
                 />
-                {errors.name && <p className="text-red-500 text-xs mt-1">{String(errors.name.message)}</p>}
+                {errors.name && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {String(errors.name.message)}
+                  </p>
+                )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Email
+                </label>
                 <input
                   type="email"
                   placeholder="support@gautam.com"
                   className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   {...register("email", {
                     required: "Email is required",
-                    pattern: { value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i, message: "Invalid email address" }
+                    pattern: {
+                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                      message: "Invalid email address",
+                    },
                   })}
                 />
-                {errors.email && <p className="text-red-500 text-xs mt-1">{String(errors.email.message)}</p>}
+                {errors.email && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {String(errors.email.message)}
+                  </p>
+                )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Password
+                </label>
                 <div className="relative">
                   <input
                     type={passwordVisible ? "text" : "password"}
@@ -160,7 +194,10 @@ const verifyOtpMutation = useMutation({
                     className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
                     {...register("password", {
                       required: "Password is required",
-                      minLength: { value: 6, message: "Password must be at least 6 characters long" }
+                      minLength: {
+                        value: 6,
+                        message: "Password must be at least 6 characters long",
+                      },
                     })}
                   />
                   <button
@@ -171,9 +208,12 @@ const verifyOtpMutation = useMutation({
                     {passwordVisible ? "Hide" : "Show"}
                   </button>
                 </div>
-                {errors.password && <p className="text-red-500 text-xs mt-1">{String(errors.password.message)}</p>}
+                {errors.password && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {String(errors.password.message)}
+                  </p>
+                )}
               </div>
-
 
               <button
                 type="submit"
@@ -185,13 +225,17 @@ const verifyOtpMutation = useMutation({
             </form>
           ) : (
             <div className="text-center">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Enter OTP</h3>
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                Enter OTP
+              </h3>
               <div className="flex justify-center gap-3 mb-6">
                 {otp.map((digit, index) => (
                   <input
                     key={index}
                     type="text"
-                    ref={(el) => { inputRefs.current[index] = el; }}
+                    ref={(el) => {
+                      inputRefs.current[index] = el;
+                    }}
                     maxLength={1}
                     value={digit}
                     onChange={(e) => handleOtpChange(index, e.target.value)}
@@ -208,22 +252,30 @@ const verifyOtpMutation = useMutation({
                 {verifyOtpMutation.isPending ? "Verifying..." : "Verify OTP"}
               </button>
               <p className="text-sm text-gray-500">
-                {canResend
-                  ? <button 
-                  onClick={resendOtp}
-                  className="text-blue-600 hover:underline">Resend OTP</button>
-                  : `Resend OTP in ${timer}s`
-                }
+                {canResend ? (
+                  <button
+                    onClick={resendOtp}
+                    className="text-blue-600 hover:underline"
+                  >
+                    Resend OTP
+                  </button>
+                ) : (
+                  `Resend OTP in ${timer}s`
+                )}
               </p>
-              {
-                verifyOtpMutation?.isError && verifyOtpMutation.error instanceof AxiosError && (<p>{verifyOtpMutation.error.response?.data?.message || verifyOtpMutation.error.message}</p>)
-              }
+              {verifyOtpMutation?.isError &&
+                verifyOtpMutation.error instanceof AxiosError && (
+                  <p>
+                    {verifyOtpMutation.error.response?.data?.message ||
+                      verifyOtpMutation.error.message}
+                  </p>
+                )}
             </div>
           )}
         </div>
       </div>
     </div>
   );
-}
+};
 
 export default SignUp;
