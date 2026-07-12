@@ -404,6 +404,73 @@ export const getAllProducts = async (req: Request, res: Response, next: NextFunc
    }
 };
 
+//get all events
+export const getAllEvents = async (req: Request, res: Response, next: NextFunction) => {
+   try {
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 20;
+      const skip = (page - 1) * limit;
+      const type = req.query.type;
+
+      const baseFilter = {
+         AND: [
+            { starting_date: { not: null } },
+      { ending_date: { not: null } },
+         ],
+      };
+
+      const orderBy: Prisma.productsOrderByWithRelationInput =
+         type === "latest"
+            ? { createdAt: "desc" as Prisma.SortOrder }
+            : { totalSales: "desc" as Prisma.SortOrder };
+
+      const [products, total, top10Products] = await Promise.all([
+         prisma.products.findMany({
+            skip,
+            take: limit,
+            include: {
+               images: true,
+               Shop: {
+                  include: {
+                     avatar: true,
+                  },
+               },
+            },
+            where: baseFilter,
+            orderBy,
+         }),
+         prisma.products.count({
+            where: baseFilter,
+         }),
+         prisma.products.findMany({
+            take: 10,
+            include: {
+               images: true,
+               Shop: {
+                  include: {
+                     avatar: true,
+                  },
+               },
+            },
+            where: baseFilter,
+            orderBy: { totalSales: "desc" },
+         }),
+      ]);
+
+      res.status(200).json({
+         products,
+         top10By: type === "latest" ? "latest" : "topSales",
+         top10Products,
+         total,
+         currentPage: page,
+         totalPages: Math.ceil(total / limit),
+      });
+   }
+   catch (error) {
+      next(error);
+   }
+};
+
 //get product details
 export const getProductDetails = async (req: Request, res: Response, next: NextFunction) => {
    try {
@@ -605,7 +672,7 @@ export const getFilteredShops = async (req: Request, res: Response, next: NextFu
             include: {
                sellers: true,
                avatar: true,
-               followers: { select: { id: true } },
+               followers: true,
                products: true,
             },
          }),
@@ -730,14 +797,19 @@ export const followShop = async (req: any, res: Response, next: NextFunction) =>
          return next(new Error("Shop not found."));
       }
 
-      await prisma.users.update({
-         where: { id: userId },
-         data: {
-            followingShops: {
-               connect: { id: shopId },
-            },
-         },
-      });
+       const existing = await prisma.followers.findUnique({
+        where: {
+           userId_shopsId: { userId, shopsId: shopId },
+        },
+     });
+
+     if (existing) {
+        return res.status(200).json({ success: true, message: "Already following this shop." });
+     }
+
+     await prisma.followers.create({
+        data: { userId, shopsId: shopId },
+     });
 
       return res.status(200).json({ success: true, message: "Shop followed successfully." });
    }
@@ -759,14 +831,9 @@ export const unfollowShop = async (req: any, res: Response, next: NextFunction) 
          return next(new ValidationError("shopId is required."));
       }
 
-      await prisma.users.update({
-         where: { id: userId },
-         data: {
-            followingShops: {
-               disconnect: { id: shopId },
-            },
-         },
-      });
+       await prisma.followers.deleteMany({
+        where: { userId, shopsId: shopId },
+     });
 
       return res.status(200).json({ success: true, message: "Shop unfollowed successfully." });
    }

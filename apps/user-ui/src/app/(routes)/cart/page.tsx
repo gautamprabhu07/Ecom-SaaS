@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import useUser from "../../../hooks/useUser";
 import useLocationTracking from "../../../hooks/useLocationTracking";
@@ -8,6 +8,8 @@ import Link from "next/link";
 import { useStore } from "apps/user-ui/src/store";
 import Image from "next/image";
 import { ChevronRight, Loader2, X } from "lucide-react";
+import axiosInstance from "apps/user-ui/src/utils/axiosInstance";
+import { useQuery } from "@tanstack/react-query";
 
 const selectClass =
   "w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500";
@@ -51,6 +53,23 @@ const CartPage = () => {
     (total: number, item: any) => total + item.sale_price * item.quantity,
     0,
   );
+
+  const { data: addresses = [] } = useQuery<any[], Error>({
+    queryKey: ["shipping-addresses"],
+    queryFn: async () => {
+      const res = await axiosInstance.get("/api/shipping-addresses");
+      return res.data.addresses;
+    },
+  });
+
+  useEffect(() => {
+    if (addresses.length > 0 && !selectedAddressId) {
+      const defaultAddress = addresses.find((address) => address.isDefault);
+      if (defaultAddress) {
+        setSelectedAddressId(defaultAddress.id);
+      }
+    }
+  }, [addresses, selectedAddressId]);
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -233,13 +252,24 @@ const CartPage = () => {
               <h4 className="text-sm font-medium text-gray-700 mb-2">
                 Shipping Address
               </h4>
-              <select
-                value={selectedAddressId}
-                onChange={(e: any) => setSelectedAddressId(e.target.value)}
-                className={selectClass}
-              >
-                <option value="123">Home - Manipal, India</option>
-              </select>
+              {addresses?.length !== 0 && (
+                <select
+                  value={selectedAddressId}
+                  onChange={(e) => setSelectedAddressId(e.target.value)}
+                >
+                  {addresses.map((address: any) => (
+                    <option key={address.id} value={address.id}>
+                      {address.label} - {address.street}, {address.city},{" "}
+                      {address.country}
+                    </option>
+                  ))}
+                </select>
+              )}
+              {addresses?.length === 0 && (
+                <p className="text-xs text-gray-400">
+                  No saved addresses. Please add one in your profile.
+                </p>
+              )}
             </div>
 
             <hr className="border-gray-100" />

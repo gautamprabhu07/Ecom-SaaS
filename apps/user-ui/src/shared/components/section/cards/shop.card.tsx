@@ -15,7 +15,7 @@ interface ShopCardProps {
     avatar?: { url: string }[];
     coverBanner?: string;
     address?: string;
-    followers?: { id: string }[];
+    followers?: { id: string; userId: string; shopsId: string }[];
     rating?: number;
     category?: string;
   };
@@ -24,7 +24,7 @@ interface ShopCardProps {
 const ShopCard: React.FC<ShopCardProps> = ({ shop }) => {
   const { user } = useUser();
   const [isFollowing, setIsFollowing] = useState(
-    shop.followers?.some((f) => f.id === user?.id) ?? false,
+    shop.followers?.some((f) => f.userId === user?.id) ?? false,
   );
   const [loading, setLoading] = useState(false);
 
