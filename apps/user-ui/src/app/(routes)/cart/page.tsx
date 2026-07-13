@@ -1,3 +1,4 @@
+//Path: apps/user-ui/src/app/%28routes%29/cart/page.tsx
 "use client";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -10,6 +11,7 @@ import Image from "next/image";
 import { ChevronRight, Loader2, X } from "lucide-react";
 import axiosInstance from "apps/user-ui/src/utils/axiosInstance";
 import { useQuery } from "@tanstack/react-query";
+import { toast } from "react-hot-toast";
 
 const selectClass =
   "w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500";
@@ -27,6 +29,26 @@ const CartPage = () => {
   const [selectedAddressId, setSelectedAddressId] = useState("");
   const cart = useStore((state: any) => state.cart);
   const removeFromCart = useStore((state: any) => state.removeFromCart);
+
+  const createPaymentSession = async () => {
+    setLoading(true);
+    try {
+      const response = await axiosInstance.post(
+        "/order/api/create-payment-session",
+        {
+          cart,
+          selectedAddressId,
+          coupon: {},
+        },
+      );
+      const sessionId = response.data.sessionId;
+      router.push(`/checkout?sessionId=${sessionId}`);
+    } catch (error) {
+      toast.error("Failed to create payment session. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const decreaseQuantity = (id: string) => {
     useStore.setState((state: any) => ({
@@ -295,6 +317,7 @@ const CartPage = () => {
 
             <button
               disabled={loading}
+              onClick={createPaymentSession}
               className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg text-sm transition disabled:opacity-60"
             >
               {loading && <Loader2 size={15} className="animate-spin" />}
