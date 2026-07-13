@@ -47,7 +47,7 @@ const Page = () => {
 
         setCartItems(cart);
         setCoupon(coupon);
-        const sellerStripeAccountId = sellers[0].stripeAccountId;
+        const sellerStripeAccountId = sellers[0].sellerStripeAccountId;
 
         const intentRes = await axiosInstance.post(
           "/order/api/create-payment-intent",
@@ -88,28 +88,31 @@ const Page = () => {
   }
 
   if (error) {
-    <div>
+    return (
       <div>
         <div>
-          <XCircle />
+          <div>
+            <XCircle />
+          </div>
+          <h2>Payment Failed</h2>
+          <p>{error}. Please go back to the cart and try again.</p>
+          <button onClick={() => router.push("/cart")}>Back to Cart</button>
         </div>
-        <h2>Payment Failed</h2>
-        <p>{error}. Please go back to the cart and try again.</p>
-        <button onClick={() => router.push("/cart")}>Back to Cart</button>
       </div>
-    </div>;
+    );
   }
 
-  return;
-  clientSecret && (
-    <Elements stripe={stripePromise} options={{ clientSecret, appearance }}>
-      <ChekoutForm
-        clientSecret={clientSecret}
-        cartItems={cartItems}
-        coupon={coupon}
-        sessionId={sessionId}
-      />
-    </Elements>
+  return (
+    clientSecret && (
+      <Elements stripe={stripePromise} options={{ clientSecret, appearance }}>
+        <ChekoutForm
+          clientSecret={clientSecret}
+          cartItems={cartItems}
+          coupon={coupon}
+          sessionId={sessionId}
+        />
+      </Elements>
+    )
   );
 };
 

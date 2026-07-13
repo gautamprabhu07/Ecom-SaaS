@@ -1,5 +1,6 @@
 //Path: apps/user-ui/src/utils/axiosInstance.ts
 import axios from "axios";
+import  {runRedirectToLogin}  from "./redirect";
 
 const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_SERVER_URL,
@@ -10,6 +11,11 @@ let isRefreshing = false;
 let refreshSubscribers: (() => void)[] = [];
 
 const handlelogout = () => {
+  const publicPaths=["/login", "/signup", "/forgot-password"];
+  const currentPath = window.location.pathname;
+  if (!publicPaths.includes(currentPath)) {
+    runRedirectToLogin();
+  }
   if (window.location.pathname !== "/login") {
     window.location.href = "/login";
   }
@@ -29,15 +35,17 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
+    const is401= error?.response?.status === 401;
+    const isRetry = originalRequest?._retry;
+    const isAuthRequired = originalRequest?.requiresAuth===true;
 
-      if (isRefreshing) {
+    if(is401 && !isRetry && isAuthRequired) {
+      if(isRefreshing) {
         return new Promise((resolve) => {
           subscribeTokenRefresh(() => resolve(axiosInstance(originalRequest)));
         });
       }
-
+      originalRequest._retry = true;
       isRefreshing = true;
       try {
         await axios.post(
@@ -55,6 +63,9 @@ axiosInstance.interceptors.response.use(
         handlelogout();
         return Promise.reject(refreshError);
       }
+
+
+    
     }
 
     return Promise.reject(error);

@@ -28,12 +28,29 @@ import axiosInstance from "apps/user-ui/src/utils/axiosInstance";
 import Image from "next/image";
 import QuickActionCard from "apps/user-ui/src/shared/components/cards/quickActionCard";
 import ShippingAddressSection from "apps/user-ui/src/shared/components/shippingAddress";
+import { useQuery } from "@tanstack/react-query";
+import useRequireAuth from "../../../hooks/useRequiredAuth";
 
 const Page = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { user, isLoading } = useUser();
+  const { user, isLoading } = useRequireAuth();
+  const { data: orders = [] } = useQuery({
+    queryKey: ["user-orders"],
+    queryFn: async () => {
+      const response = await axiosInstance.get("/api/get-user-orders");
+      return response.data;
+    },
+  });
+  const totalOrders = orders.length;
+  const processingOrders = orders.filter(
+    (o: any) =>
+      o?.deliveryStatus !== "Delivered" && o?.deliveryStatus !== "Cancelled",
+  ).length;
+  const completedOrders = orders.filter(
+    (o: any) => o?.deliveryStatus === "Delivered",
+  ).length;
   const queryTab = searchParams.get("active") || "Profile";
   const [activeTab, setActiveTab] = useState(queryTab);
 
@@ -71,9 +88,17 @@ const Page = () => {
 
         {/* Stat Cards */}
         <div className="grid grid-cols-3 gap-4">
-          <StatCard title="Total Orders" count={10} Icon={Clock} />
-          <StatCard title="Processing Orders" count={4} Icon={Truck} />
-          <StatCard title="Completed Orders" count={6} Icon={CheckCircle} />
+          <StatCard title="Total Orders" count={totalOrders} Icon={Clock} />
+          <StatCard
+            title="Processing Orders"
+            count={processingOrders}
+            Icon={Truck}
+          />
+          <StatCard
+            title="Completed Orders"
+            count={completedOrders}
+            Icon={CheckCircle}
+          />
         </div>
 
         {/* Sidebar + Content + Quick Panel */}
@@ -175,42 +200,44 @@ const Page = () => {
               </div>
             ) : activeTab === "Shipping Address" ? (
               <ShippingAddressSection />
+            ) : activeTab === "Orders" ? (
+              <OrdersTable />
+            ) : activeTab === "Change Password" ? (
+              <ChangePassword />
             ) : (
-              <p className="text-sm text-gray-400 text-center pt-16">
-                Select a section from the left.
-              </p>
+              <></>
             )}
           </div>
-
-          {/* Right Quick Panel */}
-          <div className="w-56 shrink-0 space-y-3">
-            <QuickActionCard
-              Icon={Gift}
-              title="Referral Program"
-              description="Invite friends and earn rewards"
-            />
-            <QuickActionCard
-              Icon={BadgeCheck}
-              title="Your Badges"
-              description="View your achievements"
-            />
-            <QuickActionCard
-              Icon={Settings}
-              title="Account Settings"
-              description="Manage your preferences"
-            />
-            <QuickActionCard
-              Icon={ReceiptIcon}
-              title="Billing History"
-              description="View invoices and billing"
-            />
-            <QuickActionCard
-              Icon={PhoneCall}
-              title="Support"
-              description="Contact support for help"
-            />
-          </div>
         </div>
+      </div>
+
+      {/* Right Quick Panel */}
+      <div className="w-56 shrink-0 space-y-3">
+        <QuickActionCard
+          Icon={Gift}
+          title="Referral Program"
+          description="Invite friends and earn rewards"
+        />
+        <QuickActionCard
+          Icon={BadgeCheck}
+          title="Your Badges"
+          description="View your achievements"
+        />
+        <QuickActionCard
+          Icon={Settings}
+          title="Account Settings"
+          description="Manage your preferences"
+        />
+        <QuickActionCard
+          Icon={ReceiptIcon}
+          title="Billing History"
+          description="View invoices and billing"
+        />
+        <QuickActionCard
+          Icon={PhoneCall}
+          title="Support"
+          description="Contact support for help"
+        />
       </div>
     </div>
   );

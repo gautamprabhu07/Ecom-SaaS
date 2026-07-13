@@ -69,18 +69,18 @@ const CheckoutForm = ({
           ))}
 
           <div>
-            {coupon && coupon?.discountAmount !== 0 && (
-              <>
-                <span>Discount</span>
-                <span>${(coupon?.discountAmount).toFixed(2)}</span>
-              </>
-            )}
+            {coupon &&
+              typeof coupon.discountAmount === "number" &&
+              coupon.discountAmount > 0 && (
+                <>
+                  <span>Discount</span>
+                  <span>${coupon.discountAmount.toFixed(2)}</span>
+                </>
+              )}
           </div>
           <div>
             <span>Total</span>
-            <span>
-              ${(total - coupon ? coupon?.discountAmount : 0).toFixed(2)}
-            </span>
+            <span>${(total - (coupon?.discountAmount || 0)).toFixed(2)}</span>
           </div>
         </div>
 

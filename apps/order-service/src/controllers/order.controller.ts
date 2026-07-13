@@ -172,7 +172,7 @@ export const verifyPaymentSession = async(
 )=>{
    try
    {
-      const {sessionId}=req.query.sessionId as{sessionId:string};
+      const sessionId = req.query.session_id as string;
       if(!sessionId)
       {
          return res.status(400).json({error:'Session ID is required'});
@@ -501,6 +501,141 @@ export const getOrderDetails = async(
             shippingAddress,
             couponCode: coupon,
          }
+      });
+   }
+   catch(err)
+   {
+      next(err);
+   }
+};
+
+//update order status
+export const updateDeliveryStatus = async(
+   req:any,
+   res:Response,
+   next:NextFunction
+) => {
+   try {
+      const orderId = req.params;
+      const { deliveryStatus } = req.body;
+
+      if(!orderId || !deliveryStatus)
+      {
+         return res.status(400).json({ error: 'Order ID and delivery status are required' });
+      }
+
+      const allowedStatuses = ['Ordered', 'Packed', 'Delivered', 'Shipped', 'Out for Delivery'];
+
+      if(!allowedStatuses.includes(deliveryStatus))
+      {
+         return next(new ValidationError('Invalid delivery status'));
+      }
+
+      const existingOrder = await prisma.orders.findUnique({
+         where: { id: orderId },
+      });
+      if(!existingOrder)
+      {
+         return next(new ValidationError('Order not found'));
+      }
+
+      const updatedOrder = await prisma.orders.update({
+         where: { id: orderId},
+         data: { deliveryStatus,
+            updatedAt: new Date(),
+          },
+      });
+
+      res.status(200).json({
+         success: true,
+         order: updatedOrder,
+      });
+   }
+   catch(err)
+   {
+      return next(err);
+   }
+};
+
+//verify coupon code
+export const verifyCouponCode = async(
+   req:any,
+   res:Response,
+   next:NextFunction
+)=>{
+   try{
+      const {couponCode, cart}  = req.body;
+      if(!couponCode || !cart || !Array.isArray(cart) || cart.length === 0)
+      {
+         return next(new ValidationError('Coupon code and cart are required'));
+      }
+
+      const discount = await prisma.discount_codes.findUnique({
+         where:{discountCode:couponCode},
+      });
+
+      if(!discount)
+      {
+         return next(new ValidationError('Invalid coupon code'));
+      }
+
+      const matchingProduct = cart.find((item:any) => item.discount_codes?.some((d:any)=> d===discount.id));
+
+      if(!matchingProduct)
+         {
+            return res.status(200).json({
+               valid:false,
+               discount:0,
+               discountAmount: 0,
+               message:'Coupon code is not applicable to any product in the cart',
+            });
+         }
+         let discountAmount=0;
+         const price = matchingProduct.sale_price * matchingProduct.quantity;
+
+         if(discount.discountType === 'percentage')
+         {
+            discountAmount = (price * discount.discountValue) / 100;
+         }
+         else if(discount.discountType === 'flat')
+         {
+            discountAmount = discount.discountValue;
+         }
+
+         discountAmount = Math.min(discountAmount, price);
+
+         res.status(200).json({
+            valid:true,
+            discount:discount.discountValue,
+            discountAmount: discountAmount.toFixed(2),
+            discountType: discount.discountType,
+            discountedProductId: matchingProduct.id,
+            message:'Coupon code is valid',
+         });
+   }
+   catch(err)
+   {
+      next(err);
+   }
+};
+
+//get user orders
+export const getUserOrders = async(
+   req:any,
+   res:Response,
+   next:NextFunction
+)=>{
+   try
+   {
+      const orders= await prisma.orders.findMany({
+         where:{userId:req.user.id},
+         include:{items:true},
+         orderBy:{createdAt:'desc'},
+      });
+
+      res.status(200).json({
+         success:true,
+         orders
       });
    }
    catch(err)

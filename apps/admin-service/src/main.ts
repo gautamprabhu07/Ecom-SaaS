@@ -1,0 +1,23 @@
+
+import express from 'express';
+import cookieParser from 'cookie-parser';
+import  {errorMiddleware}  from '@packages/error-handler/error-middleware';
+import router from './routes/admin.route';
+
+const app = express();
+app.use (express.json());
+app.use(cookieParser());
+
+app.use(errorMiddleware);
+
+app.get('/', (req, res) => {
+  res.send({ message: 'Welcome to admin-service!' });
+});
+
+app.use("/api", router);
+
+const port = process.env.PORT || 6005;
+const server = app.listen(port, () => {
+  console.log(`Listening at http://localhost:${port}/api`);
+});
+server.on('error', console.error);

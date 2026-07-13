@@ -11,7 +11,7 @@ import Image from "next/image";
 import { ChevronRight, Loader2, X } from "lucide-react";
 import axiosInstance from "apps/user-ui/src/utils/axiosInstance";
 import { useQuery } from "@tanstack/react-query";
-import { toast } from "react-hot-toast";
+import { toast } from "sonner";
 
 const selectClass =
   "w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500";
@@ -29,8 +29,51 @@ const CartPage = () => {
   const [selectedAddressId, setSelectedAddressId] = useState("");
   const cart = useStore((state: any) => state.cart);
   const removeFromCart = useStore((state: any) => state.removeFromCart);
+  const [error, setError] = useState("");
+  const [storedCouponCOde, setStoredCouponCode] = useState("");
+
+  const couponCodeApplyHandler = async () => {
+    setError("");
+    if(!couponCode.trim()) {
+      setError("Please enter a coupon code.");
+      return;
+    }
+
+    try
+    {
+      const res= await axiosInstance.post("/order/api/verify-coupon", {
+        couponCode: couponCode.trim(),
+        cart,
+      });
+
+      if(res.data.valid) {
+        setStoredCouponCode(couponCode.trim());
+        setDiscountAmount(parseFloat(res.data.discountAmount));
+        setDiscountPercent((res.data.discountPercent));
+        setDiscountedProductId(res.data.discountedProductId);
+        setCouponCode("");
+    }
+    else {
+      setDiscountAmount(0);
+      setDiscountPercent(0);
+      setDiscountedProductId("");
+      setError("Invalid coupon code.");
+    }
+  }
+    catch (error:any) {
+      setDiscountAmount(0);
+      setDiscountPercent(0);
+      setDiscountedProductId("");
+      console.error("Error verifying coupon:", error);
+      setError(error?.response?.data?.message || "An error occurred while verifying the coupon.");
+    }
+
 
   const createPaymentSession = async () => {
+    if(addresses?.length === 0) {
+      toast.error("Please add a shipping address before proceeding to checkout.");
+      return;
+    }
     setLoading(true);
     try {
       const response = await axiosInstance.post(
@@ -38,11 +81,18 @@ const CartPage = () => {
         {
           cart,
           selectedAddressId,
-          coupon: {},
+          coupon: {
+            code: storedCouponCOde,
+            discountAmount,
+            discountPercent,
+            discountedProductId,
+          },
         },
       );
       const sessionId = response.data.sessionId;
-      router.push(`/checkout?sessionId=${sessionId}`);
+      router.push(`/checkout?session_id=${sessionId}`);
+
+
     } catch (error) {
       toast.error("Failed to create payment session. Please try again.");
     } finally {
@@ -261,10 +311,13 @@ const CartPage = () => {
                   onChange={(e: any) => setCouponCode(e.target.value)}
                   className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
-                <button className="px-3 py-2 bg-gray-800 text-white text-sm rounded-lg hover:bg-gray-700 transition">
+                <button className="px-3 py-2 bg-gray-800 text-white text-sm rounded-lg hover:bg-gray-700 transition"
+                onClick={()=>couponCodeApplyHandler()}>
                   Apply
                 </button>
+                
               </div>
+              {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
             </div>
 
             <hr className="border-gray-100" />
