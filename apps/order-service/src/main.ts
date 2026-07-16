@@ -1,4 +1,3 @@
-
 //Path: apps/order-service/src/main.ts
 import express from 'express';
 import cors from 'cors';
@@ -26,7 +25,7 @@ app.post("/api/create-order", bodyParser.raw({type: "application/json"}),  (req,
 createOrder
 );
 
-app.use (express.json());
+app.use(express.json());
 app.use(cookieParser());
 
 app.use("/api", router);

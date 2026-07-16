@@ -10,7 +10,9 @@ import { Elements } from "@stripe/react-stripe-js";
 import ChekoutForm from "apps/user-ui/src/shared/components/checkout/checkoutform";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY!);
-
+const appearance: Appearance = {
+  theme: "stripe",
+};
 const Page = () => {
   const [clientSecret, setClientSecret] = useState("");
   const [cartItems, setCartItems] = useState<any[]>([]);
@@ -78,10 +80,6 @@ const Page = () => {
 
     fetchSessionAndClientSecret();
   }, [sessionId]);
-
-  const appearance: Appearance = {
-    theme: "stripe",
-  };
 
   if (loading) {
     return <div>Loading...</div>;

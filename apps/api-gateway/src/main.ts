@@ -2,7 +2,7 @@
  * This is not a production server yet!
  * This is only a minimal backend to get started.
  */
-
+//path: apps/api-gateway/src/main.ts
 import express from 'express';
 import * as path from 'path';
 import proxy from 'express-http-proxy';
@@ -17,7 +17,7 @@ import initializeSiteConfig from './libs/initializeSiteConfig';
 const app = express();
 
 app.use(cors({
-origin: ["http://localhost:3000"],
+origin: ["http://localhost:3000", "http://localhost:3001", "http://localhost:3002"],
 allowedHeaders: ["Authorization", "Content-Type"],
 credentials: true
 }));

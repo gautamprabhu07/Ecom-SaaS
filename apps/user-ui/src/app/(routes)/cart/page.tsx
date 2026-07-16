@@ -34,44 +34,46 @@ const CartPage = () => {
 
   const couponCodeApplyHandler = async () => {
     setError("");
-    if(!couponCode.trim()) {
+    if (!couponCode.trim()) {
       setError("Please enter a coupon code.");
       return;
     }
 
-    try
-    {
-      const res= await axiosInstance.post("/order/api/verify-coupon", {
+    try {
+      const res = await axiosInstance.post("/order/api/verify-coupon", {
         couponCode: couponCode.trim(),
         cart,
       });
 
-      if(res.data.valid) {
+      if (res.data.valid) {
         setStoredCouponCode(couponCode.trim());
         setDiscountAmount(parseFloat(res.data.discountAmount));
-        setDiscountPercent((res.data.discountPercent));
+        setDiscountPercent(res.data.discountPercent);
         setDiscountedProductId(res.data.discountedProductId);
         setCouponCode("");
-    }
-    else {
-      setDiscountAmount(0);
-      setDiscountPercent(0);
-      setDiscountedProductId("");
-      setError("Invalid coupon code.");
-    }
-  }
-    catch (error:any) {
+      } else {
+        setDiscountAmount(0);
+        setDiscountPercent(0);
+        setDiscountedProductId("");
+        setError("Invalid coupon code.");
+      }
+    } catch (error: any) {
       setDiscountAmount(0);
       setDiscountPercent(0);
       setDiscountedProductId("");
       console.error("Error verifying coupon:", error);
-      setError(error?.response?.data?.message || "An error occurred while verifying the coupon.");
+      setError(
+        error?.response?.data?.message ||
+          "An error occurred while verifying the coupon.",
+      );
     }
-
+  };
 
   const createPaymentSession = async () => {
-    if(addresses?.length === 0) {
-      toast.error("Please add a shipping address before proceeding to checkout.");
+    if (addresses?.length === 0) {
+      toast.error(
+        "Please add a shipping address before proceeding to checkout.",
+      );
       return;
     }
     setLoading(true);
@@ -91,8 +93,6 @@ const CartPage = () => {
       );
       const sessionId = response.data.sessionId;
       router.push(`/checkout?session_id=${sessionId}`);
-
-
     } catch (error) {
       toast.error("Failed to create payment session. Please try again.");
     } finally {
@@ -311,11 +311,12 @@ const CartPage = () => {
                   onChange={(e: any) => setCouponCode(e.target.value)}
                   className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
-                <button className="px-3 py-2 bg-gray-800 text-white text-sm rounded-lg hover:bg-gray-700 transition"
-                onClick={()=>couponCodeApplyHandler()}>
+                <button
+                  className="px-3 py-2 bg-gray-800 text-white text-sm rounded-lg hover:bg-gray-700 transition"
+                  onClick={() => couponCodeApplyHandler()}
+                >
                   Apply
                 </button>
-                
               </div>
               {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
             </div>
