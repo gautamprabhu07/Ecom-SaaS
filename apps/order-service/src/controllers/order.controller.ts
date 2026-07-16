@@ -516,7 +516,7 @@ export const updateDeliveryStatus = async(
    next:NextFunction
 ) => {
    try {
-      const orderId = req.params;
+      const orderId = req.params.id as string;
       const { deliveryStatus } = req.body;
 
       if(!orderId || !deliveryStatus)

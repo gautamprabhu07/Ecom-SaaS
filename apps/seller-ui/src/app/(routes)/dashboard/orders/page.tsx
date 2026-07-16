@@ -1,3 +1,4 @@
+"use client";
 import React, { useMemo, useState } from "react";
 import {
   useReactTable,
@@ -8,20 +9,34 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "../../../../utils/axiosInstance";
 import Link from "next/link";
-import { Eye, Loader2, Search, XCircle } from "lucide-react";
-import OrderDetails from "../../order/[id]/page";
+import { Eye, Search } from "lucide-react";
+import Breadcrumbs from "../../../../shared/components/breadcrumbs/index";
 
 const fetchOrders = async () => {
   const response = await axiosInstance.get("/order/api/get-seller-orders");
-  return response.data;
+  return response.data.orders;
+};
+
+const statusBadgeClass = (status: string) => {
+  switch (status) {
+    case "Paid":
+      return "bg-green-50 text-green-700";
+    case "Pending":
+      return "bg-amber-50 text-amber-700";
+    case "Failed":
+      return "bg-red-50 text-red-700";
+    default:
+      return "bg-gray-100 text-gray-600";
+  }
 };
 
 const OrdersTable = () => {
   const [globalFilter, setGlobalFilter] = useState("");
+
   const { data: orders = [], isLoading } = useQuery({
     queryKey: ["seller-orders"],
     queryFn: fetchOrders,
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: 1000 * 60 * 5,
   });
 
   const columns = useMemo(
@@ -30,44 +45,66 @@ const OrdersTable = () => {
         accessorKey: "id",
         header: "Order ID",
         cell: ({ row }: any) => (
-          <span>#{row.original.id.slice(-6).toUpperCase()}</span>
+          <span className="font-mono text-xs text-gray-600">
+            #{row.original.id.slice(-6).toUpperCase()}
+          </span>
         ),
       },
       {
         accessorKey: "user.name",
         header: "Buyer",
         cell: ({ row }: any) => (
-          <span>{row.original.user?.name ?? "Guest"}</span>
+          <span className="text-gray-800">
+            {row.original.user?.name ?? "Guest"}
+          </span>
         ),
       },
       {
         accessorKey: "total",
         header: "Total",
-        cell: ({ row }: any) => <span>${row.original.total}</span>,
+        cell: ({ row }: any) => (
+          <span className="font-medium text-gray-800">
+            ${row.original.total.toFixed(2)}
+          </span>
+        ),
       },
       {
         accessorKey: "status",
-        header: "Status",
+        header: "Payment Status",
         cell: ({ row }: any) => (
-          <span>
-            {/* classname for span based on status is Paid or not */}
+          <span
+            className={`text-xs font-medium px-2 py-0.5 rounded-full ${statusBadgeClass(row.original.status)}`}
+          >
             {row.original.status}
+          </span>
+        ),
+      },
+      {
+        accessorKey: "deliveryStatus",
+        header: "Delivery Status",
+        cell: ({ row }: any) => (
+          <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-blue-50 text-blue-700">
+            {row.original.deliveryStatus}
           </span>
         ),
       },
       {
         accessorKey: "createdAt",
         header: "Date",
-        cell: ({ row }: any) => {
-          const date = new Date(row.original.createdAt).toLocaleDateString();
-          return <span>{date}</span>;
-        },
+        cell: ({ row }: any) => (
+          <span className="text-gray-500 text-xs">
+            {new Date(row.original.createdAt).toLocaleDateString()}
+          </span>
+        ),
       },
       {
         header: "Actions",
         cell: ({ row }: any) => (
-          <Link href={`/order/${row.original.id}`}>
-            <Eye />
+          <Link
+            href={`/order/${row.original.id}`}
+            className="text-gray-400 hover:text-blue-600 transition"
+          >
+            <Eye size={16} />
           </Link>
         ),
       },
@@ -81,39 +118,41 @@ const OrdersTable = () => {
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     globalFilterFn: "includesString",
-    state: {
-      globalFilter,
-    },
+    state: { globalFilter },
     onGlobalFilterChange: setGlobalFilter,
   });
 
   return (
-    <div>
-      <h2>All orders</h2>
+    <div className="p-6">
+      <h2 className="text-xl font-semibold text-gray-800 mb-1">All Orders</h2>
+      <div className="mb-4">
+        <Breadcrumbs title="Orders" />
+      </div>
 
-      {/* Add breadcrumbs here */}
-
-      <div>
-        <Search />
+      <div className="flex items-center gap-2 mb-4 rounded-md border border-gray-200 bg-white px-3 py-2 max-w-sm">
+        <Search size={16} className="text-gray-400" />
         <input
           type="text"
           placeholder="Search orders..."
           value={globalFilter}
           onChange={(e) => setGlobalFilter(e.target.value)}
+          className="w-full text-sm outline-none placeholder:text-gray-400"
         />
       </div>
 
-      {/* Table */}
-      <div>
+      <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
         {isLoading ? (
-          <p>Loading orders..</p>
+          <p className="p-6 text-sm text-gray-500">Loading orders...</p>
         ) : (
-          <table>
-            <thead>
+          <table className="w-full text-left text-sm">
+            <thead className="bg-gray-50">
               {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
-                    <th key={header.id}>
+                    <th
+                      key={header.id}
+                      className="px-4 py-3 font-medium text-gray-600"
+                    >
                       {flexRender(
                         header.column.columnDef.header,
                         header.getContext(),
@@ -125,9 +164,12 @@ const OrdersTable = () => {
             </thead>
             <tbody>
               {table.getRowModel().rows.map((row) => (
-                <tr key={row.id}>
+                <tr
+                  key={row.id}
+                  className="border-t border-gray-100 hover:bg-gray-50"
+                >
                   {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id}>
+                    <td key={cell.id} className="px-4 py-3 align-middle">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext(),
@@ -140,7 +182,11 @@ const OrdersTable = () => {
           </table>
         )}
 
-        {!isLoading && orders?.length === 0 && <p>No Orders found!</p>}
+        {!isLoading && orders?.length === 0 && (
+          <p className="p-6 text-sm text-gray-400 text-center">
+            No orders found.
+          </p>
+        )}
       </div>
     </div>
   );

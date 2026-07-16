@@ -1,3 +1,4 @@
+//Path: apps/seller-ui/src/shared/components/breadcrumbs/index.tsx
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 
