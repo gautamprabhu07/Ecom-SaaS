@@ -8,6 +8,7 @@ import bcrypt from "bcryptjs";
 import jwt, { JsonWebTokenError } from "jsonwebtoken";
 import { setCookie } from "../utils/cookies/setCookie";
 import Stripe from "stripe";
+import { sendLog } from "@packages/utils/logs/index";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
    apiVersion: "2026-06-24.dahlia",
@@ -596,3 +597,13 @@ export const loginAdmin = async (req: Request, res: Response, next: NextFunction
    }
 };
       
+//get logged in admin details
+export const getAdmin = async (req: Request, res: Response, next: NextFunction) => {
+   try {
+      const user = req.user;
+      res.status(200).json({success: true, user});
+   }
+   catch (error) {
+      return next(error);
+   }
+};

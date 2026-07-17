@@ -1,8 +1,8 @@
 //Path: apps/order-service/src/routes/order.route.ts
 import express, {Router} from 'express';
-import { createPayment, createPaymentSession, verifyPaymentSession, getSellerOrders, getOrderDetails, updateDeliveryStatus, verifyCouponCode, getUserOrders } from '../controllers/order.controller';
+import { createPayment, createPaymentSession, verifyPaymentSession, getSellerOrders, getOrderDetails, updateDeliveryStatus, verifyCouponCode, getUserOrders, getAdminOrders } from '../controllers/order.controller';
 import isAuthenticated  from '@packages/middleware/isAuthenticated';
-import { isSeller } from '@packages/middleware/authorizeRoles';
+import { isSeller, isAdmin } from '@packages/middleware/authorizeRoles';
 
 const router:Router = express.Router();
 
@@ -14,4 +14,6 @@ router.get("/get-order-details/:id", isAuthenticated, getOrderDetails);
 router.put("/update-status/:id", isAuthenticated, isSeller, updateDeliveryStatus);
 router.post("/verify-coupon", isAuthenticated, verifyCouponCode);
 router.get("/get-user-orders", isAuthenticated, getUserOrders);
+router.get("/get-admin-orders", isAuthenticated, isAdmin, getAdminOrders);
+
 export default router;

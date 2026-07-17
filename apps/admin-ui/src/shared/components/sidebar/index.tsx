@@ -1,3 +1,4 @@
+//path: apps/admin-ui/src/shared/components/sidebar/index.tsx
 "use client";
 import React, { useEffect } from "react";
 import { usePathname } from "next/navigation";
@@ -9,6 +10,7 @@ import Link from "next/link";
 import SidebarItem from "./sidebar.item";
 import SidebarMenu from "./sidebarmenu";
 import { ListOrdered } from "lucide-react";
+import Image from "next/image";
 
 const SidebarWrapper = () => {
   const { activeSidebar, setActiveSidebar } = useSidebar();
@@ -36,7 +38,13 @@ const SidebarWrapper = () => {
       <Sidebar.Header>
         <Box>
           <Link href="/">
-            {/* Add logo */}
+            <Image
+              src="/logoeshop.png"
+              alt="Eshop Logo"
+              width={52}
+              height={52}
+              priority
+            />
             <Box>
               <h3>{admin?.name}</h3>
               <h5>{admin?.email}</h5>
@@ -61,19 +69,99 @@ const SidebarWrapper = () => {
             isActive={activeSidebar === "/dashboard"}
             href="/dashboard"
           />
+
           <div>
             <SidebarMenu title="Main Menu">
               <SidebarItem
                 isActive={activeSidebar === "/dashboard/orders"}
-                icon={<ListOrdered />}
+                title="Orders"
+                href="/dashboard/orders"
+                icon={
+                  <ListOrdered className={getIconColor("/dashboard/orders")} />
+                }
+              />
+              <SidebarItem
+                isActive={activeSidebar === "/dashboard/payments"}
+                title="Payments"
+                href="/dashboard/payments"
+                icon={/*Fill in an appropriate icon for Payments*/}
+              />
+              {/*Products*/}
+              <SidebarItem
+                isActive={activeSidebar === "/dashboard/products"}
+                title="Products"
+                href="/dashboard/products"
+                icon={/*Fill in an appropriate icon for Products*/}
+              />
+
+              {/*Events*/}
+              <SidebarItem
+                isActive={activeSidebar === "/dashboard/events"}
+                title="Events"
+                href="/dashboard/events"
+                icon={/*Fill in an appropriate icon for Events*/}
+              />
+              {/*Users*/}
+              <SidebarItem
+                isActive={activeSidebar === "/dashboard/users"}
+                title="Users"
+                href="/dashboard/users"
+                icon={/*Fill in an appropriate icon for Users*/}
+              />
+              {/* Sellers */}
+              <SidebarItem
+                isActive={activeSidebar === "/dashboard/sellers"}
+                title="Sellers"
+                href="/dashboard/sellers"
+                icon={/*Fill in an appropriate icon for Sellers*/}
+              />
+            </SidebarMenu>
+
+            <SidebarMenu title="COntrollers">
+              {/* Loggers */}
+              <SidebarItem
+                isActive={activeSidebar === "/dashboard/loggers"}
+                title="Loggers"
+                href="/dashboard/loggers"
+                icon={/*Fill in an appropriate icon for Loggers*/}
+              />
+              {/* Management */}
+              <SidebarItem
+                isActive={activeSidebar === "/dashboard/management"}
+                title="Management"
+                href="/dashboard/management"
+                icon={/*Fill in an appropriate icon for Management*/}
+              />
+              {/* Notification */}
+              <SidebarItem
+                isActive={activeSidebar === "/dashboard/notifications"}
+                title="Notifications"
+                href="/dashboard/notifications"
+                icon={/*Fill in an appropriate icon for Notifications*/}
+              />
+            </SidebarMenu>
+            <SidebarMenu title="Customization">
+              {/* Customization */}
+              <SidebarItem
+                isActive={activeSidebar === "/dashboard/customization"}
+                title="Customization"
+                href="/dashboard/customization"
+                icon={/*Fill in an appropriate icon for Customization*/}
+              />
+            </SidebarMenu>
+            <SidebarMenu title="Extras">
+              {/* Logout */}
+              <SidebarItem
+                isActive={activeSidebar === "/logout"}
+                title="Logout"
+                href="/logout"
+                icon={/*Fill in an appropriate icon for Logout*/}
               />
             </SidebarMenu>
           </div>
         </Sidebar.Body>
       </div>
     </Box>
-
-    //add payment, accounts, all products, all events,  controllers, management, notifications, customization, logout
   );
 };
 

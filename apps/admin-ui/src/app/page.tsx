@@ -1,3 +1,5 @@
+//Path: apps/admin-ui/src/app/page.tsx
+"use client";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
@@ -40,10 +42,13 @@ const Page = () => {
     loginMutation.mutate(data);
   };
   return (
-    <div>
-      <div>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <h1>Welcome Admin</h1>
+    <div className="min-h-screen flex items-center justify-center bg-[#FAF8F3] px-4">
+      <div className="w-full max-w-sm bg-white rounded-2xl border border-[#E7E5E4] shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)] p-8">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <h1 className="font-heading text-2xl font-extrabold text-[#292524] text-center mb-2">
+            Welcome Admin
+          </h1>
+
           <Input
             label="Email"
             {...register("email", {
@@ -59,10 +64,16 @@ const Page = () => {
             type="password"
             {...register("password", { required: "password is required" })}
           />
-          <button type="submit" disabled={loginMutation.isPending}>
+          <button
+            type="submit"
+            disabled={loginMutation.isPending}
+            className="w-full bg-[#059669] hover:bg-[#047857] disabled:bg-[#78716C] text-white font-semibold py-2.5 rounded-full text-sm transition shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)]"
+          >
             {loginMutation.isPending ? "Logging in..." : "Login"}
           </button>
-          {serverError && <p>{serverError}</p>}
+          {serverError && (
+            <p className="text-red-500 text-xs text-center">{serverError}</p>
+          )}
         </form>
       </div>
     </div>

@@ -1,6 +1,7 @@
+//Path: packages/middleware/isAuthenticated.ts
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import prisma from "@packages/libs/prisma";
+import prisma from "../libs/prisma";
 
 const isAuthenticated = async (req: Request, res: Response, next: NextFunction) => {
    try {
@@ -38,7 +39,12 @@ const isAuthenticated = async (req: Request, res: Response, next: NextFunction) 
          });
          req.seller = account || undefined;
       }
-
+      else if(decoded.role === "admin") {
+   account = await prisma.users.findUnique({
+      where: { id: decoded.id },
+   });
+   req.user = account || undefined;
+}
 
       if (!account) {
          return res.status(401).json({ message: "User not found" });

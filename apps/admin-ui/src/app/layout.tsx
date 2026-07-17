@@ -1,5 +1,18 @@
+//Path: apps/admin-ui/src/app/layout.tsx
 import "./global.css";
+import { Nunito, Inter } from "next/font/google";
 import Providers from "./provider";
+
+const nunito = Nunito({
+  subsets: ["latin"],
+  weight: ["700", "800"],
+  variable: "--font-heading",
+});
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-body",
+});
 
 export const metadata = {
   title: "Welcome to admin-ui",
@@ -12,8 +25,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body>
+    <html lang="en" className={`${nunito.variable} ${inter.variable}`}>
+      <body className="font-body bg-[#FAF8F3] text-[#292524]">
         <Providers>{children}</Providers>
       </body>
     </html>
