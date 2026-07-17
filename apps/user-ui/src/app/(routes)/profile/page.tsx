@@ -30,6 +30,8 @@ import QuickActionCard from "apps/user-ui/src/shared/components/cards/quickActio
 import ShippingAddressSection from "apps/user-ui/src/shared/components/shippingAddress";
 import { useQuery } from "@tanstack/react-query";
 import useRequireAuth from "../../../hooks/useRequiredAuth";
+import OrdersTable from "apps/user-ui/src/shared/components/tables/orders-table";
+import ChangePassword from "apps/user-ui/src/shared/components/change-Password";
 
 const Page = () => {
   const searchParams = useSearchParams();
@@ -39,8 +41,8 @@ const Page = () => {
   const { data: orders = [] } = useQuery({
     queryKey: ["user-orders"],
     queryFn: async () => {
-      const response = await axiosInstance.get("/api/get-user-orders");
-      return response.data;
+      const response = await axiosInstance.get("/order/api/get-user-orders");
+      return response.data.orders;
     },
   });
   const totalOrders = orders.length;
@@ -70,13 +72,13 @@ const Page = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-[#FAF8F3] p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Greeting */}
         <div>
-          <h1 className="text-2xl font-semibold text-gray-800">
+          <h1 className="font-heading text-2xl font-extrabold text-[#292524]">
             Welcome Back,{" "}
-            <span className="text-blue-600">
+            <span className="text-[#059669]">
               {isLoading ? (
                 <Loader size={18} className="inline animate-spin" />
               ) : (
@@ -104,7 +106,7 @@ const Page = () => {
         {/* Sidebar + Content + Quick Panel */}
         <div className="flex gap-6 items-start">
           {/* Left Nav */}
-          <div className="w-52 shrink-0 bg-white rounded-xl border border-gray-200 p-3 space-y-1">
+          <div className="w-52 shrink-0 bg-white rounded-2xl border border-[#E7E5E4] p-3 space-y-1 shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)]">
             <nav className="flex flex-col">
               <NavItem
                 label="Profile"
@@ -142,7 +144,7 @@ const Page = () => {
                 active={activeTab === "Change Password"}
                 onClick={() => setActiveTab("Change Password")}
               />
-              <div className="pt-2 mt-2 border-t border-gray-100">
+              <div className="pt-2 mt-2 border-t border-[#E7E5E4]">
                 <NavItem
                   label="Logout"
                   Icon={LogOut}
@@ -154,15 +156,15 @@ const Page = () => {
           </div>
 
           {/* Main Content */}
-          <div className="flex-1 bg-white rounded-xl border border-gray-200 p-6 min-h-[400px]">
-            <h2 className="text-lg font-semibold text-gray-800 mb-5">
+          <div className="flex-1 bg-white rounded-2xl border border-[#E7E5E4] p-6 min-h-[400px] shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)]">
+            <h2 className="font-heading text-lg font-bold text-[#292524] mb-5">
               My Profile
             </h2>
 
             {activeTab === "profile" && !isLoading && user ? (
               <div className="space-y-4">
                 <div className="flex items-center gap-4">
-                  <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-gray-200">
+                  <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-[#D1FAE5]">
                     <Image
                       src={
                         user?.avatar ||
@@ -173,7 +175,7 @@ const Page = () => {
                       objectFit="cover"
                     />
                   </div>
-                  <button className="flex items-center gap-1.5 text-sm text-blue-600 border border-blue-200 px-3 py-1.5 rounded-lg hover:bg-blue-50 transition">
+                  <button className="flex items-center gap-1.5 text-sm text-[#059669] border border-[#059669]/30 px-3 py-1.5 rounded-full hover:bg-[#D1FAE5] transition">
                     <Pencil size={13} /> Change Photo
                   </button>
                 </div>
@@ -190,10 +192,10 @@ const Page = () => {
                   ].map(({ label, value }) => (
                     <div
                       key={label}
-                      className="bg-gray-50 rounded-lg px-4 py-3"
+                      className="bg-[#FAF8F3] rounded-xl px-4 py-3"
                     >
-                      <p className="text-xs text-gray-400 mb-0.5">{label}</p>
-                      <p className="font-medium text-gray-800">{value}</p>
+                      <p className="text-xs text-[#78716C] mb-0.5">{label}</p>
+                      <p className="font-medium text-[#292524]">{value}</p>
                     </div>
                   ))}
                 </div>
@@ -248,8 +250,8 @@ export default Page;
 const NavItem = ({ label, Icon, active, danger, onClick }: any) => (
   <button
     onClick={onClick}
-    className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition
-      ${active ? "bg-blue-50 text-blue-600 font-medium" : "text-gray-600 hover:bg-gray-100"}
+    className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-full text-sm transition
+      ${active ? "bg-[#D1FAE5] text-[#059669] font-semibold" : "text-[#78716C] hover:bg-[#FAF8F3]"}
       ${danger ? "text-red-500 hover:bg-red-50" : ""}`}
   >
     <Icon size={16} />

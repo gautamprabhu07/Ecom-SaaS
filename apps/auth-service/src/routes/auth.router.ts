@@ -1,6 +1,6 @@
 //Path: apps/auth-service/src/routes/auth.router.ts
 import express, {Router} from "express";
-import { loginUser, userRegistration, verifyUser, verifyUserForgotPassword,refreshToken, resetUserPassword, forgotPassword, getUser, registerSeller, verifySeller, createShop, createStripeConnectLink, loginSeller, getSeller, getUserAddresses, addUserAddress, deleteUserAddress, loginAdmin } from "../controllers/auth.controller";
+import { loginUser, userRegistration, verifyUser, verifyUserForgotPassword,refreshToken, resetUserPassword, forgotPassword, getUser, registerSeller, verifySeller, createShop, createStripeConnectLink, loginSeller, getSeller, getUserAddresses, addUserAddress, deleteUserAddress, loginAdmin, updateUserPassword } from "../controllers/auth.controller";
 import isAuthenticated from "@packages/middleware/isAuthenticated";
 import { isSeller } from "@packages/middleware/authorizeRoles";
 
@@ -24,6 +24,7 @@ router.get("/shipping-addresses", isAuthenticated, getUserAddresses);
 router.post("/add-address", isAuthenticated, addUserAddress);
 router.delete("/delete-address/:addressId", isAuthenticated, deleteUserAddress);
 router.post("/login-admin", loginAdmin);
+router.post("/change-password", isAuthenticated, updateUserPassword);
 
 
 export default router;

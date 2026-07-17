@@ -9,7 +9,7 @@ import axiosInstance from "../../../utils/axiosInstance";
 import { useQuery } from "@tanstack/react-query";
 
 const inputClass =
-  "w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500";
+  "w-full border border-[#E7E5E4] rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#059669]";
 const errorClass = "text-red-500 text-xs mt-1";
 
 const ShippingAddressSection = () => {
@@ -69,54 +69,58 @@ const ShippingAddressSection = () => {
     <div>
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
-        <h2 className="text-base font-semibold text-gray-800">
+        <h2 className="font-heading text-base font-bold text-[#292524]">
           Saved Addresses
         </h2>
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-3 py-2 rounded-lg transition"
+          className="flex items-center gap-1.5 bg-[#059669] hover:bg-[#047857] text-white text-sm font-medium px-3.5 py-2 rounded-full transition shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)]"
         >
           <Plus size={15} /> Add New Address
         </button>
       </div>
 
       {/* Address List placeholder */}
-      <div className="text-sm text-gray-400 text-center py-10 border border-dashed border-gray-200 rounded-xl">
+      <div className="text-sm text-[#78716C] text-center py-10 border border-dashed border-[#E7E5E4] rounded-2xl">
         {addressesLoading ? (
           "Loading addresses..."
         ) : !addresses || addresses?.length === 0 ? (
           "No saved addresses."
         ) : (
-          <div>
+          <div className="px-4">
             {addresses.map((address: any) => (
               <div
                 key={address.id}
-                className="bg-gray-50 rounded-lg px-4 py-3 mb-3"
+                className="bg-[#FAF8F3] rounded-2xl px-4 py-3 mb-3 text-left"
               >
                 {address.isDefault && (
-                  <span className="text-xs text-green-600 font-medium mr-2">
+                  <span className="inline-block text-xs text-[#059669] font-semibold bg-[#D1FAE5] px-2 py-0.5 rounded-full mb-2">
                     Default
                   </span>
                 )}
-                <div>
-                  <MapPin />
+                <div className="flex items-start gap-2">
+                  <MapPin
+                    size={16}
+                    className="text-[#059669] shrink-0 mt-0.5"
+                  />
                   <div>
-                    <p>
+                    <p className="text-sm font-medium text-[#292524]">
                       {address.label} - {address.name}
                     </p>
-                    <p>
+                    <p className="text-xs text-[#78716C]">
                       {address.street}, {address.city}, {address.zip},{" "}
                       {address.country}
                     </p>
                   </div>
                 </div>
-                <div>
+                <div className="mt-2">
                   <button
                     onClick={() => {
                       deleteAddress(address.id);
                     }}
+                    className="flex items-center gap-1 text-xs text-red-500 hover:text-red-600 transition"
                   >
-                    <Trash2 />
+                    <Trash2 size={13} />
                     Delete
                   </button>
                 </div>
@@ -127,15 +131,15 @@ const ShippingAddressSection = () => {
 
         {/* Modal */}
         {showModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#292524]/40">
+            <div className="bg-white rounded-2xl shadow-[0_4px_20px_-4px_rgba(120,53,15,0.15)] w-full max-w-md p-6">
               <div className="flex items-center justify-between mb-5">
-                <h3 className="text-lg font-semibold text-gray-800">
+                <h3 className="font-heading text-lg font-bold text-[#292524]">
                   Add New Address
                 </h3>
                 <button
                   onClick={() => setShowModal(false)}
-                  className="text-gray-400 hover:text-gray-600 transition"
+                  className="text-[#78716C] hover:text-[#292524] transition"
                 >
                   <X size={20} />
                 </button>
@@ -229,7 +233,7 @@ const ShippingAddressSection = () => {
 
                 <button
                   type="submit"
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg text-sm transition mt-1"
+                  className="w-full bg-[#059669] hover:bg-[#047857] text-white font-semibold py-2.5 rounded-full text-sm transition mt-1 shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)]"
                 >
                   Save Address
                 </button>
