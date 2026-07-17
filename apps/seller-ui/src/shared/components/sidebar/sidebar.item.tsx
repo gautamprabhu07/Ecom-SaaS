@@ -1,4 +1,3 @@
-// Path: apps/seller-ui/src/shared/components/sidebar/sidebar.item.tsx
 import React from "react";
 import Link from "next/link";
 
@@ -13,10 +12,10 @@ const SidebarItem = ({ icon, title, isActive, href }: Props) => {
   return (
     <Link href={href}>
       <div
-        className={`flex items-center gap-3 px-3 py-2 rounded-[6px] transition-colors ${
+        className={`flex items-center gap-3 px-3 py-2 mx-2 rounded-full transition-colors ${
           isActive
-            ? "bg-[#1A1A1A] text-[#F7F6F4]"
-            : "text-[#787672] hover:bg-[#F7F6F4] hover:text-[#111110]"
+            ? "bg-[#059669] text-white shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)]"
+            : "text-[#78716C] hover:bg-[#D1FAE5] hover:text-[#292524]"
         }`}
       >
         {icon}

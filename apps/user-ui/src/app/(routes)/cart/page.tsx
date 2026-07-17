@@ -14,7 +14,7 @@ import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 const selectClass =
-  "w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500";
+  "w-full border border-neutral-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500";
 
 const CartPage = () => {
   const router = useRouter();
@@ -144,25 +144,25 @@ const CartPage = () => {
   }, [addresses, selectedAddressId]);
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-[#FAF8F3] p-6">
       {/* Breadcrumb */}
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-gray-800">Shopping Cart</h1>
-        <div className="flex items-center gap-1 text-sm text-gray-500 mt-1">
-          <Link href="/" className="hover:text-gray-700">
+        <h1 className="text-2xl font-bold text-neutral-900">Shopping Cart</h1>
+        <div className="flex items-center gap-1 text-sm text-neutral-500 mt-1">
+          <Link href="/" className="hover:text-neutral-700">
             Home
           </Link>
           <ChevronRight size={14} />
-          <span className="text-gray-700">Cart</span>
+          <span className="text-neutral-700">Cart</span>
         </div>
       </div>
 
       {cart.length === 0 ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-16 text-center">
-          <p className="text-gray-400 text-sm">Your cart is empty.</p>
+        <div className="bg-white rounded-2xl border border-neutral-200 p-16 text-center">
+          <p className="text-neutral-400 text-sm">Your cart is empty.</p>
           <Link
             href="/"
-            className="mt-4 inline-block text-blue-600 text-sm hover:underline"
+            className="mt-4 inline-block text-emerald-600 text-sm font-medium hover:underline"
           >
             Continue Shopping
           </Link>
@@ -170,22 +170,22 @@ const CartPage = () => {
       ) : (
         <div className="flex gap-6 items-start">
           {/* Cart table */}
-          <div className="flex-1 bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <div className="flex-1 bg-white rounded-2xl border border-neutral-200 overflow-hidden">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-100 text-gray-500 text-left">
+                <tr className="border-b border-neutral-100 text-neutral-500 text-left">
                   <th className="px-4 py-3 font-medium">Product</th>
                   <th className="px-4 py-3 font-medium">Price</th>
                   <th className="px-4 py-3 font-medium">Quantity</th>
                   <th className="px-4 py-3" />
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-50">
+              <tbody className="divide-y divide-neutral-50">
                 {cart?.map((item: any) => (
-                  <tr key={item.id} className="text-gray-700">
+                  <tr key={item.id} className="text-neutral-700">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="relative w-14 h-14 rounded-lg overflow-hidden border border-gray-200 shrink-0">
+                        <div className="relative w-14 h-14 rounded-xl overflow-hidden border border-neutral-200 shrink-0">
                           <Image
                             src={item?.images[0]?.url}
                             alt={item.title}
@@ -194,16 +194,16 @@ const CartPage = () => {
                           />
                         </div>
                         <div>
-                          <p className="font-medium text-gray-800 line-clamp-1">
+                          <p className="font-medium text-neutral-800 line-clamp-1">
                             {item.title}
                           </p>
                           {item?.selectedOptions && (
                             <div className="flex gap-2 mt-0.5">
                               {item?.selectedOptions?.color && (
-                                <span className="text-xs text-gray-500 flex items-center gap-1">
+                                <span className="text-xs text-neutral-500 flex items-center gap-1">
                                   Color:
                                   <span
-                                    className="inline-block w-3 h-3 rounded-full border border-gray-300"
+                                    className="inline-block w-3 h-3 rounded-full border border-neutral-300"
                                     style={{
                                       backgroundColor:
                                         item?.selectedOptions?.color,
@@ -212,7 +212,7 @@ const CartPage = () => {
                                 </span>
                               )}
                               {item?.selectedOptions?.size && (
-                                <span className="text-xs text-gray-500">
+                                <span className="text-xs text-neutral-500">
                                   Size: {item?.selectedOptions?.size}
                                 </span>
                               )}
@@ -224,31 +224,31 @@ const CartPage = () => {
                     <td className="px-4 py-3">
                       {item?.id === discountedProductId ? (
                         <div>
-                          <span className="text-gray-400 line-through text-xs">
+                          <span className="text-neutral-400 line-through text-xs">
                             ${item.sale_price.toFixed(2)}
                           </span>
-                          <span className="font-semibold text-gray-900 ml-1">
+                          <span className="font-semibold text-neutral-900 ml-1">
                             $
                             {(
                               (item.sale_price * (100 - discountPercent)) /
                               100
                             ).toFixed(2)}
                           </span>
-                          <span className="block text-xs text-green-600 font-medium">
+                          <span className="block text-xs text-emerald-600 font-medium">
                             Discount Applied
                           </span>
                         </div>
                       ) : (
-                        <span className="font-semibold text-gray-900">
+                        <span className="font-semibold text-neutral-900">
                           ${item?.sale_price.toFixed(2)}
                         </span>
                       )}
                     </td>
                     <td className="px-4 py-3">
-                      <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden w-fit">
+                      <div className="flex items-center border border-neutral-300 rounded-full overflow-hidden w-fit">
                         <button
                           onClick={() => decreaseQuantity(item?.id)}
-                          className="px-2.5 py-1 text-gray-600 hover:bg-gray-100 transition"
+                          className="px-2.5 py-1 text-neutral-600 hover:bg-neutral-100 transition"
                         >
                           −
                         </button>
@@ -257,7 +257,7 @@ const CartPage = () => {
                         </span>
                         <button
                           onClick={() => increaseQuantity(item?.id)}
-                          className="px-2.5 py-1 text-gray-600 hover:bg-gray-100 transition"
+                          className="px-2.5 py-1 text-neutral-600 hover:bg-neutral-100 transition"
                         >
                           +
                         </button>
@@ -266,7 +266,7 @@ const CartPage = () => {
                     <td className="px-4 py-3">
                       <button
                         onClick={() => removeItem(item?.id)}
-                        className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition"
+                        className="p-1.5 text-neutral-400 hover:text-rose-500 hover:bg-rose-50 rounded-full transition"
                       >
                         <X size={15} />
                       </button>
@@ -278,29 +278,29 @@ const CartPage = () => {
           </div>
 
           {/* Order summary */}
-          <div className="w-80 shrink-0 bg-white rounded-xl border border-gray-200 p-5 space-y-4">
+          <div className="w-80 shrink-0 bg-white rounded-2xl border border-neutral-200 p-5 space-y-4">
             {/* Discount row */}
             {discountAmount > 0 && (
               <div className="flex justify-between text-sm">
-                <span className="text-gray-500">
+                <span className="text-neutral-500">
                   Discount ({discountPercent}%)
                 </span>
-                <span className="text-green-600 font-medium">
+                <span className="text-emerald-600 font-medium">
                   -${discountAmount.toFixed(2)}
                 </span>
               </div>
             )}
 
-            <div className="flex justify-between text-sm font-medium text-gray-700">
+            <div className="flex justify-between text-sm font-medium text-neutral-700">
               <span>Subtotal</span>
               <span>${(subtotal - discountAmount).toFixed(2)}</span>
             </div>
 
-            <hr className="border-gray-100" />
+            <hr className="border-neutral-100" />
 
             {/* Coupon */}
             <div>
-              <h4 className="text-sm font-medium text-gray-700 mb-2">
+              <h4 className="text-sm font-medium text-neutral-700 mb-2">
                 Have a coupon?
               </h4>
               <div className="flex gap-2">
@@ -309,29 +309,30 @@ const CartPage = () => {
                   placeholder="Enter coupon code"
                   value={couponCode}
                   onChange={(e: any) => setCouponCode(e.target.value)}
-                  className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="flex-1 border border-neutral-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
                 <button
-                  className="px-3 py-2 bg-gray-800 text-white text-sm rounded-lg hover:bg-gray-700 transition"
+                  className="px-4 py-2 bg-neutral-900 text-white text-sm font-medium rounded-full hover:bg-neutral-800 transition"
                   onClick={() => couponCodeApplyHandler()}
                 >
                   Apply
                 </button>
               </div>
-              {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
+              {error && <p className="text-xs text-rose-500 mt-1">{error}</p>}
             </div>
 
-            <hr className="border-gray-100" />
+            <hr className="border-neutral-100" />
 
             {/* Shipping address */}
             <div>
-              <h4 className="text-sm font-medium text-gray-700 mb-2">
+              <h4 className="text-sm font-medium text-neutral-700 mb-2">
                 Shipping Address
               </h4>
               {addresses?.length !== 0 && (
                 <select
                   value={selectedAddressId}
                   onChange={(e) => setSelectedAddressId(e.target.value)}
+                  className={selectClass}
                 >
                   {addresses.map((address: any) => (
                     <option key={address.id} value={address.id}>
@@ -342,17 +343,17 @@ const CartPage = () => {
                 </select>
               )}
               {addresses?.length === 0 && (
-                <p className="text-xs text-gray-400">
+                <p className="text-xs text-neutral-400">
                   No saved addresses. Please add one in your profile.
                 </p>
               )}
             </div>
 
-            <hr className="border-gray-100" />
+            <hr className="border-neutral-100" />
 
             {/* Payment method */}
             <div>
-              <h4 className="text-sm font-medium text-gray-700 mb-2">
+              <h4 className="text-sm font-medium text-neutral-700 mb-2">
                 Payment Method
               </h4>
               <select className={selectClass}>
@@ -361,10 +362,10 @@ const CartPage = () => {
               </select>
             </div>
 
-            <hr className="border-gray-100" />
+            <hr className="border-neutral-100" />
 
             {/* Total + checkout */}
-            <div className="flex justify-between text-base font-semibold text-gray-800">
+            <div className="flex justify-between text-base font-semibold text-neutral-900">
               <span>Total</span>
               <span>${(subtotal - discountAmount).toFixed(2)}</span>
             </div>
@@ -372,7 +373,7 @@ const CartPage = () => {
             <button
               disabled={loading}
               onClick={createPaymentSession}
-              className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg text-sm transition disabled:opacity-60"
+              className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 rounded-full text-sm transition disabled:opacity-60"
             >
               {loading && <Loader2 size={15} className="animate-spin" />}
               {loading ? "Processing..." : "Proceed to Checkout"}

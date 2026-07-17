@@ -48,15 +48,15 @@ const ProductCard = ({
   }, [isEvent, product?.ending_date]);
 
   return (
-    <div className="relative bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition group">
+    <div className="relative bg-white rounded-2xl border border-neutral-200 overflow-hidden hover:shadow-lg hover:shadow-neutral-200/60 transition group">
       {/* Badges */}
       {isEvent && (
-        <div className="absolute top-2 left-2 z-10 bg-red-500 text-white text-xs font-semibold px-2 py-0.5 rounded">
+        <div className="absolute top-2 left-2 z-10 bg-rose-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full">
           OFFER
         </div>
       )}
       {product?.stock <= 5 && (
-        <div className="absolute top-2 right-2 z-10 bg-amber-500 text-white text-xs font-semibold px-2 py-0.5 rounded">
+        <div className="absolute top-2 right-2 z-10 bg-amber-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full">
           Limited Stock
         </div>
       )}
@@ -64,7 +64,7 @@ const ProductCard = ({
       {/* Image */}
       <Link
         href={`/product/${product?.slug}`}
-        className="block relative h-52 overflow-hidden bg-gray-50"
+        className="block relative h-52 overflow-hidden bg-neutral-50"
       >
         <img
           src={product?.images?.[0]?.url}
@@ -122,7 +122,7 @@ const ProductCard = ({
           <button
             key={i}
             onClick={action}
-            className="w-8 h-8 bg-white rounded-full shadow flex items-center justify-center text-gray-600 hover:text-blue-600 hover:shadow-md transition"
+            className="w-8 h-8 bg-white rounded-full shadow flex items-center justify-center text-neutral-600 hover:text-emerald-600 hover:shadow-md transition"
           >
             {icon}
           </button>
@@ -132,7 +132,7 @@ const ProductCard = ({
       {/* Info */}
       <div className="p-3 space-y-1.5">
         <Link href={`/shop/${product?.Shop?.name}`}>
-          <h3 className="text-sm font-medium text-gray-800 line-clamp-2 hover:text-blue-600 transition">
+          <h3 className="text-sm font-medium text-neutral-800 line-clamp-2 hover:text-emerald-600 transition">
             {product?.title}
           </h3>
         </Link>
@@ -140,16 +140,16 @@ const ProductCard = ({
         <Ratings rating={product?.ratings} />
 
         <div className="flex items-center justify-between">
-          <span className="text-base font-semibold text-gray-900">
+          <span className="text-base font-semibold text-neutral-900">
             ${product?.sale_price}
           </span>
-          <span className="text-xs text-gray-400">
+          <span className="text-xs text-neutral-400">
             {product?.totalSales} sold
           </span>
         </div>
 
         {isEvent && timeLeft && (
-          <p className="text-xs text-red-500 font-medium">{timeLeft}</p>
+          <p className="text-xs text-rose-500 font-medium">{timeLeft}</p>
         )}
       </div>
 

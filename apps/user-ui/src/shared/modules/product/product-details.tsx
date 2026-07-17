@@ -97,11 +97,11 @@ const ProductDetails = ({ productDetails }: { productDetails: any }) => {
   }, [priceRange]);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="max-w-7xl mx-auto px-4 py-8 bg-[#FAF8F3]">
       <div className="flex gap-6">
         {/* Left — Images */}
         <div className="w-[380px] shrink-0 space-y-3">
-          <div className="rounded-xl overflow-hidden border border-gray-200 bg-gray-50">
+          <div className="rounded-2xl overflow-hidden border border-[#E7E5E4] bg-white shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)]">
             <InnerImageZoom
               src={currentImage || ""}
               zoomSrc={currentImage || ""}
@@ -120,7 +120,7 @@ const ProductDetails = ({ productDetails }: { productDetails: any }) => {
               <button
                 onClick={prevImage}
                 disabled={currentIndex === 0}
-                className="p-1 rounded-lg border border-gray-200 hover:bg-gray-100 disabled:opacity-40 transition"
+                className="p-1.5 rounded-full border border-[#E7E5E4] hover:bg-[#D1FAE5] disabled:opacity-40 transition"
               >
                 <ChevronLeft size={16} />
               </button>
@@ -133,7 +133,7 @@ const ProductDetails = ({ productDetails }: { productDetails: any }) => {
                     setCurrentIndex(index);
                     setCurrentImage(image.url);
                   }}
-                  className={`relative w-14 h-14 rounded-lg overflow-hidden border-2 cursor-pointer transition shrink-0 ${currentIndex === index ? "border-blue-500" : "border-gray-200"}`}
+                  className={`relative w-14 h-14 rounded-xl overflow-hidden border-2 cursor-pointer transition shrink-0 ${currentIndex === index ? "border-[#059669]" : "border-[#E7E5E4]"}`}
                 >
                   <Image
                     src={image.url}
@@ -148,7 +148,7 @@ const ProductDetails = ({ productDetails }: { productDetails: any }) => {
               <button
                 onClick={nextImage}
                 disabled={currentIndex === productDetails?.images?.length - 1}
-                className="p-1 rounded-lg border border-gray-200 hover:bg-gray-100 disabled:opacity-40 transition"
+                className="p-1.5 rounded-full border border-[#E7E5E4] hover:bg-[#D1FAE5] disabled:opacity-40 transition"
               >
                 <ChevronRight size={16} />
               </button>
@@ -159,7 +159,7 @@ const ProductDetails = ({ productDetails }: { productDetails: any }) => {
         {/* Middle — Product info */}
         <div className="flex-1 space-y-4">
           <div className="flex items-start justify-between gap-4">
-            <h1 className="text-xl font-semibold text-gray-800 leading-snug">
+            <h1 className="font-heading text-xl font-extrabold text-[#292524] leading-snug">
               {productDetails?.title}
             </h1>
             <button
@@ -185,12 +185,12 @@ const ProductDetails = ({ productDetails }: { productDetails: any }) => {
                       deviceInfo,
                     )
               }
-              className="shrink-0 p-2 rounded-full hover:bg-red-50 transition"
+              className="shrink-0 p-2 rounded-full hover:bg-[#FDBA74]/20 transition"
             >
               <Heart
                 size={20}
-                fill={isWishlisted ? "red" : "transparent"}
-                color={isWishlisted ? "red" : "gray"}
+                fill={isWishlisted ? "#FDBA74" : "transparent"}
+                color={isWishlisted ? "#FDBA74" : "#78716C"}
               />
             </button>
           </div>
@@ -199,30 +199,30 @@ const ProductDetails = ({ productDetails }: { productDetails: any }) => {
             <Ratings rating={productDetails?.rating} />
             <Link
               href="#reviews"
-              className="text-sm text-blue-600 hover:underline"
+              className="text-sm text-[#059669] hover:text-[#047857] hover:underline"
             >
               (0 Reviews)
             </Link>
           </div>
 
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-[#78716C]">
             Brand:{" "}
-            <span className="font-medium text-gray-700">
+            <span className="font-medium text-[#292524]">
               {productDetails?.brand || "No Brand"}
             </span>
           </p>
 
           {/* Price */}
           <div className="flex items-center gap-3">
-            <span className="text-2xl font-bold text-gray-900">
+            <span className="font-heading text-2xl font-extrabold text-[#292524]">
               ${productDetails?.sale_price}
             </span>
             {productDetails?.regular_price && (
               <>
-                <span className="text-sm text-gray-400 line-through">
+                <span className="text-sm text-[#78716C] line-through">
                   ${productDetails?.regular_price}
                 </span>
-                <span className="text-sm text-green-600 font-medium bg-green-50 px-2 py-0.5 rounded-full">
+                <span className="text-sm text-[#059669] font-semibold bg-[#D1FAE5] px-2.5 py-0.5 rounded-full">
                   {discountPercentage}% Off
                 </span>
               </>
@@ -232,14 +232,14 @@ const ProductDetails = ({ productDetails }: { productDetails: any }) => {
           {/* Colors */}
           {productDetails?.colors?.length > 0 && (
             <div className="flex items-center gap-3">
-              <span className="text-sm font-medium text-gray-700">Color:</span>
+              <span className="text-sm font-medium text-[#292524]">Color:</span>
               <div className="flex gap-2">
                 {productDetails?.colors?.map((color: any, index: number) => (
                   <button
                     key={index}
                     style={{ backgroundColor: color }}
                     onClick={() => setIsSelected(color)}
-                    className={`w-7 h-7 rounded-full border-2 transition ${isSelected === color ? "border-blue-500 scale-110" : "border-gray-300"}`}
+                    className={`w-7 h-7 rounded-full border-2 transition ${isSelected === color ? "border-[#059669] scale-110" : "border-[#E7E5E4]"}`}
                   />
                 ))}
               </div>
@@ -249,13 +249,13 @@ const ProductDetails = ({ productDetails }: { productDetails: any }) => {
           {/* Sizes */}
           {productDetails?.sizes?.length > 0 && (
             <div className="flex items-center gap-3">
-              <span className="text-sm font-medium text-gray-700">Size:</span>
+              <span className="text-sm font-medium text-[#292524]">Size:</span>
               <div className="flex gap-2">
                 {productDetails?.sizes?.map((size: any, index: number) => (
                   <button
                     key={index}
                     onClick={() => setIsSizeSelected(size)}
-                    className={`px-3 py-1 rounded-lg text-sm font-medium border transition ${isSizeSelected === size ? "bg-blue-600 text-white border-blue-600" : "bg-white text-gray-600 border-gray-300 hover:border-blue-400"}`}
+                    className={`px-3 py-1 rounded-full text-sm font-medium border transition ${isSizeSelected === size ? "bg-[#059669] text-white border-[#059669]" : "bg-white text-[#78716C] border-[#E7E5E4] hover:border-[#059669]"}`}
                   >
                     {size}
                   </button>
@@ -266,28 +266,30 @@ const ProductDetails = ({ productDetails }: { productDetails: any }) => {
 
           {/* Quantity + Stock + Cart */}
           <div className="flex items-center gap-4 pt-1">
-            <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
+            <div className="flex items-center border border-[#E7E5E4] rounded-full overflow-hidden">
               <button
                 onClick={() => setQuantity((p) => Math.max(1, p - 1))}
-                className="px-3 py-1.5 text-gray-600 hover:bg-gray-100 transition"
+                className="px-3 py-1.5 text-[#78716C] hover:bg-[#D1FAE5] transition"
               >
                 −
               </button>
-              <span className="px-4 text-sm font-medium">{quantity}</span>
+              <span className="px-4 text-sm font-medium text-[#292524]">
+                {quantity}
+              </span>
               <button
                 onClick={() => setQuantity((p) => p + 1)}
-                className="px-3 py-1.5 text-gray-600 hover:bg-gray-100 transition"
+                className="px-3 py-1.5 text-[#78716C] hover:bg-[#D1FAE5] transition"
               >
                 +
               </button>
             </div>
 
             {productDetails?.stock > 0 ? (
-              <span className="text-xs text-green-600 font-medium bg-green-50 px-2 py-1 rounded-full">
+              <span className="text-xs text-[#059669] font-semibold bg-[#D1FAE5] px-2.5 py-1 rounded-full">
                 In Stock ({productDetails?.stock})
               </span>
             ) : (
-              <span className="text-xs text-red-500 font-medium bg-red-50 px-2 py-1 rounded-full">
+              <span className="text-xs text-red-500 font-semibold bg-red-50 px-2.5 py-1 rounded-full">
                 Out of Stock
               </span>
             )}
@@ -307,7 +309,7 @@ const ProductDetails = ({ productDetails }: { productDetails: any }) => {
               )
             }
             disabled={isInCart}
-            className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-medium text-white transition ${isInCart ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"}`}
+            className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-semibold text-white transition shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)] ${isInCart ? "bg-[#78716C] cursor-not-allowed" : "bg-[#059669] hover:bg-[#047857]"}`}
           >
             <ShoppingCartIcon size={16} />
             {isInCart ? "Added to Cart" : "Add to Cart"}
@@ -317,49 +319,49 @@ const ProductDetails = ({ productDetails }: { productDetails: any }) => {
         {/* Right — Seller + Delivery */}
         <div className="w-64 shrink-0 space-y-4">
           {/* Delivery */}
-          <div className="bg-white border border-gray-200 rounded-xl p-4 space-y-2">
-            <p className="text-sm font-semibold text-gray-700">
+          <div className="bg-white border border-[#E7E5E4] rounded-2xl p-4 space-y-2 shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)]">
+            <p className="text-sm font-semibold text-[#292524]">
               Delivery Options
             </p>
-            <div className="flex items-center gap-2 text-sm text-gray-600">
-              <MapPin size={14} className="text-gray-400" />
+            <div className="flex items-center gap-2 text-sm text-[#78716C]">
+              <MapPin size={14} className="text-[#059669]" />
               <span>{location?.city + ", " + location?.country}</span>
             </div>
           </div>
 
           {/* Return & Warranty */}
-          <div className="bg-white border border-gray-200 rounded-xl p-4 space-y-2">
-            <p className="text-sm font-semibold text-gray-700">
+          <div className="bg-white border border-[#E7E5E4] rounded-2xl p-4 space-y-2 shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)]">
+            <p className="text-sm font-semibold text-[#292524]">
               Return & Warranty
             </p>
-            <div className="flex items-center gap-2 text-sm text-gray-600">
-              <Package size={14} className="text-gray-400" />
+            <div className="flex items-center gap-2 text-sm text-[#78716C]">
+              <Package size={14} className="text-[#059669]" />
               <span>7 days return</span>
             </div>
-            <div className="flex items-center gap-2 text-sm text-gray-600">
-              <WalletMinimal size={14} className="text-gray-400" />
+            <div className="flex items-center gap-2 text-sm text-[#78716C]">
+              <WalletMinimal size={14} className="text-[#059669]" />
               <span>Warranty not available</span>
             </div>
           </div>
 
           {/* Seller */}
-          <div className="bg-white border border-gray-200 rounded-xl p-4 space-y-3">
+          <div className="bg-white border border-[#E7E5E4] rounded-2xl p-4 space-y-3 shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)]">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-gray-400">Sold by</p>
-                <p className="text-sm font-semibold text-gray-800">
+                <p className="text-xs text-[#78716C]">Sold by</p>
+                <p className="font-heading text-sm font-bold text-[#292524]">
                   {productDetails?.shop?.name || "Unknown Shop"}
                 </p>
               </div>
               <Link
                 href="#"
-                className="flex items-center gap-1 text-xs text-blue-600 border border-blue-200 px-2 py-1 rounded-lg hover:bg-blue-50 transition"
+                className="flex items-center gap-1 text-xs text-[#059669] border border-[#059669]/30 px-2.5 py-1 rounded-full hover:bg-[#D1FAE5] transition"
               >
                 <MessageSquareText size={12} /> Chat
               </Link>
             </div>
 
-            <div className="space-y-1.5 text-xs text-gray-600">
+            <div className="space-y-1.5 text-xs text-[#78716C]">
               {[
                 { label: "Positive Ratings", value: "88%" },
                 { label: "Ships on Time", value: "90%" },
@@ -367,14 +369,14 @@ const ProductDetails = ({ productDetails }: { productDetails: any }) => {
               ].map(({ label, value }) => (
                 <div key={label} className="flex justify-between">
                   <span>{label}</span>
-                  <span className="font-medium text-gray-800">{value}</span>
+                  <span className="font-medium text-[#292524]">{value}</span>
                 </div>
               ))}
             </div>
 
             <Link
               href={`/shop/${productDetails?.Shop?.id}`}
-              className="block text-center text-sm text-blue-600 border border-blue-200 py-1.5 rounded-lg hover:bg-blue-50 transition"
+              className="block text-center text-sm text-[#059669] border border-[#059669]/30 py-1.5 rounded-full hover:bg-[#D1FAE5] transition"
             >
               Go to Store
             </Link>
@@ -384,12 +386,12 @@ const ProductDetails = ({ productDetails }: { productDetails: any }) => {
 
       {/* Description + Reviews */}
       <div className="mt-10 grid grid-cols-1 gap-6">
-        <div className="bg-white border border-gray-200 rounded-xl p-6">
-          <h3 className="text-lg font-semibold text-gray-800 mb-3">
+        <div className="bg-white border border-[#E7E5E4] rounded-2xl p-6 shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)]">
+          <h3 className="font-heading text-lg font-bold text-[#292524] mb-3">
             Product details of {productDetails?.title}
           </h3>
           <div
-            className="prose prose-sm max-w-none text-gray-600"
+            className="prose prose-sm max-w-none text-[#78716C]"
             dangerouslySetInnerHTML={{
               __html: productDetails?.detailed_description,
             }}
@@ -398,18 +400,18 @@ const ProductDetails = ({ productDetails }: { productDetails: any }) => {
 
         <div
           id="reviews"
-          className="bg-white border border-gray-200 rounded-xl p-6"
+          className="bg-white border border-[#E7E5E4] rounded-2xl p-6 shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)]"
         >
-          <h3 className="text-lg font-semibold text-gray-800 mb-2">
+          <h3 className="font-heading text-lg font-bold text-[#292524] mb-2">
             Rating and Reviews
           </h3>
-          <p className="text-sm text-gray-500">No Reviews available yet</p>
+          <p className="text-sm text-[#78716C]">No Reviews available yet</p>
         </div>
       </div>
 
       {/* You may also like */}
       <div className="mt-10">
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">
+        <h3 className="font-heading text-lg font-bold text-[#292524] mb-4">
           You may also like...
         </h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">

@@ -11,6 +11,7 @@ import { Sidebar } from "./sidebar.styles";
 import Logo from "./logo";
 import SidebarItem from "./sidebar.item";
 import SidebarMenu from "./sidebar.menu";
+import Image from "next/image";
 import {
   Home,
   BellPlus,
@@ -38,11 +39,21 @@ const SidebarWrapper = () => {
     <Box css={{ height: "100vh" }} className="sidebar-wrapper">
       <Sidebar.Header>
         <Box>
-          <Link href={"/"}>
-            <Logo />
+          <Link href={"/"} className="flex items-center gap-3">
+            <Image
+              src="/logoeshop.png"
+              alt="Eshop Logo"
+              width={52}
+              height={52}
+              priority
+            />
             <Box>
-              <h3>{seller?.shop?.name}</h3>
-              <h5>{seller?.shop?.address}</h5>
+              <h3 className="font-heading text-sm font-bold text-[#292524]">
+                {seller?.shop?.name}
+              </h3>
+              <h5 className="text-xs text-[#78716C]">
+                {seller?.shop?.address}
+              </h5>
             </Box>
           </Link>
         </Box>
@@ -51,7 +62,7 @@ const SidebarWrapper = () => {
         <Sidebar.Body>
           <SidebarItem
             title="Dashboard"
-            icon={<Home size={26} color="currentColor" />}
+            icon={<Home size={22} color="currentColor" />}
             isActive={activeSidebar === "/dashboard"}
             href="/dashboard"
           />
@@ -60,13 +71,13 @@ const SidebarWrapper = () => {
               <SidebarItem
                 isActive={activeSidebar === "/dashboard/orders"}
                 title="Orders"
-                icon={<ListOrdered size={26} color="currentColor" />}
+                icon={<ListOrdered size={22} color="currentColor" />}
                 href="/dashboard/orders"
               />
               <SidebarItem
                 isActive={activeSidebar === "/dashboard/payments"}
                 title="Payments"
-                icon={<ListOrdered size={26} color="currentColor" />}
+                icon={<ListOrdered size={22} color="currentColor" />}
                 href="/dashboard/payments"
               />
             </SidebarMenu>
@@ -74,13 +85,13 @@ const SidebarWrapper = () => {
               <SidebarItem
                 isActive={activeSidebar === "/dashboard/create-product"}
                 title="Create Product"
-                icon={<SquarePlus size={26} color="currentColor" />}
+                icon={<SquarePlus size={22} color="currentColor" />}
                 href="/dashboard/create-product"
               />
               <SidebarItem
                 isActive={activeSidebar === "/dashboard/all-products"}
                 title="All Products"
-                icon={<PackageSearch size={26} color="currentColor" />}
+                icon={<PackageSearch size={22} color="currentColor" />}
                 href="/dashboard/all-products"
               />
             </SidebarMenu>
@@ -88,34 +99,33 @@ const SidebarWrapper = () => {
               <SidebarItem
                 isActive={activeSidebar === "/dashboard/create-event"}
                 title="Create Event"
-                icon={<CalendarPlus size={26} color="currentColor" />}
+                icon={<CalendarPlus size={22} color="currentColor" />}
                 href="/dashboard/create-event"
               />
               <SidebarItem
                 isActive={activeSidebar === "/dashboard/all-events"}
                 title="All Events"
-                icon={<BellPlus size={26} color="currentColor" />}
+                icon={<BellPlus size={22} color="currentColor" />}
                 href="/dashboard/all-events"
               />
             </SidebarMenu>
-            q{" "}
             <SidebarMenu title="Controllers">
               <SidebarItem
                 isActive={activeSidebar === "/dashboard/inbox"}
                 title="Inbox"
-                icon={<Mail size={26} color="currentColor" />}
+                icon={<Mail size={22} color="currentColor" />}
                 href="/dashboard/inbox"
               />
               <SidebarItem
                 isActive={activeSidebar === "/dashboard/settings"}
                 title="Settings"
-                icon={<Settings size={26} color="currentColor" />}
+                icon={<Settings size={22} color="currentColor" />}
                 href="/dashboard/settings"
               />
               <SidebarItem
                 isActive={activeSidebar === "/dashboard/notifications"}
                 title="Notifications"
-                icon={<BellRing size={26} color="currentColor" />}
+                icon={<BellRing size={22} color="currentColor" />}
                 href="/dashboard/notifications"
               />
             </SidebarMenu>
@@ -123,13 +133,13 @@ const SidebarWrapper = () => {
               <SidebarItem
                 isActive={activeSidebar === "/dashboard/discountCodes"}
                 title="Discount Codes"
-                icon={<TicketPercent size={26} color="currentColor" />}
+                icon={<TicketPercent size={22} color="currentColor" />}
                 href="/dashboard/discountCodes"
               />
               <SidebarItem
                 isActive={activeSidebar === "/dashboard/logout"}
                 title="Logout"
-                icon={<DoorOpen size={26} color="currentColor" />}
+                icon={<DoorOpen size={22} color="currentColor" />}
                 href="/dashboard/logout"
               />
             </SidebarMenu>

@@ -57,81 +57,79 @@ const Page = () => {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#FAF8F3]">
       <Hero />
 
       {/* Featured Products */}
-      <div className="max-w-7xl mx-auto px-4 py-10">
-        <SectionTitle title="Featured Products" />
+      <div className="max-w-7xl mx-auto px-4 py-10 space-y-14">
+        <div>
+          <SectionTitle title="Featured Products" />
 
-        {/* Skeleton */}
-        {isLoading && (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mt-6">
-            {Array.from({ length: 10 }).map((_, index) => (
-              <div
-                key={index}
-                className="bg-white rounded-xl border border-gray-200 h-64 animate-pulse"
-              />
-            ))}
-          </div>
-        )}
+          {/* Skeleton */}
+          {isLoading && (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+              {Array.from({ length: 10 }).map((_, index) => (
+                <div
+                  key={index}
+                  className="bg-white rounded-2xl border border-neutral-200 h-64 animate-pulse"
+                />
+              ))}
+            </div>
+          )}
 
-        {!isLoading && !isError && (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mt-6">
-            {products?.products?.map((product: any) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        )}
+          {!isLoading && !isError && (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+              {products?.products?.map((product: any) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          )}
 
-        {products?.length === 0 && (
-          <p className="text-gray-500 mt-6">No products available yet.</p>
-        )}
-        {isLoading && (
-          <div>
-            {Array.from({ length: 10 }).map((_, index) => (
-              <div key={index}></div>
-            ))}
-          </div>
-        )}
+          {products?.length === 0 && (
+            <p className="text-neutral-500 mt-6">No products available yet.</p>
+          )}
+        </div>
 
         <div>
           <SectionTitle title="Latest Products" />
+          {!LatestProductsLoading && (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+              {latestProducts?.map((product: any) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          )}
+          {latestProducts?.length === 0 && (
+            <p className="text-neutral-500 mt-6">
+              No latest products available yet.
+            </p>
+          )}
         </div>
-        {!LatestProductsLoading && (
-          <div>
-            {latestProducts?.map((product: any) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        )}
-        {latestProducts?.length === 0 && (
-          <p>No latest products available yet.</p>
-        )}
 
         <div>
           <SectionTitle title="Top Shops" />
+          {!shopLoading && (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+              {shops?.map((shop: any) => (
+                <ShopCard key={shop.id} shop={shop} />
+              ))}
+            </div>
+          )}
+          {shops?.length === 0 && (
+            <p className="text-neutral-500 mt-6">No top shops available yet.</p>
+          )}
         </div>
-        {!shopLoading && (
-          <div>
-            {shops?.map((shop: any) => (
-              <ShopCard key={shop.id} shop={shop} />
-            ))}
-          </div>
-        )}
-
-        {shops?.length === 0 && <p>No top shops available yet.</p>}
 
         <div>
           <SectionTitle title="Top Offers" />
+          {!offersLoading && (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+              {offers?.map((offer: any) => (
+                <ProductCard key={offer.id} product={offer} />
+              ))}
+            </div>
+          )}
         </div>
-        {!offersLoading && (
-          <div>
-            {offers?.map((offer: any) => (
-              <ProductCard key={offer.id} product={offer} />
-            ))}
-          </div>
-        )}
       </div>
     </div>
   );

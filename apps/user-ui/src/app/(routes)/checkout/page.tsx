@@ -5,7 +5,7 @@ import { loadStripe, Appearance } from "@stripe/stripe-js";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import axiosInstance from "apps/user-ui/src/utils/axiosInstance";
-import { XCircle } from "lucide-react";
+import { Loader2, XCircle } from "lucide-react";
 import { Elements } from "@stripe/react-stripe-js";
 import ChekoutForm from "apps/user-ui/src/shared/components/checkout/checkoutform";
 
@@ -82,19 +82,31 @@ const Page = () => {
   }, [sessionId]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="min-h-screen bg-[#FAF8F3] flex items-center justify-center gap-2 text-neutral-500 text-sm">
+        <Loader2 size={16} className="animate-spin" />
+        Loading checkout...
+      </div>
+    );
   }
 
   if (error) {
     return (
-      <div>
-        <div>
-          <div>
-            <XCircle />
-          </div>
-          <h2>Payment Failed</h2>
-          <p>{error}. Please go back to the cart and try again.</p>
-          <button onClick={() => router.push("/cart")}>Back to Cart</button>
+      <div className="min-h-screen bg-[#FAF8F3] flex items-center justify-center px-4">
+        <div className="bg-white rounded-2xl border border-neutral-200 p-8 text-center max-w-sm w-full">
+          <XCircle className="mx-auto text-rose-500 mb-3" size={32} />
+          <h2 className="text-lg font-semibold text-neutral-900 mb-1">
+            Payment Failed
+          </h2>
+          <p className="text-sm text-neutral-500 mb-5">
+            {error}. Please go back to the cart and try again.
+          </p>
+          <button
+            onClick={() => router.push("/cart")}
+            className="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium px-5 py-2.5 rounded-full transition"
+          >
+            Back to Cart
+          </button>
         </div>
       </div>
     );
@@ -102,14 +114,16 @@ const Page = () => {
 
   return (
     clientSecret && (
-      <Elements stripe={stripePromise} options={{ clientSecret, appearance }}>
-        <ChekoutForm
-          clientSecret={clientSecret}
-          cartItems={cartItems}
-          coupon={coupon}
-          sessionId={sessionId}
-        />
-      </Elements>
+      <div className="min-h-screen bg-[#FAF8F3] py-12 px-4">
+        <Elements stripe={stripePromise} options={{ clientSecret, appearance }}>
+          <ChekoutForm
+            clientSecret={clientSecret}
+            cartItems={cartItems}
+            coupon={coupon}
+            sessionId={sessionId}
+          />
+        </Elements>
+      </div>
     )
   );
 };

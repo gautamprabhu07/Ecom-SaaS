@@ -51,7 +51,7 @@ const ProductDetailsCard = ({
         {/* Close */}
         <button
           onClick={() => setOpen(false)}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition"
+          className="absolute top-4 right-4 text-neutral-400 hover:text-neutral-600 transition"
         >
           <X size={20} />
         </button>
@@ -59,7 +59,7 @@ const ProductDetailsCard = ({
         <div className="flex gap-6">
           {/* Images */}
           <div className="w-64 shrink-0 space-y-2">
-            <div className="relative h-64 rounded-xl overflow-hidden border border-gray-200 bg-gray-50">
+            <div className="relative h-64 rounded-2xl overflow-hidden border border-neutral-200 bg-neutral-50">
               {data?.images?.[activeImage]?.url && (
                 <Image
                   src={data.images[activeImage].url}
@@ -74,7 +74,7 @@ const ProductDetailsCard = ({
                 <div
                   key={index}
                   onClick={() => setActiveImage(index)}
-                  className={`relative h-14 rounded-lg overflow-hidden border-2 cursor-pointer transition ${activeImage === index ? "border-blue-500" : "border-gray-200"}`}
+                  className={`relative h-14 rounded-lg overflow-hidden border-2 cursor-pointer transition ${activeImage === index ? "border-emerald-500" : "border-neutral-200"}`}
                 >
                   <Image
                     src={image.url}
@@ -90,8 +90,8 @@ const ProductDetailsCard = ({
           {/* Details */}
           <div className="flex-1 space-y-3">
             {/* Seller */}
-            <div className="flex items-center gap-2 pb-3 border-b border-gray-100">
-              <div className="relative w-8 h-8 rounded-full overflow-hidden border border-gray-200">
+            <div className="flex items-center gap-2 pb-3 border-b border-neutral-100">
+              <div className="relative w-8 h-8 rounded-full overflow-hidden border border-neutral-200">
                 {data?.Shop?.avatar?.url && (
                   <Image
                     src={data.Shop.avatar.url}
@@ -104,11 +104,11 @@ const ProductDetailsCard = ({
               <div>
                 <Link
                   href={`/shop/${data?.Shop?.name}`}
-                  className="text-sm font-medium text-gray-800 hover:text-blue-600"
+                  className="text-sm font-medium text-neutral-800 hover:text-emerald-600"
                 >
                   {data?.Shop?.name}
                 </Link>
-                <div className="flex items-center gap-1 text-xs text-gray-500">
+                <div className="flex items-center gap-1 text-xs text-neutral-500">
                   <MapPin size={11} />
                   <span>{data?.Shop?.address}</span>
                 </div>
@@ -116,34 +116,38 @@ const ProductDetailsCard = ({
               <Ratings rating={data?.Shop?.ratings} />
               <button
                 onClick={() => router.push(`/inbox?shopId=${data?.Shop?.id}`)}
-                className="ml-auto text-xs border border-blue-500 text-blue-600 px-3 py-1 rounded-lg hover:bg-blue-50 transition"
+                className="ml-auto text-xs border border-emerald-500 text-emerald-600 px-3 py-1 rounded-full hover:bg-emerald-50 transition"
               >
                 Chat with seller
               </button>
             </div>
 
-            <h3 className="text-lg font-semibold text-gray-800">
+            <h3 className="text-lg font-semibold text-neutral-800">
               {data?.title}
             </h3>
-            <p className="text-sm text-gray-500">{data?.short_description}</p>
+            <p className="text-sm text-neutral-500">
+              {data?.short_description}
+            </p>
             {data?.brand && (
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-neutral-500">
                 Brand:{" "}
-                <span className="font-medium text-gray-700">{data?.brand}</span>
+                <span className="font-medium text-neutral-700">
+                  {data?.brand}
+                </span>
               </p>
             )}
 
             {/* Colors */}
             {data?.colors?.length > 0 && (
               <div className="flex items-center gap-2">
-                <strong className="text-sm text-gray-700">Color:</strong>
+                <strong className="text-sm text-neutral-700">Color:</strong>
                 <div className="flex gap-1.5">
                   {data?.colors?.map((color: string, index: number) => (
                     <button
                       key={index}
                       onClick={() => setIsSelected(color)}
                       style={{ backgroundColor: color }}
-                      className={`w-6 h-6 rounded-full border-2 transition ${isSelected === color ? "border-blue-500 scale-110" : "border-gray-300"}`}
+                      className={`w-6 h-6 rounded-full border-2 transition ${isSelected === color ? "border-emerald-500 scale-110" : "border-neutral-300"}`}
                     />
                   ))}
                 </div>
@@ -153,13 +157,13 @@ const ProductDetailsCard = ({
             {/* Sizes */}
             {data?.sizes?.length > 0 && (
               <div className="flex items-center gap-2">
-                <strong className="text-sm text-gray-700">Size:</strong>
+                <strong className="text-sm text-neutral-700">Size:</strong>
                 <div className="flex gap-1.5">
                   {data.sizes.map((size: string, index: number) => (
                     <button
                       key={index}
                       onClick={() => setIsSizeSelected(size)}
-                      className={`px-2.5 py-1 rounded-lg text-xs font-medium border transition ${isSizeSelected === size ? "bg-blue-600 text-white border-blue-600" : "bg-white text-gray-600 border-gray-300 hover:border-blue-400"}`}
+                      className={`px-2.5 py-1 rounded-full text-xs font-medium border transition ${isSizeSelected === size ? "bg-emerald-600 text-white border-emerald-600" : "bg-white text-neutral-600 border-neutral-300 hover:border-emerald-400"}`}
                     >
                       {size}
                     </button>
@@ -170,20 +174,20 @@ const ProductDetailsCard = ({
 
             {/* Price */}
             <div className="flex items-center gap-3">
-              <span className="text-2xl font-bold text-gray-900">
+              <span className="text-2xl font-bold text-neutral-900">
                 ${data?.sale_price}
               </span>
               {data?.regular_price && (
-                <span className="text-sm text-gray-400 line-through">
+                <span className="text-sm text-neutral-400 line-through">
                   ${data?.regular_price}
                 </span>
               )}
               {data?.stock > 0 ? (
-                <span className="text-xs text-green-600 font-medium bg-green-50 px-2 py-0.5 rounded-full">
+                <span className="text-xs text-emerald-700 font-medium bg-emerald-50 px-2 py-0.5 rounded-full">
                   In stock
                 </span>
               ) : (
-                <span className="text-xs text-red-500 font-medium bg-red-50 px-2 py-0.5 rounded-full">
+                <span className="text-xs text-rose-600 font-medium bg-rose-50 px-2 py-0.5 rounded-full">
                   Out of stock
                 </span>
               )}
@@ -191,11 +195,11 @@ const ProductDetailsCard = ({
 
             {/* Quantity + Actions */}
             <div className="flex items-center gap-3 pt-1">
-              <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
+              <div className="flex items-center border border-neutral-300 rounded-full overflow-hidden">
                 <button
                   onClick={() => setQuantity(quantity - 1)}
                   disabled={quantity <= 1}
-                  className="px-3 py-1.5 text-gray-600 hover:bg-gray-100 disabled:opacity-40 transition"
+                  className="px-3 py-1.5 text-neutral-600 hover:bg-neutral-100 disabled:opacity-40 transition"
                 >
                   −
                 </button>
@@ -203,7 +207,7 @@ const ProductDetailsCard = ({
                 <button
                   onClick={() => setQuantity(quantity + 1)}
                   disabled={quantity >= data?.stock}
-                  className="px-3 py-1.5 text-gray-600 hover:bg-gray-100 disabled:opacity-40 transition"
+                  className="px-3 py-1.5 text-neutral-600 hover:bg-neutral-100 disabled:opacity-40 transition"
                 >
                   +
                 </button>
@@ -225,7 +229,7 @@ const ProductDetailsCard = ({
                     deviceInfo,
                   )
                 }
-                className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition"
+                className="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium px-4 py-2 rounded-full transition"
               >
                 <ShoppingCartIcon size={16} /> Add to cart
               </button>
@@ -247,15 +251,15 @@ const ProductDetailsCard = ({
                         deviceInfo,
                       )
                 }
-                className="w-9 h-9 flex items-center justify-center border border-gray-300 rounded-lg hover:bg-red-50 hover:border-red-300 transition"
+                className="w-9 h-9 flex items-center justify-center border border-neutral-300 rounded-full hover:bg-rose-50 hover:border-rose-300 transition"
               >
                 <Heart size={16} fill={isWishlisted ? "red" : "transparent"} />
               </button>
             </div>
 
             {/* Delivery */}
-            <p className="text-xs text-gray-500 pt-1">
-              <span className="font-medium text-gray-700">
+            <p className="text-xs text-neutral-500 pt-1">
+              <span className="font-medium text-neutral-700">
                 Estimated delivery:{" "}
               </span>
               {estimatedDelivery.toDateString()}

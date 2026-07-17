@@ -117,27 +117,27 @@ const Page = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="max-w-7xl mx-auto px-4 py-8 bg-[#FAF8F3]">
       {/* Breadcrumb */}
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-gray-800 mb-1">
+        <h1 className="font-heading text-2xl font-extrabold text-[#292524] mb-1">
           All Products
         </h1>
-        <div className="flex items-center gap-1.5 text-sm text-gray-500">
-          <Link href="/" className="hover:text-blue-600 transition">
+        <div className="flex items-center gap-1.5 text-sm text-[#78716C]">
+          <Link href="/" className="hover:text-[#059669] transition">
             Home
           </Link>
           <span>/</span>
-          <span className="text-gray-700">All Products</span>
+          <span className="text-[#292524]">All Products</span>
         </div>
       </div>
 
       <div className="flex gap-8 items-start">
         {/* Sidebar */}
-        <aside className="w-64 shrink-0 bg-white border border-gray-200 rounded-xl p-5 space-y-6">
+        <aside className="w-64 shrink-0 bg-white border border-[#E7E5E4] rounded-2xl p-5 space-y-6 shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)]">
           {/* Price Filter */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">
+            <h3 className="font-heading text-sm font-bold text-[#292524] mb-3">
               Price Filter
             </h3>
             <Range
@@ -153,11 +153,11 @@ const Page = () => {
                 return (
                   <div
                     {...props}
-                    className="h-1.5 w-full rounded-full bg-gray-200 relative"
+                    className="h-1.5 w-full rounded-full bg-[#E7E5E4] relative"
                     style={{ ...props.style }}
                   >
                     <div
-                      className="absolute h-1.5 rounded-full bg-blue-600"
+                      className="absolute h-1.5 rounded-full bg-[#059669]"
                       style={{
                         left: `${percentageLeft}%`,
                         width: `${percentageRight - percentageLeft}%`,
@@ -173,13 +173,13 @@ const Page = () => {
                   <div
                     key={key}
                     {...rest}
-                    className="w-4 h-4 rounded-full bg-blue-600 border-2 border-white shadow"
+                    className="w-4 h-4 rounded-full bg-[#059669] border-2 border-white shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)]"
                   />
                 );
               }}
             />
             <div className="flex items-center justify-between mt-3">
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-[#78716C]">
                 ${tempPriceRange[0]} - ${tempPriceRange[1]}
               </span>
               <button
@@ -187,7 +187,7 @@ const Page = () => {
                   setPriceRange(tempPriceRange);
                   setPage(1);
                 }}
-                className="text-xs font-medium text-blue-600 border border-blue-200 px-2.5 py-1 rounded-lg hover:bg-blue-50 transition"
+                className="text-xs font-semibold text-[#059669] border border-[#059669]/30 px-2.5 py-1 rounded-full hover:bg-[#D1FAE5] transition"
               >
                 Apply
               </button>
@@ -196,21 +196,21 @@ const Page = () => {
 
           {/* Categories Filter */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">
+            <h3 className="font-heading text-sm font-bold text-[#292524] mb-3">
               Categories
             </h3>
             <ul className="space-y-2">
               {isLoading ? (
-                <li className="text-sm text-gray-400">Loading...</li>
+                <li className="text-sm text-[#78716C]">Loading...</li>
               ) : (
                 data?.categories.map((category: any) => (
                   <li key={category}>
-                    <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:text-gray-800">
+                    <label className="flex items-center gap-2 text-sm text-[#78716C] cursor-pointer hover:text-[#292524]">
                       <input
                         type="checkbox"
                         checked={selectedCategories.includes(category)}
                         onChange={() => toggleCategory(category)}
-                        className="accent-blue-600 w-3.5 h-3.5"
+                        className="accent-[#059669] w-3.5 h-3.5"
                       />
                       {category}
                     </label>
@@ -222,19 +222,21 @@ const Page = () => {
 
           {/* Colors Filter */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">Colors</h3>
+            <h3 className="font-heading text-sm font-bold text-[#292524] mb-3">
+              Colors
+            </h3>
             <ul className="space-y-2">
               {colors.map((color) => (
                 <li key={color.name}>
-                  <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:text-gray-800">
+                  <label className="flex items-center gap-2 text-sm text-[#78716C] cursor-pointer hover:text-[#292524]">
                     <input
                       type="checkbox"
                       checked={selectedColors.includes(color.name)}
                       onChange={() => toggleColor(color.name)}
-                      className="accent-blue-600 w-3.5 h-3.5"
+                      className="accent-[#059669] w-3.5 h-3.5"
                     />
                     <span
-                      className="w-3 h-3 rounded-full border border-gray-300"
+                      className="w-3 h-3 rounded-full border border-[#E7E5E4]"
                       style={{ backgroundColor: color.hex }}
                     />
                     {color.name}
@@ -246,13 +248,15 @@ const Page = () => {
 
           {/* Sizes Filter */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">Sizes</h3>
+            <h3 className="font-heading text-sm font-bold text-[#292524] mb-3">
+              Sizes
+            </h3>
             <div className="flex flex-wrap gap-2">
               {sizes.map((size) => (
                 <button
                   key={size}
                   onClick={() => toggleSize(size)}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-medium border transition ${selectedSizes.includes(size) ? "bg-blue-600 text-white border-blue-600" : "bg-white text-gray-600 border-gray-300 hover:border-blue-400"}`}
+                  className={`px-2.5 py-1 rounded-full text-xs font-medium border transition ${selectedSizes.includes(size) ? "bg-[#059669] text-white border-[#059669]" : "bg-white text-[#78716C] border-[#E7E5E4] hover:border-[#059669]"}`}
                 >
                   {size}
                 </button>
@@ -268,7 +272,7 @@ const Page = () => {
               {Array.from({ length: 12 }).map((_, index) => (
                 <div
                   key={index}
-                  className="aspect-square rounded-xl bg-gray-100 animate-pulse"
+                  className="aspect-square rounded-2xl bg-[#E7E5E4]/50 animate-pulse"
                 ></div>
               ))}
             </div>
@@ -279,7 +283,7 @@ const Page = () => {
               ))}
             </div>
           ) : (
-            <div className="text-sm text-gray-500 text-center py-16">
+            <div className="text-sm text-[#78716C] text-center py-16">
               No products found.
             </div>
           )}
@@ -290,7 +294,7 @@ const Page = () => {
                 <button
                   key={i + 1}
                   onClick={() => setPage(i + 1)}
-                  className={`w-8 h-8 rounded-lg text-sm font-medium border transition ${page === i + 1 ? "bg-blue-600 text-white border-blue-600" : "bg-white text-gray-600 border-gray-300 hover:border-blue-400"}`}
+                  className={`w-8 h-8 rounded-full text-sm font-medium border transition ${page === i + 1 ? "bg-[#059669] text-white border-[#059669]" : "bg-white text-[#78716C] border-[#E7E5E4] hover:border-[#059669]"}`}
                 >
                   {i + 1}
                 </button>

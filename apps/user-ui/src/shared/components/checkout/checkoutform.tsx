@@ -64,23 +64,23 @@ const CheckoutForm = ({
     <div className="max-w-md mx-auto">
       <form
         onSubmit={handleSubmit}
-        className="bg-white border border-gray-200 rounded-xl p-6 space-y-5"
+        className="bg-white border border-neutral-200 rounded-2xl p-6 space-y-5"
       >
-        <h2 className="text-lg font-semibold text-gray-800">
+        <h2 className="text-lg font-semibold text-neutral-900">
           Secure Payment Checkout
         </h2>
 
         {/*Dynamic order summary*/}
-        <div className="space-y-2 border-y border-gray-100 py-4">
+        <div className="space-y-2 border-y border-neutral-100 py-4">
           {cartItems.map((item, index) => (
             <div
               key={index}
-              className="flex items-center justify-between text-sm text-gray-600"
+              className="flex items-center justify-between text-sm text-neutral-600"
             >
               <span>
                 {item.quantity} × {item.title}
               </span>
-              <span className="font-medium text-gray-800">
+              <span className="font-medium text-neutral-800">
                 ${(item.quantity * item.sale_price).toFixed(2)}
               </span>
             </div>
@@ -89,12 +89,12 @@ const CheckoutForm = ({
           {coupon &&
             typeof coupon.discountAmount === "number" &&
             coupon.discountAmount > 0 && (
-              <div className="flex items-center justify-between text-sm text-green-600">
+              <div className="flex items-center justify-between text-sm text-emerald-600">
                 <span>Discount</span>
                 <span>-${coupon.discountAmount.toFixed(2)}</span>
               </div>
             )}
-          <div className="flex items-center justify-between text-sm font-semibold text-gray-800 pt-2">
+          <div className="flex items-center justify-between text-sm font-semibold text-neutral-900 pt-2">
             <span>Total</span>
             <span>${(total - (coupon?.discountAmount || 0)).toFixed(2)}</span>
           </div>
@@ -105,25 +105,25 @@ const CheckoutForm = ({
         <button
           type="submit"
           disabled={!stripe || loading}
-          className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition"
+          className="w-full flex items-center justify-center gap-2 py-2.5 rounded-full text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 disabled:bg-neutral-400 disabled:cursor-not-allowed transition"
         >
           {loading && <Loader2 size={16} className="animate-spin" />}
           {loading ? "Processing..." : "Pay Now"}
         </button>
 
         {errorMsg && (
-          <div className="flex items-center gap-2 text-sm text-red-500 bg-red-50 px-3 py-2 rounded-lg">
+          <div className="flex items-center gap-2 text-sm text-rose-600 bg-rose-50 px-3 py-2 rounded-xl">
             <XCircle size={16} />
             {errorMsg}
           </div>
         )}
         {status === "success" && (
-          <div className="text-sm text-green-600 bg-green-50 px-3 py-2 rounded-lg">
+          <div className="text-sm text-emerald-700 bg-emerald-50 px-3 py-2 rounded-xl">
             Payment Successful! Thank you for your purchase.
           </div>
         )}
         {status === "failed" && (
-          <div className="flex items-center gap-2 text-sm text-red-500 bg-red-50 px-3 py-2 rounded-lg">
+          <div className="flex items-center gap-2 text-sm text-rose-600 bg-rose-50 px-3 py-2 rounded-xl">
             <XCircle size={16} />
             Payment Failed. Please try again.
           </div>

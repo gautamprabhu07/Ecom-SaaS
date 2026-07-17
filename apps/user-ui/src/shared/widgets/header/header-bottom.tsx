@@ -28,13 +28,13 @@ const HeaderBottom = () => {
 
   return (
     <div
-      className={`bg-gray-700 text-white w-full ${isSticky ? "fixed top-0 left-0 z-50 shadow-lg" : ""}`}
+      className={`bg-neutral-800 text-white w-full border-t border-neutral-700 ${isSticky ? "fixed top-0 left-0 z-50 shadow-lg shadow-black/20" : ""}`}
     >
-      <div className="container mx-auto px-4 py-2 flex items-center gap-6">
+      <div className="container mx-auto px-4 py-2.5 flex items-center gap-6">
         {/* All Categories Dropdown */}
         <div className="relative shrink-0">
           <div
-            className="flex items-center gap-2 cursor-pointer hover:text-amber-400 transition"
+            className="flex items-center gap-2 cursor-pointer hover:text-emerald-400 transition"
             onClick={() => setShow(!show)}
           >
             <AlignLeft className="w-5 h-5" />
@@ -45,8 +45,10 @@ const HeaderBottom = () => {
           </div>
 
           {show && (
-            <div className="absolute top-full left-0 mt-1 bg-gray-800 rounded-lg shadow-xl w-48 z-50 py-2">
-              <ul className="text-sm text-gray-200">{/* category items */}</ul>
+            <div className="absolute top-full left-0 mt-2 bg-neutral-900 rounded-xl shadow-xl shadow-black/30 w-48 z-50 py-2 border border-neutral-700">
+              <ul className="text-sm text-neutral-200">
+                {/* category items */}
+              </ul>
             </div>
           )}
         </div>
@@ -57,7 +59,7 @@ const HeaderBottom = () => {
             <Link
               key={index}
               href={i.href}
-              className="text-sm font-medium hover:text-amber-400 transition"
+              className="text-sm font-medium hover:text-emerald-400 transition"
             >
               {i.title}
             </Link>
@@ -72,7 +74,7 @@ const HeaderBottom = () => {
               <>
                 <Link
                   href="/profile"
-                  className="flex flex-col items-center gap-0.5 hover:text-amber-400 transition"
+                  className="flex flex-col items-center gap-0.5 hover:text-emerald-400 transition"
                 >
                   <CircleUserRound className=" h-5" />
                 </Link>
@@ -87,7 +89,7 @@ const HeaderBottom = () => {
               <>
                 <Link
                   href="/login"
-                  className="flex flex-col items-center gap-0.5 hover:text-amber-400 transition"
+                  className="flex flex-col items-center gap-0.5 hover:text-emerald-400 transition"
                 >
                   <CircleUserRound className="w-5 h-5" />
                   <span className="text-xs leading-none">
@@ -100,11 +102,11 @@ const HeaderBottom = () => {
             {/* Wishlist */}
             <Link
               href="/wishlist"
-              className="relative flex flex-col items-center gap-0.5 hover:text-amber-400 transition"
+              className="relative flex flex-col items-center gap-0.5 hover:text-emerald-400 transition"
             >
               <Heart className="w-5 h-5" />
               <span className="text-xs leading-none">Wishlist</span>
-              <span className="absolute -top-1.5 -right-2 bg-blue-500 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full">
+              <span className="absolute -top-1.5 -right-2 bg-emerald-500 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full">
                 {wishlist.length}
               </span>
             </Link>
@@ -112,11 +114,11 @@ const HeaderBottom = () => {
             {/* Cart */}
             <Link
               href="/cart"
-              className="relative flex flex-col items-center gap-0.5 hover:text-amber-400 transition"
+              className="relative flex flex-col items-center gap-0.5 hover:text-emerald-400 transition"
             >
               <ShoppingCartIcon className="w-5 h-5" />
               <span className="text-xs leading-none">Cart</span>
-              <span className="absolute -top-1.5 -right-2 bg-blue-500 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full">
+              <span className="absolute -top-1.5 -right-2 bg-emerald-500 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full">
                 {cart?.length}
               </span>
             </Link>

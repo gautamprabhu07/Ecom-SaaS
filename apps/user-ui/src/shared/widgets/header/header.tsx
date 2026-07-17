@@ -7,6 +7,7 @@ import HeaderBottom from "./header-bottom";
 import useUser from "../../../hooks/useUser";
 import { useStore } from "apps/user-ui/src/store";
 import axiosInstance from "../../../utils/axiosInstance";
+import Image from "next/image";
 
 const Header = () => {
   const { user, isLoading } = useUser();
@@ -33,11 +34,23 @@ const Header = () => {
   };
 
   return (
-    <div className="bg-gray-800 text-white w-full">
+    <div className="bg-neutral-900 text-white w-full">
       <div className="container mx-auto px-4 py-3 flex items-center gap-6">
         {/* Logo */}
-        <Link href="/" className="text-xl font-bold text-amber-400 shrink-0">
-          Eshop
+        <Link
+          href="/"
+          className="flex flex-col items-center justify-center shrink-0"
+        >
+          <Image
+            src="/logoeshop.png"
+            alt="Eshop Logo"
+            width={52}
+            height={52}
+            priority
+          />
+          <span className="mt-1 text-[10px] font-semibold tracking-[0.25em] text-emerald-400 uppercase">
+            OUTSOURCE
+          </span>
         </Link>
 
         {/* Search */}
@@ -47,11 +60,11 @@ const Header = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search products..."
-            className="w-full pl-4 pr-10 py-2 text-sm text-gray-800 rounded-lg border-2 border-blue-500 focus:outline-none"
+            className="w-full pl-5 pr-12 py-2.5 text-sm text-neutral-800 rounded-full border  border-emerald-50 focus:outline-none focus:ring-2 focus:ring-emerald-400"
           />
           <div
             onClick={handleSearchClick}
-            className="absolute right-0 h-full px-3 flex items-center justify-center bg-blue-500 rounded-r-lg cursor-pointer"
+            className="absolute right-1 h-[calc(100%-8px)] top-1 aspect-square flex items-center justify-center bg-emerald-500 hover:bg-emerald-600 transition rounded-full cursor-pointer"
           >
             <Search className="w-4 h-4 text-white" />
           </div>
@@ -64,7 +77,7 @@ const Header = () => {
             <>
               <Link
                 href="/profile"
-                className="flex flex-col items-center gap-0.5 hover:text-amber-400 transition"
+                className="flex flex-col items-center gap-0.5 hover:text-emerald-400 transition"
               >
                 <CircleUserRound className=" h-5" />
               </Link>
@@ -79,7 +92,7 @@ const Header = () => {
             <>
               <Link
                 href="/login"
-                className="flex flex-col items-center gap-0.5 hover:text-amber-400 transition"
+                className="flex flex-col items-center gap-0.5 hover:text-emerald-400 transition"
               >
                 <CircleUserRound className="w-5 h-5" />
                 <span className="text-xs leading-none">
@@ -92,11 +105,11 @@ const Header = () => {
           {/* Wishlist */}
           <Link
             href="/wishlist"
-            className="relative flex flex-col items-center gap-0.5 hover:text-amber-400 transition"
+            className="relative flex flex-col items-center gap-0.5 hover:text-emerald-400 transition"
           >
             <Heart className="w-5 h-5" />
             <span className="text-xs leading-none">Wishlist</span>
-            <span className="absolute -top-1.5 -right-2 bg-blue-500 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full">
+            <span className="absolute -top-1.5 -right-2 bg-emerald-500 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full">
               {wishlist.length}
             </span>
           </Link>
@@ -104,12 +117,12 @@ const Header = () => {
           {/* Cart */}
           <Link
             href="/cart"
-            className="relative flex flex-col items-center gap-0.5 hover:text-amber-400 transition"
+            className="relative flex flex-col items-center gap-0.5 hover:text-emerald-400 transition"
           >
             <ShoppingCartIcon className="w-5 h-5" />
-            <span className="text-xs leading-none">{cart?.length}</span>
-            <span className="absolute -top-1.5 -right-2 bg-blue-500 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full">
-              9
+            <span className="text-xs leading-none">Cart</span>
+            <span className="absolute -top-1.5 -right-2 bg-emerald-500 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full">
+              {cart?.length}
             </span>
           </Link>
         </div>
