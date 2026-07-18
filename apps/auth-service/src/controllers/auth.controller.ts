@@ -607,3 +607,4 @@ export const getAdmin = async (req: Request, res: Response, next: NextFunction) 
       return next(error);
    }
 };
+
