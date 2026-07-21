@@ -1,3 +1,5 @@
+//Path: apps/seller-ui/src/app/%28routes%29/order/%5Bid%5D/page.tsx
+//order details page for seller
 "use client";
 import React, { useEffect, useState } from "react";
 import { ArrowLeft, Loader2, MapPin, Tag } from "lucide-react";

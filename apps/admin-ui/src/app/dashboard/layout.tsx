@@ -4,18 +4,11 @@ import SidebarWrapper from "apps/admin-ui/src/shared/components/sidebar/index";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div>
-      {/* sidebar */}
-      <aside>
-        <div>
-          <SidebarWrapper />
-        </div>
+    <div className="flex min-h-screen bg-[#FAF8F3]">
+      <aside className="w-[260px] shrink-0">
+        <SidebarWrapper />
       </aside>
-
-      {/* main content */}
-      <main>
-        <div>{children}</div>
-      </main>
+      <main className="flex-1 min-w-0 p-6">{children}</main>
     </div>
   );
 };

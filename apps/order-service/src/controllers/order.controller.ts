@@ -462,6 +462,8 @@ export const getOrderDetails = async(
          where:{id:orderId},
          include:{
             items:true,
+            user: true,
+           shops: true,
          }
       });
 
@@ -655,7 +657,7 @@ export const getAdminOrders = async(
       const orders= await prisma.orders.findMany({
          include:{
             user: true,
-            shop: true,
+            shops: true,
          },
          orderBy:{createdAt:'desc'},
       });

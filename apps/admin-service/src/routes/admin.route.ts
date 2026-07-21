@@ -1,3 +1,4 @@
+//Path: apps/admin-service/src/routes/admin.route.ts
 import express, {Router} from 'express';
 import { getAllProducts, getAllEvents, getAllAdmins, getAllCustomizations, getAllSellers, getAllUsers, addNewAdmin} from '../controllers/admin.controller';
 import isAuthenticated from '@packages/middleware/isAuthenticated';

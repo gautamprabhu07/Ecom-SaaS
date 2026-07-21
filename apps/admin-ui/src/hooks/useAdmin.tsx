@@ -1,3 +1,4 @@
+//path: apps/admin-ui/src/hooks/useAdmin.tsx
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";

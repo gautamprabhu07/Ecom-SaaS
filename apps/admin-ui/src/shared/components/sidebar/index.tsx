@@ -4,12 +4,24 @@ import React, { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import useSidebar from "../../../hooks/useSidebar";
 import useAdmin from "../../../hooks/useAdmin";
-import Box from "../box";
 import { Sidebar } from "./sidebar.styles";
 import Link from "next/link";
 import SidebarItem from "./sidebar.item";
 import SidebarMenu from "./sidebarmenu";
-import { ListOrdered } from "lucide-react";
+import {
+  LayoutDashboard,
+  ListOrdered,
+  Wallet,
+  Package,
+  CalendarDays,
+  Users,
+  Store,
+  FileText,
+  Settings,
+  Bell,
+  Palette,
+  LogOut,
+} from "lucide-react";
 import Image from "next/image";
 
 const SidebarWrapper = () => {
@@ -21,50 +33,29 @@ const SidebarWrapper = () => {
     setActiveSidebar(pathName);
   }, [pathName, setActiveSidebar]);
 
-  const getIconColor = (route: string) => {
-    return activeSidebar === route ? "text-blue-500" : "text-gray-500";
-  };
   return (
-    <Box
-      css={{
-        width: "250px",
-        height: "100vh",
-        backgroundColor: "#f8f9fa",
-        padding: "20px",
-        boxShadow: "2px 0 5px rgba(0, 0, 0, 0.1)",
-        overflowY: "scroll",
-      }}
-    >
+    <div className="w-[260px] h-screen bg-white border-r border-[#E7E5E4] overflow-y-auto">
       <Sidebar.Header>
-        <Box>
-          <Link href="/">
-            <Image
-              src="/logoeshop.png"
-              alt="Eshop Logo"
-              width={52}
-              height={52}
-              priority
-            />
-            <Box>
-              <h3>{admin?.name}</h3>
-              <h5>{admin?.email}</h5>
-            </Box>
-          </Link>
-        </Box>
+        <Link href="/" className="flex items-center gap-3">
+          <Image
+            src="/logoeshop.png"
+            alt="Eshop Logo"
+            width={40}
+            height={40}
+            priority
+          />
+          <div>
+            <h3 className="font-heading text-sm font-bold text-[#292524]">
+              {admin?.name}
+            </h3>
+            <h5 className="text-xs text-[#78716C]">{admin?.email}</h5>
+          </div>
+        </Link>
       </Sidebar.Header>
       <div>
         <Sidebar.Body>
           <SidebarItem
-            icon={
-              <svg
-                className={getIconColor("/dashboard")}
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-              ></svg>
-            }
+            icon={<LayoutDashboard size={22} color="currentColor" />}
             title="Dashboard"
             isActive={activeSidebar === "/dashboard"}
             href="/dashboard"
@@ -76,92 +67,80 @@ const SidebarWrapper = () => {
                 isActive={activeSidebar === "/dashboard/orders"}
                 title="Orders"
                 href="/dashboard/orders"
-                icon={
-                  <ListOrdered className={getIconColor("/dashboard/orders")} />
-                }
+                icon={<ListOrdered size={22} color="currentColor" />}
               />
               <SidebarItem
                 isActive={activeSidebar === "/dashboard/payments"}
                 title="Payments"
                 href="/dashboard/payments"
-                icon={/*Fill in an appropriate icon for Payments*/}
+                icon={<Wallet size={22} color="currentColor" />}
               />
-              {/*Products*/}
               <SidebarItem
                 isActive={activeSidebar === "/dashboard/products"}
                 title="Products"
                 href="/dashboard/products"
-                icon={/*Fill in an appropriate icon for Products*/}
+                icon={<Package size={22} color="currentColor" />}
               />
-
-              {/*Events*/}
               <SidebarItem
                 isActive={activeSidebar === "/dashboard/events"}
                 title="Events"
                 href="/dashboard/events"
-                icon={/*Fill in an appropriate icon for Events*/}
+                icon={<CalendarDays size={22} color="currentColor" />}
               />
-              {/*Users*/}
               <SidebarItem
                 isActive={activeSidebar === "/dashboard/users"}
                 title="Users"
                 href="/dashboard/users"
-                icon={/*Fill in an appropriate icon for Users*/}
+                icon={<Users size={22} color="currentColor" />}
               />
-              {/* Sellers */}
               <SidebarItem
                 isActive={activeSidebar === "/dashboard/sellers"}
                 title="Sellers"
                 href="/dashboard/sellers"
-                icon={/*Fill in an appropriate icon for Sellers*/}
+                icon={<Store size={22} color="currentColor" />}
               />
             </SidebarMenu>
 
-            <SidebarMenu title="COntrollers">
-              {/* Loggers */}
+            <SidebarMenu title="Controllers">
               <SidebarItem
                 isActive={activeSidebar === "/dashboard/loggers"}
                 title="Loggers"
                 href="/dashboard/loggers"
-                icon={/*Fill in an appropriate icon for Loggers*/}
+                icon={<FileText size={22} color="currentColor" />}
               />
-              {/* Management */}
               <SidebarItem
                 isActive={activeSidebar === "/dashboard/management"}
                 title="Management"
                 href="/dashboard/management"
-                icon={/*Fill in an appropriate icon for Management*/}
+                icon={<Settings size={22} color="currentColor" />}
               />
-              {/* Notification */}
               <SidebarItem
                 isActive={activeSidebar === "/dashboard/notifications"}
                 title="Notifications"
                 href="/dashboard/notifications"
-                icon={/*Fill in an appropriate icon for Notifications*/}
+                icon={<Bell size={22} color="currentColor" />}
               />
             </SidebarMenu>
             <SidebarMenu title="Customization">
-              {/* Customization */}
               <SidebarItem
                 isActive={activeSidebar === "/dashboard/customization"}
                 title="Customization"
                 href="/dashboard/customization"
-                icon={/*Fill in an appropriate icon for Customization*/}
+                icon={<Palette size={22} color="currentColor" />}
               />
             </SidebarMenu>
             <SidebarMenu title="Extras">
-              {/* Logout */}
               <SidebarItem
                 isActive={activeSidebar === "/logout"}
                 title="Logout"
                 href="/logout"
-                icon={/*Fill in an appropriate icon for Logout*/}
+                icon={<LogOut size={22} color="currentColor" />}
               />
             </SidebarMenu>
           </div>
         </Sidebar.Body>
       </div>
-    </Box>
+    </div>
   );
 };
 

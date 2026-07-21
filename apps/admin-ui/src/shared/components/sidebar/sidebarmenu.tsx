@@ -1,3 +1,5 @@
+//Path: apps/admin-ui/src/shared/components/sidebar/sidebarmenu.tsx
+
 interface Props {
   title: string;
   children: React.ReactNode;
@@ -5,9 +7,11 @@ interface Props {
 
 const SidebarMenu = ({ title, children }: Props) => {
   return (
-    <div>
-      <h3>{title}</h3>
-      {children}
+    <div className="mt-6">
+      <h3 className="px-5 mb-2 text-xs font-semibold uppercase tracking-wide text-[#78716C]">
+        {title}
+      </h3>
+      <div className="flex flex-col gap-1">{children}</div>
     </div>
   );
 };

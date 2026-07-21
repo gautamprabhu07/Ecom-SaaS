@@ -1,3 +1,4 @@
+//Path: apps/admin-service/src/controllers/admin.controller.ts
 import { Request, Response, NextFunction } from "express";
 import prisma from "@packages/libs/prisma";
 import { ValidationError } from "@packages/error-handler";
@@ -15,7 +16,10 @@ export const getAllProducts = async (req: Request, res: Response, next: NextFunc
       const [products, totalProducts] = await Promise.all([
          prisma.products.findMany({
             where: {
-               starting_date: null,
+               OR: [
+                 { starting_date: { equals: null } },
+                 { starting_date: { isSet: false } },
+              ],
             },
             skip,
             take: limit,
@@ -29,7 +33,7 @@ export const getAllProducts = async (req: Request, res: Response, next: NextFunc
                sale_price: true,
                stock: true,
                createdAt: true,
-               ratings: true,
+               rating: true,
                category: true,
                images: {
                   select: {
@@ -197,7 +201,7 @@ export const getAllSellers = async (req: Request, res: Response, next: NextFunct
       const skip = (page - 1) * limit;
 
       const [sellers, totalSellers] = await Promise.all([
-         prisma.users.findMany({
+         prisma.sellers.findMany({
             skip,
             take: limit,
             orderBy: {

@@ -1,3 +1,5 @@
+//Path: apps/admin-ui/src/app/dashboard/orders/page.tsx
+//Orders table for admin
 "use client";
 import React, { useMemo, useState } from "react";
 import {
@@ -34,7 +36,7 @@ const OrdersTable = () => {
   const [globalFilter, setGlobalFilter] = useState("");
 
   const { data: orders = [], isLoading } = useQuery({
-    queryKey: ["seller-orders"],
+    queryKey: ["admin-orders"],
     queryFn: fetchOrders,
     staleTime: 1000 * 60 * 5,
   });
@@ -51,11 +53,11 @@ const OrdersTable = () => {
         ),
       },
       {
-        accessorKey: "shop.name",
+        accessorKey: "shops.name",
         header: "Shop",
         cell: ({ row }: any) => (
           <span className="text-gray-800">
-            {row.original.shop?.name ?? "Unknown shop"}
+            {row.original.shops?.name ?? "Unknown shop"}
           </span>
         ),
       },
@@ -79,7 +81,7 @@ const OrdersTable = () => {
       },
       {
         accessorKey: "status",
-        header: "Payment Status",
+        header: "Status",
         cell: ({ row }: any) => (
           <span
             className={`text-xs font-medium px-2 py-0.5 rounded-full ${statusBadgeClass(row.original.status)}`}
