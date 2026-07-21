@@ -1,3 +1,4 @@
+//Path: apps/user-ui/src/store/authStore.ts
 import {create} from "zustand";
 
 type AuthState = {
@@ -6,6 +7,6 @@ type AuthState = {
 };
 
 export const useAuthStore = create<AuthState>((set) => ({
-  isLoggedIn: true,
+  isLoggedIn: false,
   setLoggedIn: (value: boolean) => set({isLoggedIn: value}),
 }));

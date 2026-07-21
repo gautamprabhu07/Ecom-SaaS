@@ -12,7 +12,7 @@ interface BufferedMessage {
    createdAt: string;
 }
 
-const TOPIC = "chat-messages";
+const TOPIC = "chat_new_message";
 const GROUP_ID = "chatting-message-db-writer";
 const BATCH_INTERVAL_MS = 3000; // 3 seconds
 

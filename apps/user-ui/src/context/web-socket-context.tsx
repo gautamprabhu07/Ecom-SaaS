@@ -26,9 +26,14 @@ export const WebSocketProvider = ({
   useEffect(() => {
     if (!user?.id) return;
 
-    const ws = new WebSocket(
-      `${process.env.NEXT_PUBLIC_CHATTING_WEBSOCKET_URL}`,
-    );
+    let ws: WebSocket;
+    try {
+      ws = new WebSocket(`${process.env.NEXT_PUBLIC_CHATTING_WEBSOCKET_URL}`);
+    } catch (err) {
+      console.error("Failed to create WebSocket:", err);
+      return;
+    }
+
     wsRef.current = ws;
 
     ws.onopen = () => {
@@ -37,14 +42,22 @@ export const WebSocketProvider = ({
     };
 
     ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      if (data.type === "UNSEEN_COUNT_UPDATE") {
-        const { conversationId, count } = data.payload;
-        setUnreadCounts((prev) => ({
-          ...prev,
-          [conversationId]: count,
-        }));
+      try {
+        const data = JSON.parse(event.data);
+        if (data.type === "UNSEEN_COUNT_UPDATE") {
+          const { conversationId, count } = data.payload;
+          setUnreadCounts((prev) => ({
+            ...prev,
+            [conversationId]: count,
+          }));
+        }
+      } catch (err) {
+        console.error("Failed to parse WebSocket message:", err);
       }
+    };
+
+    ws.onerror = (err) => {
+      console.error("WebSocket error:", err);
     };
 
     return () => {
@@ -53,6 +66,8 @@ export const WebSocketProvider = ({
     };
   }, [user?.id]);
 
+  // Always render children immediately — chat connectivity is
+  // supplementary and must never block the rest of the app.
   return (
     <WebSocketContext.Provider value={{ ws: wsRef.current, unreadCounts }}>
       {children}

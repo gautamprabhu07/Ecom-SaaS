@@ -9,6 +9,7 @@ import { useStore } from "apps/user-ui/src/store";
 import useLocationTracking from "apps/user-ui/src/hooks/useLocationTracking";
 import useDeviceTracking from "apps/user-ui/src/hooks/useDeviceTracking";
 import useUser from "apps/user-ui/src/hooks/useUser";
+import axiosInstance from "apps/user-ui/src/utils/axiosInstance";
 
 const ProductDetailsCard = ({
   data,
@@ -19,6 +20,7 @@ const ProductDetailsCard = ({
 }) => {
   const [activeImage, setActiveImage] = useState(0);
   const [isSelected, setIsSelected] = useState(data?.colors?.[0] || "");
+  const [isLoading, setIsLoading] = useState(false);
   const [isSizeSelected, setIsSizeSelected] = useState(data?.sizes?.[0] || "");
   const [quantity, setQuantity] = useState(1);
   const isInCart = useStore((state: any) =>
@@ -38,6 +40,23 @@ const ProductDetailsCard = ({
   const estimatedDelivery = new Date();
   estimatedDelivery.setDate(estimatedDelivery.getDate() + 5);
   const router = useRouter();
+
+  const handleChat = async () => {
+    if(isLoading) return;
+    setIsLoading(true);
+    try{
+      const res = await axiosInstance.post("/chatting/api/create-user-conversationGroup", {
+        sellerId: data?.Shop?.sellerId,
+      });
+      router.push(`/inbox?conversationId=${res.data.conversation.id}`);
+    }
+    catch(error){
+      console.error("Error initiating chat:", error);
+    }
+    finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div
@@ -115,7 +134,7 @@ const ProductDetailsCard = ({
               </div>
               <Ratings rating={data?.Shop?.ratings} />
               <button
-                onClick={() => router.push(`/inbox?shopId=${data?.Shop?.id}`)}
+                onClick={() => handleChat()}
                 className="ml-auto text-xs border border-emerald-500 text-emerald-600 px-3 py-1 rounded-full hover:bg-emerald-50 transition"
               >
                 Chat with seller

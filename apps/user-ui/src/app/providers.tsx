@@ -21,6 +21,7 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
     <QueryClientProvider client={queryClient}>
       <ProvidersWithWebSocket>{children}</ProvidersWithWebSocket>
+      {/* {children} */}
     </QueryClientProvider>
   );
 };
@@ -30,16 +31,15 @@ const ProvidersWithWebSocket = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { user, isLoading } = useUser();
-
-  if (isLoading) {
-    return null;
-  }
+  const { user } = useUser();
 
   return (
     <>
-      {user && <WebSocketProvider user={user}>{children}</WebSocketProvider>}
-      {!user && children}
+      {user ? (
+        <WebSocketProvider user={user}>{children}</WebSocketProvider>
+      ) : (
+        children
+      )}
     </>
   );
 };

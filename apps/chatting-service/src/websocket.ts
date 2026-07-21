@@ -106,7 +106,7 @@ export async function createWebSocketServer(server: HttpServer) {
             }
 
             await producer.send({
-               topic: 'chat-messages',
+               topic: 'chat_new_message',
                messages: [
                   {
                      key: conversationId,
@@ -114,7 +114,7 @@ export async function createWebSocketServer(server: HttpServer) {
                   },
                ],
             });
-            console.log(`Message sent to Kafka topic 'chat-messages' for conversation ${conversationId}`);
+            console.log(`Message sent to Kafka topic 'chat_new_message' for conversation ${conversationId}`);
          } catch (error) {
             console.error('Error processing WebSocket message:', error);
          }
