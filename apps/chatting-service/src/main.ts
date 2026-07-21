@@ -1,4 +1,4 @@
-
+//Path: apps/chatting-service/src/main.ts
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import { startConsumer } from './chat-message.consumer';

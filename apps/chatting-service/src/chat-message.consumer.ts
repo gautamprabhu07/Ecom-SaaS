@@ -1,3 +1,4 @@
+//Path: apps/chatting-service/src/chat-message.consumer.ts
 import {kafka} from '@packages/utils/kafka';
 import prisma from '@packages/libs/prisma';
 import {Consumer, EachMessagePayload} from 'kafkajs';
@@ -11,7 +12,7 @@ interface BufferedMessage {
    createdAt: string;
 }
 
-const TOPIC = "chat.new_message";
+const TOPIC = "chat-messages";
 const GROUP_ID = "chatting-message-db-writer";
 const BATCH_INTERVAL_MS = 3000; // 3 seconds
 

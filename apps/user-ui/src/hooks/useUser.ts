@@ -11,7 +11,8 @@ const fetchUser = async (isLoggedIn: boolean) => {
 };
 
 const useUser = () => {
-  const { isLoggedIn, setLoggedIn } = useAuthStore();
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+  const setLoggedIn = useAuthStore((state) => state.setLoggedIn);
 
   const { data: user, isPending, isError } = useQuery({
     queryKey: ["user"],
@@ -22,8 +23,13 @@ const useUser = () => {
 
   useEffect(() => {
     if (isPending) return;
-    setLoggedIn(!isError && !!user);
-  }, [isPending, isError, user, setLoggedIn]);
+
+    const nextLoggedIn = !isError && !!user;
+
+    if (isLoggedIn !== nextLoggedIn) {
+      setLoggedIn(nextLoggedIn);
+    }
+  }, [isPending, isError, user, isLoggedIn, setLoggedIn]);
 
   return { user: user as any, isLoading: isPending, isError };
 };
