@@ -1,4 +1,4 @@
-//Path: apps/user-ui/src/context/web-socket-context.tsx
+//Path: apps/seller-ui/src/context/web-socket-context.tsx
 "use client";
 import { useEffect, useRef, useState, createContext, useContext } from "react";
 
@@ -14,17 +14,17 @@ const WebSocketContext = createContext<WebSocketContextValue>({
 
 export const WebSocketProvider = ({
   children,
-  user,
+  seller,
 }: {
   children: React.ReactNode;
-  user: any;
+  seller: any;
 }) => {
   const wsRef = useRef<WebSocket | null>(null);
   const [, forceRender] = useState(0);
   const [unreadCounts, setUnreadCounts] = useState<Record<string, number>>({});
 
   useEffect(() => {
-    if (!user?.id) return;
+    if (!seller?.id) return;
 
     let ws: WebSocket;
     try {
@@ -37,7 +37,7 @@ export const WebSocketProvider = ({
     wsRef.current = ws;
 
     ws.onopen = () => {
-      ws.send(`user_${user.id}`);
+      ws.send(`seller_${seller.id}`);
       forceRender((n) => n + 1);
     };
 
@@ -76,7 +76,7 @@ export const WebSocketProvider = ({
       }
       wsRef.current = null;
     };
-  }, [user?.id]);
+  }, [seller?.id]);
 
   // Always render children immediately — chat connectivity is
   // supplementary and must never block the rest of the app.

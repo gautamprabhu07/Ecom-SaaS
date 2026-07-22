@@ -31,7 +31,7 @@ const Page = () => {
       const response = await axiosInstance.get(
         "/product/api/get-all-products?page=1&limit=10&type=latest",
       );
-      return response.data.products;
+      return response.data.products ?? [];
     },
     staleTime: 1000 * 60 * 2,
   });
@@ -39,8 +39,8 @@ const Page = () => {
   const { data: shops, isLoading: shopLoading } = useQuery({
     queryKey: ["shops"],
     queryFn: async () => {
-      const res = await axiosInstance.get("/products/api/top-shops");
-      return res.data.shops;
+      const res = await axiosInstance.get("/product/api/top-shops");
+      return res.data.shops ?? [];
     },
     staleTime: 1000 * 60 * 2,
   });
@@ -49,9 +49,9 @@ const Page = () => {
     queryKey: ["offers"],
     queryFn: async () => {
       const res = await axiosInstance.get(
-        "/products/api/get-all-events?page=1&limit=10",
+        "/product/api/get-all-events?page=1&limit=10",
       );
-      return res.data.events;
+      return res.data.events ?? [];
     },
     staleTime: 1000 * 60 * 2,
   });
