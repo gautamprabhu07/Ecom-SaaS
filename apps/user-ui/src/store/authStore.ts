@@ -8,5 +8,5 @@ type AuthState = {
 
 export const useAuthStore = create<AuthState>((set) => ({
   isLoggedIn: false,
-  setLoggedIn: (value: boolean) => set({isLoggedIn: value}),
+  setLoggedIn: (value: boolean) => set((state) => (state.isLoggedIn === value ? state : { isLoggedIn: value })),
 }));

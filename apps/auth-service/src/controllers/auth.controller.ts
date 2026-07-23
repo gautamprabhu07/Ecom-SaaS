@@ -162,6 +162,11 @@ export const refreshToken = async (req: any, res: Response, next: NextFunction) 
 export const getUser = async (req: Request, res: Response, next: NextFunction) => {
    try {
       const user=req.user;
+      await sendLog({
+         type: "info",
+         message: `User details fetched for user ID: ${user?.id}`,
+         source: "auth-service",
+      });
       res.status(200).json({success:true, user});
    }
    catch (error) {

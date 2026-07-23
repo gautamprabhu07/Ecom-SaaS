@@ -1,7 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "../utils/axiosInstance";
+import { isProtected } from "../utils/protected";
 const fetchSeller = async () => {
-  const response = await axiosInstance.get("/api/logged-in-seller");
+  const response = await axiosInstance.get(
+    "/api/logged-in-seller",
+    isProtected,
+  );
   return response.data.seller;
 };
 
@@ -15,7 +19,7 @@ const useSeller = () => {
     queryKey: ["seller"],
     queryFn: fetchSeller,
     staleTime: 5 * 60 * 1000, // 5 minutes
-    retry: 1, // Retry once on failure
+    retry: false,
   });
   return { seller, isLoading, isError, refetch };
 };

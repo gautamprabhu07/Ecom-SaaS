@@ -1,20 +1,27 @@
-// Path: packages/utils/logs/index.ts
+import {kafka} from "../kafka";
 
-type LogType = "success" | "error" | "info" | "warning";
+const producer = kafka.producer();
 
-interface LogPayload {
-  type: LogType;
+export async function sendLog({
+  type = 'info',
+  message,
+  source = 'unknown-service',
+}: {
+  type?: 'info' | 'error' | 'warning' | "success" | "debug";
   message: string;
-  source: string;
+  source?: string;
+}) {
+  const logPayload = {
+    type,
+    message,
+    source,
+    timestamp: new Date().toISOString(),
+  };
+
+  await producer.connect();
+  await producer.send({
+    topic: 'logs',
+    messages: [{ value: JSON.stringify(logPayload) }],
+  });
+  await producer.disconnect();
 }
-
-export const sendLog = ({ type, message, source }: LogPayload) => {
-  const timestamp = new Date().toISOString();
-  const prefix = `[${timestamp}] [${source}] [${type.toUpperCase()}]`;
-
-  if (type === "error") {
-    console.error(`${prefix} ${message}`);
-  } else {
-    console.log(`${prefix} ${message}`);
-  }
-};

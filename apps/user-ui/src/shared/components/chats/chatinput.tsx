@@ -1,8 +1,8 @@
-//Path: apps/user-ui/src/shared/components/chats/chatinput.tsx
+//Path: apps/user-ui/src/shared/components/chats/chatinput.tsx  (same for apps/seller-ui/src/shared/components/chats/chatinput.tsx)
 import React, { useState } from "react";
 import dynamic from "next/dynamic";
 import { PickerProps } from "emoji-picker-react";
-import { ImageIcon, Smile } from "lucide-react";
+import { ImageIcon, Smile, Send } from "lucide-react";
 
 const EmojiPicker = dynamic(
   () =>
@@ -36,10 +36,10 @@ const ChatInput = ({
   };
 
   return (
-    <div>
-      <form onSubmit={onSendMessage}>
-        <label>
-          <ImageIcon />
+    <div className="relative border-t border-neutral-100 px-4 py-3">
+      <form onSubmit={onSendMessage} className="flex items-center gap-2">
+        <label className="w-9 h-9 flex items-center justify-center rounded-full text-neutral-500 hover:bg-neutral-100 cursor-pointer transition shrink-0">
+          <ImageIcon size={18} />
           <input
             type="file"
             accept="image/*"
@@ -49,12 +49,16 @@ const ChatInput = ({
         </label>
 
         {/* Emoji picker toggle */}
-        <div>
-          <button type="button" onClick={() => setShowEmoji((prev) => !prev)}>
-            <Smile />
+        <div className="relative shrink-0">
+          <button
+            type="button"
+            onClick={() => setShowEmoji((prev) => !prev)}
+            className="w-9 h-9 flex items-center justify-center rounded-full text-neutral-500 hover:bg-neutral-100 transition"
+          >
+            <Smile size={18} />
           </button>
           {showEmoji && (
-            <div>
+            <div className="absolute bottom-12 left-0 z-10">
               <EmojiPicker onEmojiClick={handleEmojiClick} />
             </div>
           )}
@@ -66,8 +70,14 @@ const ChatInput = ({
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder="Type a message..."
+          className="flex-1 border border-neutral-300 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
         />
-        <button type="submit">Send</button>
+        <button
+          type="submit"
+          className="w-9 h-9 flex items-center justify-center bg-emerald-600 hover:bg-emerald-700 text-white rounded-full transition shrink-0"
+        >
+          <Send size={16} />
+        </button>
       </form>
     </div>
   );

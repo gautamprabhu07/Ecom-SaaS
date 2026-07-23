@@ -12,7 +12,7 @@ import ChatInput from "../../../../shared/components/chats/chatinput";
 
 const Page = () => {
   const searchParams = useSearchParams();
-  const { seller, isLoading: sellerLoading } = useSeller();
+  const { seller } = useSeller();
   const router = useRouter();
   const messageContainerRef = useRef<HTMLDivElement | null>(null);
   const scrollAnchorRef = useRef<HTMLDivElement | null>(null);
@@ -24,7 +24,7 @@ const Page = () => {
   const [hasMore, setHasMore] = useState(false);
   const [page, setPage] = useState(1);
   const conversationId = searchParams.get("conversationId");
-  const { ws, unreadCounts } = useWebSocket();
+  const { ws } = useWebSocket();
 
   const { data: messages = [] } = useQuery({
     queryKey: ["seller-messages", conversationId],
@@ -93,7 +93,23 @@ const Page = () => {
         const payload = data.payload;
         queryClient.setQueryData(
           ["seller-messages", payload.conversationId],
-          (old: any) => [...(old || []), payload],
+          (old: any) => {
+            const previousMessages = old || [];
+            const pendingIndex = previousMessages.findIndex(
+              (message: any) =>
+                message.pending &&
+                message.senderType === payload.senderType &&
+                message.content === payload.content,
+            );
+
+            if (pendingIndex !== -1) {
+              return previousMessages.map((message: any, index: number) =>
+                index === pendingIndex ? { ...payload } : message,
+              );
+            }
+
+            return [...previousMessages, payload];
+          },
         );
         setChats((prev) =>
           prev.map((c) =>
@@ -152,6 +168,8 @@ const Page = () => {
       (old: any) => [
         ...(old || []),
         {
+          pending: true,
+          senderId: seller?.id,
           content: payload.messageBody,
           senderType: "seller",
           createdAt: new Date().toISOString(),
@@ -174,18 +192,18 @@ const Page = () => {
   const getLastMessage = (chat: any) => chat.lastMessage || "";
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-6xl mx-auto flex gap-4 h-[75vh] bg-white rounded-xl border border-gray-200 overflow-hidden">
+    <div className="min-h-screen bg-[#FAF8F3] p-6">
+      <div className="max-w-6xl mx-auto flex gap-4 h-[75vh] bg-white rounded-2xl border border-neutral-200 overflow-hidden">
         {/* Sidebar */}
-        <div className="w-72 shrink-0 border-r border-gray-100 flex flex-col">
-          <div className="px-4 py-3 border-b border-gray-100 font-semibold text-gray-800">
+        <div className="w-72 shrink-0 border-r border-neutral-100 flex flex-col">
+          <div className="px-4 py-3 border-b border-neutral-100 font-semibold text-neutral-900">
             Messages
           </div>
           <div className="flex-1 overflow-y-auto">
             {isLoading ? (
-              <div className="p-4 text-sm text-gray-400">Loading...</div>
+              <div className="p-4 text-sm text-neutral-400">Loading...</div>
             ) : chats.length === 0 ? (
-              <div className="p-4 text-sm text-gray-400">
+              <div className="p-4 text-sm text-neutral-400">
                 No conversations found.
               </div>
             ) : (
@@ -196,9 +214,9 @@ const Page = () => {
                   <button
                     key={chat.conversationId}
                     onClick={() => handleChatSelect(chat)}
-                    className={`w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-gray-50 transition ${isActive ? "bg-blue-50" : ""}`}
+                    className={`w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-neutral-50 transition ${isActive ? "bg-emerald-50" : ""}`}
                   >
-                    <div className="relative w-9 h-9 rounded-full overflow-hidden bg-gray-100 shrink-0">
+                    <div className="relative w-9 h-9 rounded-full overflow-hidden bg-neutral-100 shrink-0">
                       {chat.user?.avatar && (
                         <Image
                           src={chat.user.avatar}
@@ -211,19 +229,21 @@ const Page = () => {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5">
-                        <span className="text-sm font-medium text-gray-800 truncate">
+                        <span className="text-sm font-medium text-neutral-800 truncate">
                           {chat.user?.name}
                         </span>
                         {chat.user?.isOnline && (
-                          <span className="text-[10px] text-green-600">●</span>
+                          <span className="text-[10px] text-emerald-500">
+                            ●
+                          </span>
                         )}
                       </div>
-                      <p className="text-xs text-gray-500 truncate">
+                      <p className="text-xs text-neutral-500 truncate">
                         {getLastMessage(chat)}
                       </p>
                     </div>
                     {chat.unreadCount > 0 && (
-                      <span className="text-[10px] bg-blue-600 text-white rounded-full w-4 h-4 flex items-center justify-center shrink-0">
+                      <span className="text-[10px] bg-emerald-500 text-white rounded-full w-4 h-4 flex items-center justify-center shrink-0">
                         {chat.unreadCount}
                       </span>
                     )}
@@ -238,8 +258,8 @@ const Page = () => {
         <div className="flex-1 flex flex-col">
           {selectedChat ? (
             <>
-              <div className="flex items-center gap-3 px-4 py-3 border-b border-gray-100">
-                <div className="relative w-9 h-9 rounded-full overflow-hidden bg-gray-100">
+              <div className="flex items-center gap-3 px-4 py-3 border-b border-neutral-100">
+                <div className="relative w-9 h-9 rounded-full overflow-hidden bg-neutral-100">
                   {selectedChat.user?.avatar && (
                     <Image
                       src={selectedChat.user.avatar}
@@ -251,10 +271,10 @@ const Page = () => {
                   )}
                 </div>
                 <div>
-                  <h2 className="text-sm font-semibold text-gray-800">
+                  <h2 className="text-sm font-semibold text-neutral-900">
                     {selectedChat.user?.name}
                   </h2>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-neutral-500">
                     {selectedChat.user?.isOnline ? "Online" : "Offline"}
                   </p>
                 </div>
@@ -262,13 +282,13 @@ const Page = () => {
 
               <div
                 ref={messageContainerRef}
-                className="flex-1 overflow-y-auto px-4 py-3 space-y-2"
+                className="flex-1 overflow-y-auto px-4 py-3 space-y-2 bg-[#FDFCF9]"
               >
                 {hasMore && (
                   <div className="text-center">
                     <button
                       onClick={loadMoreMessages}
-                      className="text-xs text-blue-600 hover:underline"
+                      className="text-xs text-emerald-600 hover:underline"
                     >
                       Load previous messages
                     </button>
@@ -282,13 +302,13 @@ const Page = () => {
                     <div
                       className={`max-w-[70%] rounded-2xl px-3 py-2 text-sm ${
                         msg.senderType === "seller"
-                          ? "bg-blue-600 text-white"
-                          : "bg-gray-100 text-gray-800"
+                          ? "bg-emerald-600 text-white"
+                          : "bg-white border border-neutral-200 text-neutral-800"
                       }`}
                     >
                       <div>{msg.text || msg.content}</div>
                       <div
-                        className={`text-[10px] mt-0.5 ${msg.senderType === "seller" ? "text-blue-100" : "text-gray-400"}`}
+                        className={`text-[10px] mt-0.5 ${msg.senderType === "seller" ? "text-emerald-100" : "text-neutral-400"}`}
                       >
                         {msg.time ||
                           new Date(msg.createdAt).toLocaleTimeString([], {
@@ -309,7 +329,7 @@ const Page = () => {
               />
             </>
           ) : (
-            <div className="flex-1 flex items-center justify-center text-sm text-gray-400">
+            <div className="flex-1 flex items-center justify-center text-sm text-neutral-400">
               Select a conversation
             </div>
           )}
