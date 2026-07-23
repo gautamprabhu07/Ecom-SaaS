@@ -51,7 +51,7 @@ const Page = () => {
       const res = await axiosInstance.get(
         "/product/api/get-all-events?page=1&limit=10",
       );
-      return res.data.events ?? [];
+      return res.data.products ?? [];
     },
     staleTime: 1000 * 60 * 2,
   });

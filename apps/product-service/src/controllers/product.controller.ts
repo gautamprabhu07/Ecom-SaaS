@@ -172,11 +172,21 @@ export const createProduct = async (req: any, res: Response, next: NextFunction)
    subCategory,
    customProperties={},
    images =[],
+   starting_date,
+  ending_date,
        } = req.body;
 
        if(!title || !short_description || !slug || !category || !stock || !sale_price || !regular_price) {
          return next(new Error("Missing required fields."));
        }
+
+       if (ending_date && !starting_date) {
+         return next(new Error("Starting date is required when an ending date is set."));
+      }
+
+      if (starting_date && ending_date && new Date(ending_date) <= new Date(starting_date)) {
+         return next(new Error("Ending date must be after the starting date."));
+      }
 
        if(!req.seller.id)
        {
@@ -216,6 +226,8 @@ export const createProduct = async (req: any, res: Response, next: NextFunction)
             regular_price: parseFloat(regular_price),
             customProperties: customProperties || {},
             custom_specifications: custom_specifications || {},
+            starting_date: starting_date ? new Date(starting_date) : null,
+           ending_date: ending_date ? new Date(ending_date) : null,
             images: {
                create: images.filter((img: any) => img && img.file_url && img.fileId).map((img: any) => ({
                 url: img.file_url,        
@@ -745,7 +757,9 @@ export const topShops = async (req: Request, res: Response, next: NextFunction) 
          },
          take: 10,
       });
-      const shopIds = topShopsData.map((shop) => shop.shopId);
+      const shopIds = topShopsData
+         .map((shop) => shop.shopId)
+         .filter((id): id is string => id !== null);
       const shops = await prisma.shops.findMany({
          where: {
             id: { in: shopIds },
@@ -836,6 +850,33 @@ export const unfollowShop = async (req: any, res: Response, next: NextFunction) 
      });
 
       return res.status(200).json({ success: true, message: "Shop unfollowed successfully." });
+   }
+   catch (error) {
+      return next(error);
+   }
+};
+
+//get logged in seller events
+export const getShopEvents = async (req: any, res: Response, next: NextFunction) => {
+   try {
+      const events = await prisma.products.findMany({
+         where: {
+            shopId: req?.seller?.shop?.id,
+            AND: [
+               { starting_date: { not: null } },
+               { ending_date: { not: null } },
+            ],
+         },
+         include: {
+            images: true,
+         },
+         orderBy: { createdAt: "desc" },
+      });
+
+      res.status(200).json({
+         success: true,
+         events,
+      });
    }
    catch (error) {
       return next(error);

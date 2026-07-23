@@ -122,12 +122,6 @@ const SidebarWrapper = () => {
                 icon={<Settings size={22} color="currentColor" />}
                 href="/dashboard/settings"
               />
-              <SidebarItem
-                isActive={activeSidebar === "/dashboard/notifications"}
-                title="Notifications"
-                icon={<BellRing size={22} color="currentColor" />}
-                href="/dashboard/notifications"
-              />
             </SidebarMenu>
             <SidebarMenu title="Extras">
               <SidebarItem

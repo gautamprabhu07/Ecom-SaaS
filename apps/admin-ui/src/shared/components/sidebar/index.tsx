@@ -81,12 +81,7 @@ const SidebarWrapper = () => {
                 href="/dashboard/products"
                 icon={<Package size={22} color="currentColor" />}
               />
-              <SidebarItem
-                isActive={activeSidebar === "/dashboard/events"}
-                title="Events"
-                href="/dashboard/events"
-                icon={<CalendarDays size={22} color="currentColor" />}
-              />
+
               <SidebarItem
                 isActive={activeSidebar === "/dashboard/users"}
                 title="Users"
@@ -113,12 +108,6 @@ const SidebarWrapper = () => {
                 title="Management"
                 href="/dashboard/management"
                 icon={<Settings size={22} color="currentColor" />}
-              />
-              <SidebarItem
-                isActive={activeSidebar === "/dashboard/notifications"}
-                title="Notifications"
-                href="/dashboard/notifications"
-                icon={<Bell size={22} color="currentColor" />}
               />
             </SidebarMenu>
             <SidebarMenu title="Customization">

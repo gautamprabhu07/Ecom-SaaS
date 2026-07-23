@@ -1,7 +1,7 @@
 //Path: apps/product-service/src/routes/product.routes.ts
 import express, { Router } from 'express';
 const router: Router = express.Router();
-import {getProductCategories, getDiscountCodes, createDiscountCode, deleteDiscountCode, uploadProductImage, deleteProductImage, createProduct, getShopProducts, deleteProduct, restoreProduct, getAllProducts, getProductDetails, getFilteredEvents, getFilteredProducts, getFilteredShops, searchProducts, topShops, followShop, unfollowShop, getAllEvents} from '../controllers/product.controller';
+import {getProductCategories, getDiscountCodes, createDiscountCode, deleteDiscountCode, uploadProductImage, deleteProductImage, createProduct, getShopProducts, deleteProduct, restoreProduct, getAllProducts, getProductDetails, getFilteredEvents, getFilteredProducts, getFilteredShops, searchProducts, topShops, followShop, unfollowShop, getAllEvents, getShopEvents} from '../controllers/product.controller';
 import  isAuthenticated from '@packages/middleware/isAuthenticated';
 
 router.get('/get-categories', getProductCategories);
@@ -24,5 +24,6 @@ router.get('/search-products', searchProducts);
 router.get('/top-shops', topShops);
 router.post('/follow-shop', isAuthenticated, followShop);
 router.post('/unfollow-shop', isAuthenticated, unfollowShop);
+router.get('/get-shop-events', isAuthenticated, getShopEvents);
 
 export default router;
