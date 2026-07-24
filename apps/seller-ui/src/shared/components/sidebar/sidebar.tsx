@@ -116,14 +116,7 @@ const SidebarWrapper = () => {
                 icon={<Mail size={22} color="currentColor" />}
                 href="/dashboard/inbox"
               />
-              <SidebarItem
-                isActive={activeSidebar === "/dashboard/settings"}
-                title="Settings"
-                icon={<Settings size={22} color="currentColor" />}
-                href="/dashboard/settings"
-              />
-            </SidebarMenu>
-            <SidebarMenu title="Extras">
+
               <SidebarItem
                 isActive={activeSidebar === "/dashboard/discountCodes"}
                 title="Discount Codes"
