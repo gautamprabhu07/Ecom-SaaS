@@ -1014,3 +1014,85 @@ export const updateProduct = async (req: any, res: Response, next: NextFunction)
       return next(error);
    }
 };
+
+//get shop details by id (public)
+export const getShopDetails = async (req: any, res: Response, next: NextFunction) => {
+   try {
+      const { id } = req.params;
+
+      const shop = await prisma.shops.findUnique({
+         where: { id },
+         include: {
+            avatar: true,
+            followers: true,
+         },
+      });
+
+      if (!shop) {
+         return next(new Error("Shop not found."));
+      }
+
+      const [products, offers, reviews] = await Promise.all([
+         prisma.products.findMany({
+            where: {
+               shopId: shop.id,
+               isDeleted: false,
+               OR: [
+                  { starting_date: { equals: null } },
+                  { starting_date: { isSet: false } },
+               ],
+            },
+            include: { images: true },
+            orderBy: { createdAt: "desc" },
+         }),
+         prisma.products.findMany({
+            where: {
+               shopId: shop.id,
+               isDeleted: false,
+               AND: [
+                  { starting_date: { not: null } },
+                  { ending_date: { not: null } },
+               ],
+            },
+            include: { images: true },
+            orderBy: { createdAt: "desc" },
+         }),
+         prisma.shopReviews.findMany({
+            where: { shopsId: shop.id },
+            include: {
+               user: { select: { id: true, name: true, avatar: true } },
+            },
+            orderBy: { createdAt: "desc" },
+         }),
+      ]);
+
+      const userId = req.user?.id;
+      const isFollowing = userId
+         ? shop.followers.some((f) => f.userId === userId)
+         : false;
+
+      return res.status(200).json({
+         success: true,
+         shop: {
+            id: shop.id,
+            name: shop.name,
+            bio: shop.bio,
+            category: shop.category,
+            address: shop.address,
+            opening_hours: shop.opening_hours,
+            website: shop.website,
+            ratings: shop.ratings,
+            coverBanner: shop.coverBanner,
+            avatar: shop.avatar?.[0]?.url || null,
+            followersCount: shop.followers.length,
+            isFollowing,
+         },
+         products,
+         offers,
+         reviews,
+      });
+   }
+   catch (error) {
+      return next(error);
+   }
+};

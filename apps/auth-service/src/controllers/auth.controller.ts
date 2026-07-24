@@ -112,6 +112,21 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
    }
 };
 
+export const logoutUser = async (req: Request, res: Response, next: NextFunction) => {
+   try {
+      res.clearCookie("access_token");
+      res.clearCookie("refresh_token");
+
+      res.status(200).json({
+         success: true,
+         message: "User logged out successfully",
+      });
+   }
+   catch (error) {
+      return next(error);
+   }
+};
+
 //refresh token user
 export const refreshToken = async (req: any, res: Response, next: NextFunction) => {
    try {
@@ -177,7 +192,6 @@ export const getUser = async (req: Request, res: Response, next: NextFunction) =
 
 //user forgot password
 export const forgotPassword = async (req: Request, res: Response, next: NextFunction) => {
-   const {email} = req.body;
    await handleforgotPassword(req, res, next, "user");
 };
 
@@ -394,6 +408,21 @@ export const loginSeller = async (req: Request, res: Response, next: NextFunctio
    }
    catch (error) {
       next(error);
+   }
+};
+
+export const logoutSeller = async (req: Request, res: Response, next: NextFunction) => {
+   try {
+      res.clearCookie("seller_access_token");
+      res.clearCookie("seller_refresh_token");
+
+      res.status(200).json({
+         success: true,
+         message: "Seller logged out successfully",
+      });
+   }
+   catch (error) {
+      return next(error);
    }
 };
 

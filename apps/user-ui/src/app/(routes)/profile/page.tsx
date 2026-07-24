@@ -207,35 +207,6 @@ const Page = () => {
           </div>
         </div>
       </div>
-
-      {/* Right Quick Panel */}
-      <div className="w-56 shrink-0 space-y-3">
-        <QuickActionCard
-          Icon={Gift}
-          title="Referral Program"
-          description="Invite friends and earn rewards"
-        />
-        <QuickActionCard
-          Icon={BadgeCheck}
-          title="Your Badges"
-          description="View your achievements"
-        />
-        <QuickActionCard
-          Icon={Settings}
-          title="Account Settings"
-          description="Manage your preferences"
-        />
-        <QuickActionCard
-          Icon={ReceiptIcon}
-          title="Billing History"
-          description="View invoices and billing"
-        />
-        <QuickActionCard
-          Icon={PhoneCall}
-          title="Support"
-          description="Contact support for help"
-        />
-      </div>
     </div>
   );
 };

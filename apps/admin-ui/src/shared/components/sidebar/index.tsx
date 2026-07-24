@@ -110,14 +110,7 @@ const SidebarWrapper = () => {
                 icon={<Settings size={22} color="currentColor" />}
               />
             </SidebarMenu>
-            <SidebarMenu title="Customization">
-              <SidebarItem
-                isActive={activeSidebar === "/dashboard/customization"}
-                title="Customization"
-                href="/dashboard/customization"
-                icon={<Palette size={22} color="currentColor" />}
-              />
-            </SidebarMenu>
+
             <SidebarMenu title="Extras">
               <SidebarItem
                 isActive={activeSidebar === "/logout"}

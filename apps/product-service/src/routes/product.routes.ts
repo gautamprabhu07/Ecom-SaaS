@@ -1,8 +1,9 @@
 //Path: apps/product-service/src/routes/product.routes.ts
 import express, { Router } from 'express';
 const router: Router = express.Router();
-import {getProductCategories, getDiscountCodes, createDiscountCode, deleteDiscountCode, uploadProductImage, deleteProductImage, createProduct, getShopProducts, deleteProduct, restoreProduct, getAllProducts, getProductDetails, getFilteredEvents, getFilteredProducts, getFilteredShops, searchProducts, topShops, followShop, unfollowShop, getAllEvents, getShopEvents, getSellerProductById, updateProduct} from '../controllers/product.controller';
+import {getProductCategories, getDiscountCodes, createDiscountCode, deleteDiscountCode, uploadProductImage, deleteProductImage, createProduct, getShopProducts, deleteProduct, restoreProduct, getAllProducts, getProductDetails, getFilteredEvents, getFilteredProducts, getFilteredShops, searchProducts, topShops, followShop, unfollowShop, getAllEvents, getShopEvents, getSellerProductById, updateProduct, getShopDetails} from '../controllers/product.controller';
 import  isAuthenticated from '@packages/middleware/isAuthenticated';
+import isOptionalAuth from '@packages/middleware/isOptionalAuth';
 
 router.get('/get-categories', getProductCategories);
 router.post('/create-discount-code', isAuthenticated ,createDiscountCode);
@@ -22,6 +23,7 @@ router.get('/get-filtered-products', getFilteredProducts);
 router.get('/get-filtered-shops', getFilteredShops);
 router.get('/search-products', searchProducts);
 router.get('/top-shops', topShops);
+router.get('/get-shop/:id', isOptionalAuth, getShopDetails);
 router.post('/follow-shop', isAuthenticated, followShop);
 router.post('/unfollow-shop', isAuthenticated, unfollowShop);
 router.get('/get-shop-events', isAuthenticated, getShopEvents);

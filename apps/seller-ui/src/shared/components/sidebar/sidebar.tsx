@@ -8,14 +8,15 @@ import { useEffect } from "react";
 import Box from "../box";
 import Link from "next/link";
 import { Sidebar } from "./sidebar.styles";
-import Logo from "./logo";
 import SidebarItem from "./sidebar.item";
 import SidebarMenu from "./sidebar.menu";
 import Image from "next/image";
+import { useQueryClient } from "@tanstack/react-query";
+import axiosInstance from "apps/seller-ui/src/utils/axiosInstance";
+import { useRouter } from "next/navigation";
 import {
   Home,
   BellPlus,
-  BellRing,
   CalendarPlus,
   ListOrdered,
   PackageSearch,
@@ -23,17 +24,27 @@ import {
   TicketPercent,
   DoorOpen,
   Mail,
-  Settings,
 } from "lucide-react";
 
 const SidebarWrapper = () => {
   const { activeSidebar, setActiveSidebar } = useSidebar();
   const pathName = usePathname();
   const { seller } = useSeller();
+  const queryClient = useQueryClient();
+  const router = useRouter();
 
   useEffect(() => {
     setActiveSidebar(pathName);
   }, [pathName, setActiveSidebar]);
+
+  const handleLogout = async () => {
+    try {
+      await axiosInstance.get("/api/logout-seller");
+    } finally {
+      queryClient.removeQueries({ queryKey: ["seller"] });
+      router.replace("/login");
+    }
+  };
 
   return (
     <Box css={{ height: "100vh" }} className="sidebar-wrapper">
@@ -124,10 +135,9 @@ const SidebarWrapper = () => {
                 href="/dashboard/discountCodes"
               />
               <SidebarItem
-                isActive={activeSidebar === "/dashboard/logout"}
                 title="Logout"
                 icon={<DoorOpen size={22} color="currentColor" />}
-                href="/dashboard/logout"
+                onClick={handleLogout}
               />
             </SidebarMenu>
           </div>
