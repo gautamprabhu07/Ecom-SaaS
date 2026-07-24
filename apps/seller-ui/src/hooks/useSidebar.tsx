@@ -1,3 +1,4 @@
+//Path: apps/seller-ui/src/hooks/useSidebar.tsx
 "use client";
 
 import { useAtom } from "jotai";
