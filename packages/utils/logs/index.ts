@@ -1,3 +1,4 @@
+//Path: packages/utils/logs/index.ts
 import {kafka} from "../kafka";
 
 const producer = kafka.producer();

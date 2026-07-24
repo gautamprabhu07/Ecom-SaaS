@@ -1,3 +1,4 @@
+//Path: apps/logger-service/src/logger-consumer.ts
 import {kafka} from '@packages/utils/kafka';
 import {clients} from "./main";
 
