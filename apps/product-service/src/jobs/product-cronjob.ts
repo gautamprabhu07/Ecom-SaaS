@@ -1,3 +1,4 @@
+//Path: apps/product-service/src/jobs/product-cronjob.ts
 import prisma from "@packages/libs/prisma";
 import cron from "node-cron";
 

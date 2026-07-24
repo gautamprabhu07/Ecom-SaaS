@@ -160,13 +160,13 @@ const ProductList = () => {
         cell: ({ row }: any) => (
           <div className="flex items-center gap-3 text-gray-500">
             <Link
-              href={`/product/${row.original.id}`}
+              href={`/dashboard/product-details/${row.original.id}`}
               className="hover:text-blue-600"
             >
               <Eye size={18} />
             </Link>
             <Link
-              href={`/product/edit/${row.original.id}`}
+              href={`/dashboard/edit-product/${row.original.id}`}
               className="hover:text-green-600"
             >
               <Pencil size={18} />

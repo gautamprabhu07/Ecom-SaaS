@@ -39,7 +39,7 @@ const SidebarWrapper = () => {
     <Box css={{ height: "100vh" }} className="sidebar-wrapper">
       <Sidebar.Header>
         <Box>
-          <Link href={"/"} className="flex items-center gap-3">
+          <Link href={"/dashboard/profile"} className="flex items-center gap-3">
             <Image
               src="/logoeshop.png"
               alt="Eshop Logo"

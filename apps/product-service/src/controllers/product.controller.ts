@@ -883,3 +883,134 @@ export const getShopEvents = async (req: any, res: Response, next: NextFunction)
    }
 };
 
+//get single product for the logged-in seller (for view + edit pages)
+export const getSellerProductById = async (req: any, res: Response, next: NextFunction) => {
+   try {
+      const { productId } = req.params;
+      const sellerShopId = req.seller?.shop?.id;
+
+      const product = await prisma.products.findUnique({
+         where: { id: productId },
+         include: { images: true },
+      });
+
+      if (!product) {
+         return next(new Error("Product not found."));
+      }
+
+      if (product.shopId !== sellerShopId) {
+         return next(new Error("You are not authorized to view this product."));
+      }
+
+      res.status(200).json({ success: true, product });
+   }
+   catch (error) {
+      return next(error);
+   }
+};
+
+//update product
+export const updateProduct = async (req: any, res: Response, next: NextFunction) => {
+   try {
+      const { productId } = req.params;
+      const sellerShopId = req.seller?.shop?.id;
+
+      const existingProduct = await prisma.products.findUnique({
+         where: { id: productId },
+         select: { id: true, shopId: true, slug: true },
+      });
+
+      if (!existingProduct) {
+         return next(new Error("Product not found."));
+      }
+
+      if (existingProduct.shopId !== sellerShopId) {
+         return next(new Error("You are not authorized to update this product."));
+      }
+
+      const {
+         title,
+         short_description,
+         detailed_description,
+         warranty,
+         custom_specifications,
+         slug,
+         tags,
+         cashOnDelivery,
+         brand,
+         video_url,
+         category,
+         colors,
+         sizes,
+         discountCodes,
+         stock,
+         sale_price,
+         regular_price,
+         subCategory,
+         customProperties,
+         images,
+         starting_date,
+         ending_date,
+      } = req.body;
+
+      // if slug is being changed, make sure it isn't already taken by a different product
+      if (slug && slug !== existingProduct.slug) {
+         const slugTaken = await prisma.products.findUnique({ where: { slug } });
+         if (slugTaken) {
+            return next(new ValidationError("Slug already exists."));
+         }
+      }
+
+      const updatedProduct = await prisma.products.update({
+         where: { id: productId },
+         data: {
+            ...(title !== undefined && { title }),
+            ...(short_description !== undefined && { short_description }),
+            ...(detailed_description !== undefined && { detailed_description }),
+            ...(warranty !== undefined && { warranty }),
+            ...(cashOnDelivery !== undefined && { cashOnDelivery }),
+            ...(slug !== undefined && { slug }),
+            ...(tags !== undefined && {
+               tags: Array.isArray(tags) ? tags : tags.split(","),
+            }),
+            ...(brand !== undefined && { brand }),
+            ...(video_url !== undefined && { video_url }),
+            ...(category !== undefined && { category }),
+            ...(subCategory !== undefined && { subCategory }),
+            ...(colors !== undefined && { colors }),
+            ...(discountCodes !== undefined && {
+               discount_codes: discountCodes.map((codeId: string) => codeId),
+            }),
+            ...(sizes !== undefined && { sizes }),
+            ...(stock !== undefined && { stock: parseInt(stock) }),
+            ...(sale_price !== undefined && { sale_price: parseFloat(sale_price) }),
+            ...(regular_price !== undefined && { regular_price: parseFloat(regular_price) }),
+            ...(customProperties !== undefined && { customProperties }),
+            ...(custom_specifications !== undefined && { custom_specifications }),
+            ...(starting_date !== undefined && {
+               starting_date: starting_date ? new Date(starting_date) : null,
+            }),
+            ...(ending_date !== undefined && {
+               ending_date: ending_date ? new Date(ending_date) : null,
+            }),
+            ...(images !== undefined && {
+               images: {
+                  deleteMany: {}, // clear existing image records, replace with the new set
+                  create: images
+                     .filter((img: any) => img && img.file_url && img.fileId)
+                     .map((img: any) => ({
+                        url: img.file_url,
+                        file_id: img.fileId,
+                     })),
+               },
+            }),
+         },
+         include: { images: true },
+      });
+
+      res.status(200).json({ success: true, product: updatedProduct });
+   }
+   catch (error) {
+      return next(error);
+   }
+};
