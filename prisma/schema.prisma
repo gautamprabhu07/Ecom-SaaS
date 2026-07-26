@@ -204,6 +204,7 @@ model productAnalytics {
 
 model shopAnalytics {
   id String    @id @default(auto()) @map("_id") @db.ObjectId
+  shopId String @unique @db.ObjectId
   totalVisitors Int @default(0)
   countryStats Json?
   cityStats Json?

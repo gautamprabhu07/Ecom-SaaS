@@ -7,6 +7,10 @@ import axiosInstance from "../../../../utils/axiosInstance";
 import useUser from "../../../../hooks/useUser";
 import Image from "next/image";
 import { ArrowLeft, MapPin, Clock, Users, Star, Heart } from "lucide-react";
+import { useEffect } from "react";
+import useLocationTracking from "../../../../hooks/useLocationTracking";
+import useDeviceTracking from "../../../../hooks/useDeviceTracking";
+import { sendKafkaEvent } from "../../../../actions/track-user";
 
 const fetchShopDetails = async (shopId: string) => {
   const res = await axiosInstance.get(`/product/api/get-shop/${shopId}`);
@@ -17,7 +21,7 @@ const Page = () => {
   const params = useParams();
   const shopId = params.id as string;
   const router = useRouter();
-  const { user } = useUser();
+  const { user, isLoading: userLoading } = useUser();
   const queryClient = useQueryClient();
 
   const [activeTab, setActiveTab] = useState<"products" | "offers" | "reviews">(
@@ -30,6 +34,25 @@ const Page = () => {
     enabled: !!shopId,
     staleTime: 1000 * 60 * 2,
   });
+
+  const location = useLocationTracking();
+  const deviceInfo = useDeviceTracking();
+
+  const shop = data?.shop;
+
+  useEffect(() => {
+    if (userLoading) return;
+    if (!location || !deviceInfo || !user?.id || !shop?.id) return;
+
+    sendKafkaEvent({
+      userId: user.id,
+      shopId: shop.id,
+      action: "shop_visit",
+      country: location.country || "Unknown",
+      city: location.city || "Unknown",
+      device: deviceInfo || "Unknown Device",
+    });
+  }, [location, deviceInfo, userLoading, user?.id, shop?.id]);
 
   const followMutation = useMutation({
     mutationFn: async () => {
@@ -74,8 +97,6 @@ const Page = () => {
       </div>
     );
   }
-
-  const shop = data?.shop;
 
   if (!shop) {
     return (

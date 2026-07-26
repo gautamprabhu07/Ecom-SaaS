@@ -1,6 +1,6 @@
 //path: apps/kafka-service/src/main.ts
 import {kafka} from "@packages/utils/kafka";
-import { updateUserAnalytics } from "./services/analytics.services";
+import { updateUserAnalytics, updateShopAnalytics, updateProductAnalytics} from "./services/analytics.services";
 
 const consumer = kafka.consumer({ groupId: "user-events-group" });
 
@@ -14,8 +14,12 @@ const processQueue = async() => {
 
    for(const event of events){
       if(event.action==="shop_visit"){
+         try {
+            await updateShopAnalytics(event);
+         } catch (err) {
+            console.error(`Error processing shop_visit event: ${err}`);
+         }
          continue;
-         //update shop analytics
       }
 
       const validActions = ["add_to_wishlist", "product_view", "add_to_cart", "remove_from_wishlist","remove_from_cart" ];
@@ -45,8 +49,6 @@ export const consumerKafkaMessages = async () => {
       eachMessage: async ({message }) => {
          if(!message.value) return;
          const event = JSON.parse(message.value.toString());
-            console.log("Received kafka event:", event); // temp debug log
-
          eventQueue.push(event);
       }
    });
