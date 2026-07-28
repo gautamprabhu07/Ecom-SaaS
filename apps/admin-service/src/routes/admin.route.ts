@@ -1,6 +1,7 @@
 //Path: apps/admin-service/src/routes/admin.route.ts
 import express, {Router} from 'express';
 import { getAllProducts, getAllEvents, getAllAdmins, getAllCustomizations, getAllSellers, getAllUsers, addNewAdmin} from '../controllers/admin.controller';
+import { chatWithAnalyticsAssistant } from '../controllers/ai-chat.controller';
 import isAuthenticated from '@packages/middleware/isAuthenticated';
 import { isAdmin } from '@packages/middleware/authorizeRoles';
 
@@ -12,5 +13,6 @@ router.get('/get-all-customizations',getAllCustomizations);
 router.get('/get-all-sellers', isAuthenticated, isAdmin, getAllSellers);
 router.get('/get-all-users', isAuthenticated, isAdmin, getAllUsers);
 router.post('/add-new-admin', isAuthenticated, isAdmin, addNewAdmin);
+router.post('/ai-chat', isAuthenticated, isAdmin, chatWithAnalyticsAssistant);
 
 export default router;

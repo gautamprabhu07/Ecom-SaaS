@@ -67,7 +67,7 @@ const ProductCard = ({
         className="block relative h-52 overflow-hidden bg-neutral-50"
       >
         <img
-          src={product?.images?.[0]?.url}
+          src={product?.images?.[0]?.url || "/product-backup.jpg"}
           alt={product?.name}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />

@@ -132,3 +132,65 @@ export const updateProductAnalytics = async (event: any) => {
    }
 };
 
+//update shop analytics
+export const updateShopAnalytics = async (event: any) => {
+   try {
+      if (!event.shopId) return;
+
+      const { shopId, userId, country, city, device } = event;
+
+      //check if this is a new unique visitor for this shop
+      let isNewVisitor = false;
+      if (userId) {
+         const existingVisit = await prisma.uniqueShopVisitors.findUnique({
+            where: {
+               shopId_userId: { shopId, userId },
+            },
+         });
+
+         if (!existingVisit) {
+            await prisma.uniqueShopVisitors.create({
+               data: { shopId, userId },
+            });
+            isNewVisitor = true;
+         }
+      }
+
+      const existingAnalytics = await prisma.shopAnalytics.findUnique({
+         where: { shopId },
+      });
+
+      const currentCountryStats = (existingAnalytics?.countryStats as Record<string, number>) || {};
+      const currentCityStats = (existingAnalytics?.cityStats as Record<string, number>) || {};
+      const currentDeviceStats = (existingAnalytics?.deviceStats as Record<string, number>) || {};
+
+      const countryKey = country || "Unknown";
+      const cityKey = city || "Unknown";
+      const deviceKey = device || "Unknown Device";
+
+      currentCountryStats[countryKey] = (currentCountryStats[countryKey] || 0) + 1;
+      currentCityStats[cityKey] = (currentCityStats[cityKey] || 0) + 1;
+      currentDeviceStats[deviceKey] = (currentDeviceStats[deviceKey] || 0) + 1;
+
+      await prisma.shopAnalytics.upsert({
+   where: { shopId },
+   update: {
+      ...(isNewVisitor && { totalVisitors: { increment: 1 } }),
+      countryStats: currentCountryStats,
+      cityStats: currentCityStats,
+      deviceStats: currentDeviceStats,
+      lastViewedAt: new Date(),
+   },
+   create: {
+      shopId,
+      totalVisitors: 1,
+      countryStats: currentCountryStats,
+      cityStats: currentCityStats,
+      deviceStats: currentDeviceStats,
+      lastViewedAt: new Date(),
+   },
+});
+   } catch (error) {
+      console.error(`Error updating shop analytics: ${error}`);
+   }
+};

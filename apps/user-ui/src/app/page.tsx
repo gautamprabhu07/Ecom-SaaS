@@ -8,8 +8,16 @@ import SectionTitle from "../shared/components/section/section-title";
 import axiosInstance from "../utils/axiosInstance";
 import ProductCard from "../shared/components/section/cards/product-card";
 import ShopCard from "../shared/components/section/cards/shop.card";
+import useUser from "../hooks/useUser";
+import useRecommendedProducts from "../hooks/useRecommendedProducts";
 
 const Page = () => {
+  const { user } = useUser();
+  const {
+    products: recommendedProducts,
+    isLoading: recommendedLoading,
+  } = useRecommendedProducts(10);
+
   const {
     data: products,
     isLoading,
@@ -130,6 +138,37 @@ const Page = () => {
             </div>
           )}
         </div>
+
+        {user && (
+          <div>
+            <SectionTitle title="Recommended for You" />
+
+            {recommendedLoading && (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                {Array.from({ length: 10 }).map((_, index) => (
+                  <div
+                    key={index}
+                    className="bg-white rounded-2xl border border-neutral-200 h-64 animate-pulse"
+                  />
+                ))}
+              </div>
+            )}
+
+            {!recommendedLoading && (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                {recommendedProducts?.map((product: any) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+            )}
+
+            {!recommendedLoading && recommendedProducts?.length === 0 && (
+              <p className="text-neutral-500 mt-6">
+                No recommendations available yet.
+              </p>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

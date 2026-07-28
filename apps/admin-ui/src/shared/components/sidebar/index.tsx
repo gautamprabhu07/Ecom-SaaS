@@ -21,6 +21,7 @@ import {
   Bell,
   Palette,
   LogOut,
+  Sparkles,
 } from "lucide-react";
 import Image from "next/image";
 
@@ -108,6 +109,12 @@ const SidebarWrapper = () => {
                 title="Management"
                 href="/dashboard/management"
                 icon={<Settings size={22} color="currentColor" />}
+              />
+              <SidebarItem
+                isActive={activeSidebar === "/dashboard/ai-chat"}
+                title="AI Chat"
+                href="/dashboard/ai-chat"
+                icon={<Sparkles size={22} color="currentColor" />}
               />
             </SidebarMenu>
 

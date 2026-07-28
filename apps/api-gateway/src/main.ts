@@ -46,6 +46,7 @@ app.get('/gateway-health', (req, res) => {
   res.send({ message: 'Welcome to api-gateway!' });
 });
 
+app.use("/recommendation", proxy("http://localhost:6010"));
 app.use("/seller", proxy("http://localhost:6009"));
 app.use("/chatting", proxy("http://localhost:6006"));
 app.use("/admin", proxy("http://localhost:6005"));
