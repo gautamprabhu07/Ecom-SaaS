@@ -1,6 +1,7 @@
 // path: apps/user-ui/src/shared/components/section/cards/product-card.tsx
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import Ratings from "../../ratings";
 import { Eye, Heart, ShoppingBag } from "lucide-react";
 import ProductDetailsCard from "./product-details-card";
@@ -18,6 +19,7 @@ const ProductCard = ({
 }) => {
   const [timeLeft, setTimeLeft] = useState("");
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const { user } = useUser();
   const location = useLocationTracking();
   const deviceInfo = useDeviceTracking();
@@ -47,16 +49,24 @@ const ProductCard = ({
     }
   }, [isEvent, product?.ending_date]);
 
+  //render the modal via a portal so its `fixed` positioning is anchored to the
+  //viewport, not to this card — a transformed ancestor (e.g. this card's hover
+  //lift) would otherwise become the fixed-position containing block and make
+  //the modal render squished into the card's box until the hover ends
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   return (
-    <div className="relative bg-white rounded-2xl border border-neutral-200 overflow-hidden hover:shadow-lg hover:shadow-neutral-200/60 transition group">
+    <div className="relative bg-white rounded-2xl border border-neutral-200 shadow-sm shadow-neutral-300/40 overflow-hidden transition-all duration-300 hover:-translate-y-1.5 hover:border-emerald-300 hover:shadow-xl hover:shadow-neutral-300/60 group">
       {/* Badges */}
       {isEvent && (
-        <div className="absolute top-2 left-2 z-10 bg-rose-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full">
+        <div className="absolute top-2 left-2 z-10 bg-rose-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full shadow-sm shadow-black/20">
           OFFER
         </div>
       )}
       {product?.stock <= 5 && (
-        <div className="absolute top-2 right-2 z-10 bg-amber-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full">
+        <div className="absolute top-2 right-2 z-10 bg-amber-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full shadow-sm shadow-black/20">
           Limited Stock
         </div>
       )}
@@ -69,12 +79,13 @@ const ProductCard = ({
         <img
           src={product?.images?.[0]?.url || "/product-backup.jpg"}
           alt={product?.name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out"
         />
+        <div className="absolute inset-0 bg-linear-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       </Link>
 
       {/* Action icons */}
-      <div className="absolute right-2 top-[calc(50%-48px)] flex flex-col gap-1.5 opacity-0 group-hover:opacity-100 transition">
+      <div className="absolute right-2 top-3 flex flex-col gap-1.5">
         {[
           {
             icon: (
@@ -122,7 +133,8 @@ const ProductCard = ({
           <button
             key={i}
             onClick={action}
-            className="w-8 h-8 bg-white rounded-full shadow flex items-center justify-center text-neutral-600 hover:text-emerald-600 hover:shadow-md transition"
+            style={{ transitionDelay: `${i * 40}ms` }}
+            className="w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center text-neutral-600 opacity-0 translate-x-3 group-hover:opacity-100 group-hover:translate-x-0 hover:!scale-110 hover:text-emerald-600 transition-all duration-300"
           >
             {icon}
           </button>
@@ -132,7 +144,7 @@ const ProductCard = ({
       {/* Info */}
       <div className="p-3 space-y-1.5">
         <Link href={`/shop/${product?.Shop?.name}`}>
-          <h3 className="text-sm font-medium text-neutral-800 line-clamp-2 hover:text-emerald-600 transition">
+          <h3 className="text-sm font-medium text-neutral-800 line-clamp-2 group-hover:text-emerald-600 transition-colors duration-200">
             {product?.title}
           </h3>
         </Link>
@@ -153,7 +165,12 @@ const ProductCard = ({
         )}
       </div>
 
-      {open && <ProductDetailsCard data={product} setOpen={setOpen} />}
+      {open &&
+        mounted &&
+        createPortal(
+          <ProductDetailsCard data={product} setOpen={setOpen} />,
+          document.body,
+        )}
     </div>
   );
 };

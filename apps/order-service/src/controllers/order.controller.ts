@@ -357,7 +357,7 @@ export const createOrder = async(
     //send email to user
     await sendEmail(
       email,
-      "Your Eshop Confirmation",
+      "Your OutSource Confirmation",
       "order-confirmation",
       {
          name,

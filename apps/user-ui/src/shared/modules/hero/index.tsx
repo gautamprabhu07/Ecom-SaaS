@@ -43,17 +43,17 @@ const Hero = () => {
           <div className="mt-9 flex flex-wrap items-center gap-4">
             <button
               onClick={() => router.push("/signup?role=seller")}
-              className="group inline-flex items-center gap-2 rounded-full bg-emerald-600 px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-emerald-700"
+              className="group inline-flex items-center gap-2 rounded-full bg-emerald-600 px-6 py-3.5 text-sm font-semibold text-white shadow-md shadow-emerald-600/20 transition-all duration-200 hover:-translate-y-0.5 hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-600/30 active:translate-y-0"
             >
               Start selling
               <ArrowUpRight
                 size={16}
-                className="transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
               />
             </button>
             <button
               onClick={() => router.push("/products")}
-              className="rounded-full border border-neutral-300 bg-white px-6 py-3.5 text-sm font-semibold text-neutral-800 transition hover:border-emerald-400"
+              className="rounded-full border border-neutral-300 bg-white px-6 py-3.5 text-sm font-semibold text-neutral-800 transition-all duration-200 hover:-translate-y-0.5 hover:border-emerald-400 hover:shadow-md hover:shadow-neutral-300/50 active:translate-y-0"
             >
               Explore products
             </button>
@@ -61,15 +61,15 @@ const Hero = () => {
 
           {/* trust row */}
           <div className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-4 border-t border-neutral-200 pt-6">
-            <div>
+            <div className="cursor-default transition-transform duration-200 hover:-translate-y-0.5">
               <p className="text-2xl font-bold text-neutral-900">12K+</p>
               <p className="text-xs text-neutral-500">Active vendors</p>
             </div>
-            <div>
+            <div className="cursor-default transition-transform duration-200 hover:-translate-y-0.5">
               <p className="text-2xl font-bold text-neutral-900">480K+</p>
               <p className="text-xs text-neutral-500">Products listed</p>
             </div>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1 cursor-default transition-transform duration-200 hover:-translate-y-0.5">
               <Star size={16} className="fill-amber-400 text-amber-400" />
               <p className="text-2xl font-bold text-neutral-900">4.8</p>
               <p className="text-xs text-neutral-500">avg. seller rating</p>
@@ -81,7 +81,10 @@ const Hero = () => {
         <div className="relative flex items-center justify-center lg:col-span-6">
           <div className="relative h-[420px] w-full max-w-md">
             {/* large card */}
-            <div className="absolute left-0 top-0 h-64 w-56 rotate-[-4deg] overflow-hidden rounded-2xl shadow-xl shadow-emerald-200/40">
+            <div
+              style={{ animationDelay: "0s" }}
+              className="absolute left-0 top-0 h-64 w-56 rotate-[-4deg] overflow-hidden rounded-2xl shadow-xl shadow-emerald-200/40 animate-[float-y_6s_ease-in-out_infinite] transition-transform duration-300 hover:!-translate-y-2 hover:scale-105 hover:shadow-2xl hover:[animation-play-state:paused] hover:z-20"
+            >
               <img
                 src="/hero1.avif"
                 alt="Featured product"
@@ -90,7 +93,10 @@ const Hero = () => {
             </div>
 
             {/* medium card */}
-            <div className="absolute right-2 top-10 h-48 w-44 rotate-[6deg] overflow-hidden rounded-2xl shadow-xl shadow-teal-200/40">
+            <div
+              style={{ animationDelay: "1s" }}
+              className="absolute right-2 top-10 h-48 w-44 rotate-[6deg] overflow-hidden rounded-2xl shadow-xl shadow-teal-200/40 animate-[float-y_5s_ease-in-out_infinite] transition-transform duration-300 hover:!-translate-y-2 hover:scale-105 hover:shadow-2xl hover:[animation-play-state:paused] hover:z-20"
+            >
               <img
                 src="/hero2.avif"
                 alt="Featured product"
@@ -99,7 +105,10 @@ const Hero = () => {
             </div>
 
             {/* small card */}
-            <div className="absolute bottom-0 left-16 h-40 w-40 rotate-[3deg] overflow-hidden rounded-2xl shadow-xl shadow-amber-200/40">
+            <div
+              style={{ animationDelay: "0.5s" }}
+              className="absolute bottom-0 left-16 h-40 w-40 rotate-[3deg] overflow-hidden rounded-2xl shadow-xl shadow-amber-200/40 animate-[float-y_7s_ease-in-out_infinite] transition-transform duration-300 hover:!-translate-y-2 hover:scale-105 hover:shadow-2xl hover:[animation-play-state:paused] hover:z-20"
+            >
               <img
                 src="/hero3.webp"
                 alt="Featured product"
@@ -108,13 +117,19 @@ const Hero = () => {
             </div>
 
             {/* floating price chip */}
-            <div className="absolute left-4 top-40 flex items-center gap-2 rounded-xl bg-white px-3 py-2 shadow-lg">
+            <div
+              style={{ animationDelay: "0.2s" }}
+              className="absolute left-4 top-40 flex items-center gap-2 rounded-xl bg-white px-3 py-2 shadow-lg animate-[float-y_4s_ease-in-out_infinite] transition-transform duration-300 hover:!-translate-y-1 hover:scale-105 hover:shadow-xl hover:[animation-play-state:paused] hover:z-20"
+            >
               <span className="text-sm font-bold text-neutral-900">$42</span>
               <span className="text-xs text-neutral-400 line-through">$68</span>
             </div>
 
             {/* floating shipping chip */}
-            <div className="absolute right-0 bottom-8 flex items-center gap-2 rounded-xl bg-white px-3 py-2 shadow-lg">
+            <div
+              style={{ animationDelay: "1.2s" }}
+              className="absolute right-0 bottom-8 flex items-center gap-2 rounded-xl bg-white px-3 py-2 shadow-lg animate-[float-y_4.5s_ease-in-out_infinite] transition-transform duration-300 hover:!-translate-y-1 hover:scale-105 hover:shadow-xl hover:[animation-play-state:paused] hover:z-20"
+            >
               <Truck size={14} className="text-neutral-700" />
               <span className="text-xs font-medium text-neutral-700">
                 2-day delivery
@@ -122,7 +137,10 @@ const Hero = () => {
             </div>
 
             {/* floating trust chip */}
-            <div className="absolute right-10 top-0 flex items-center gap-2 rounded-xl bg-white px-3 py-2 shadow-lg">
+            <div
+              style={{ animationDelay: "0.7s" }}
+              className="absolute right-10 top-0 flex items-center gap-2 rounded-xl bg-white px-3 py-2 shadow-lg animate-[float-y_5s_ease-in-out_infinite] transition-transform duration-300 hover:!-translate-y-1 hover:scale-105 hover:shadow-xl hover:[animation-play-state:paused] hover:z-20"
+            >
               <ShieldCheck size={14} className="text-emerald-600" />
               <span className="text-xs font-medium text-neutral-700">
                 Verified seller

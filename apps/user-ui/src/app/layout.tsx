@@ -7,7 +7,7 @@ import Providers from "./providers";
 import Footer from "../shared/widgets/footer";
 
 export const metadata = {
-  title: "Eshop",
+  title: "OutSource",
   description: "Multi-vendor marketplace",
 };
 

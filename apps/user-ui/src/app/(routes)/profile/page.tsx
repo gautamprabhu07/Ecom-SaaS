@@ -106,7 +106,7 @@ const Page = () => {
         {/* Sidebar + Content + Quick Panel */}
         <div className="flex gap-6 items-start">
           {/* Left Nav */}
-          <div className="w-52 shrink-0 bg-white rounded-2xl border border-[#E7E5E4] p-3 space-y-1 shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)]">
+          <div className="w-52 shrink-0 bg-white rounded-2xl border border-[#E7E5E4] p-3 space-y-1 shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)] transition-shadow duration-300 hover:shadow-[0_8px_30px_-8px_rgba(120,53,15,0.12)]">
             <nav className="flex flex-col">
               <NavItem
                 label="Profile"
@@ -159,7 +159,7 @@ const Page = () => {
             {activeTab === "profile" && !isLoading && user ? (
               <div className="space-y-4">
                 <div className="flex items-center gap-4">
-                  <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-[#D1FAE5]">
+                  <div className="group relative w-20 h-20 rounded-full overflow-hidden border-2 border-[#D1FAE5] transition-all duration-300 hover:border-[#059669] hover:shadow-[0_0_0_4px_rgba(5,150,105,0.15)]">
                     <Image
                       src={
                         user?.avatar ||
@@ -168,10 +168,11 @@ const Page = () => {
                       alt="Profile Image"
                       layout="fill"
                       objectFit="cover"
+                      className="transition-transform duration-300 group-hover:scale-110"
                     />
                   </div>
-                  <button className="flex items-center gap-1.5 text-sm text-[#059669] border border-[#059669]/30 px-3 py-1.5 rounded-full hover:bg-[#D1FAE5] transition">
-                    <Pencil size={13} /> Change Photo
+                  <button className="group flex items-center gap-1.5 text-sm text-[#059669] border border-[#059669]/30 px-3 py-1.5 rounded-full hover:bg-[#D1FAE5] hover:border-[#059669] transition-all duration-200 hover:-translate-y-0.5">
+                    <Pencil size={13} className="transition-transform duration-200 group-hover:rotate-12" /> Change Photo
                   </button>
                 </div>
 
@@ -187,7 +188,7 @@ const Page = () => {
                   ].map(({ label, value }) => (
                     <div
                       key={label}
-                      className="bg-[#FAF8F3] rounded-xl px-4 py-3"
+                      className="bg-[#FAF8F3] rounded-xl px-4 py-3 border border-transparent transition-all duration-200 hover:-translate-y-0.5 hover:border-[#059669]/20 hover:shadow-[0_10px_30px_-8px_rgba(120,53,15,0.15)]"
                     >
                       <p className="text-xs text-[#78716C] mb-0.5">{label}</p>
                       <p className="font-medium text-[#292524]">{value}</p>
@@ -216,11 +217,14 @@ export default Page;
 const NavItem = ({ label, Icon, active, danger, onClick }: any) => (
   <button
     onClick={onClick}
-    className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-full text-sm transition
-      ${active ? "bg-[#D1FAE5] text-[#059669] font-semibold" : "text-[#78716C] hover:bg-[#FAF8F3]"}
-      ${danger ? "text-red-500 hover:bg-red-50" : ""}`}
+    className={`group w-full flex items-center gap-2.5 px-3 py-2 rounded-full text-sm transition-all duration-200
+      ${active ? "bg-[#D1FAE5] text-[#059669] font-semibold shadow-[0_2px_10px_-2px_rgba(5,150,105,0.3)]" : "text-[#78716C] hover:bg-[#FAF8F3] hover:translate-x-0.5"}
+      ${danger ? "text-red-500 hover:bg-red-50 hover:translate-x-0.5" : ""}`}
   >
-    <Icon size={16} />
+    <Icon
+      size={16}
+      className={`transition-transform duration-200 ${active ? "" : "group-hover:scale-110"}`}
+    />
     <span>{label}</span>
   </button>
 );

@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import InnerImageZoom from "react-inner-image-zoom";
+import "react-inner-image-zoom/lib/styles.min.css";
 import Image from "next/image";
 import Ratings from "../../components/ratings";
 import Link from "next/link";
@@ -28,7 +29,7 @@ const ProductDetails = ({ productDetails }: { productDetails: any }) => {
   const deviceInfo = useDeviceTracking();
 
   const [currentImage, setCurrentImage] = useState(
-    productDetails?.images?.[0]?.url,
+    productDetails?.images?.[0]?.url || "/product-backup.jpg",
   );
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isSelected, setIsSelected] = useState(
@@ -59,15 +60,26 @@ const ProductDetails = ({ productDetails }: { productDetails: any }) => {
   const prevImage = () => {
     if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
-      setCurrentImage(productDetails?.images?.[currentIndex - 1]?.url);
+      setCurrentImage(
+        productDetails?.images?.[currentIndex - 1]?.url ||
+          "/product-backup.jpg",
+      );
     }
   };
   const nextImage = () => {
     if (currentIndex < (productDetails?.images?.length || 0) - 1) {
       setCurrentIndex(currentIndex + 1);
-      setCurrentImage(productDetails?.images?.[currentIndex + 1]?.url);
+      setCurrentImage(
+        productDetails?.images?.[currentIndex + 1]?.url ||
+          "/product-backup.jpg",
+      );
     }
   };
+
+  //hides the thumbnail strip when the product has no real images, so the
+  //backup placeholder isn't shown twice (once as the main image, once as
+  //the only "thumbnail")
+  const hasImages = productDetails?.images?.some((img: any) => img?.url);
 
   const discountPercentage = Math.round(
     ((productDetails?.regular_price - productDetails?.sale_price) /
@@ -101,10 +113,10 @@ const ProductDetails = ({ productDetails }: { productDetails: any }) => {
       <div className="flex gap-6">
         {/* Left — Images */}
         <div className="w-[380px] shrink-0 space-y-3">
-          <div className="rounded-2xl overflow-hidden border border-[#E7E5E4] bg-white shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)]">
+          <div className="rounded-2xl overflow-hidden border border-[#E7E5E4] bg-white shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)] transition-shadow duration-300 hover:shadow-[0_8px_30px_-8px_rgba(120,53,15,0.16)]">
             <InnerImageZoom
-              src={currentImage || ""}
-              zoomSrc={currentImage || ""}
+              src={currentImage}
+              zoomSrc={currentImage}
               zoomType="hover"
               hideHint
               imgAttributes={{
@@ -115,45 +127,49 @@ const ProductDetails = ({ productDetails }: { productDetails: any }) => {
           </div>
 
           {/* Thumbnails */}
-          <div className="flex items-center gap-2">
-            {productDetails?.images?.length > 4 && (
-              <button
-                onClick={prevImage}
-                disabled={currentIndex === 0}
-                className="p-1.5 rounded-full border border-[#E7E5E4] hover:bg-[#D1FAE5] disabled:opacity-40 transition"
-              >
-                <ChevronLeft size={16} />
-              </button>
-            )}
-            <div className="flex gap-2 overflow-hidden">
-              {productDetails?.images?.map((image: any, index: number) => (
-                <div
-                  key={index}
-                  onClick={() => {
-                    setCurrentIndex(index);
-                    setCurrentImage(image.url);
-                  }}
-                  className={`relative w-14 h-14 rounded-xl overflow-hidden border-2 cursor-pointer transition shrink-0 ${currentIndex === index ? "border-[#059669]" : "border-[#E7E5E4]"}`}
+          {hasImages && (
+            <div className="flex items-center gap-2">
+              {productDetails?.images?.length > 4 && (
+                <button
+                  onClick={prevImage}
+                  disabled={currentIndex === 0}
+                  className="p-1.5 rounded-full border border-[#E7E5E4] transition-all duration-200 hover:bg-[#D1FAE5] hover:-translate-x-0.5 disabled:opacity-40 disabled:hover:translate-x-0"
                 >
-                  <Image
-                    src={image.url}
-                    alt="Thumbnail"
-                    layout="fill"
-                    objectFit="cover"
-                  />
-                </div>
-              ))}
+                  <ChevronLeft size={16} />
+                </button>
+              )}
+              <div className="flex gap-2 overflow-hidden">
+                {productDetails?.images?.map((image: any, index: number) => (
+                  <div
+                    key={index}
+                    onClick={() => {
+                      setCurrentIndex(index);
+                      setCurrentImage(image?.url || "/product-backup.jpg");
+                    }}
+                    className={`relative w-14 h-14 rounded-xl overflow-hidden border-2 cursor-pointer transition-all duration-200 hover:scale-105 shrink-0 ${currentIndex === index ? "border-[#059669]" : "border-[#E7E5E4] hover:border-[#059669]/50"}`}
+                  >
+                    <Image
+                      src={image?.url || "/product-backup.jpg"}
+                      alt="Thumbnail"
+                      layout="fill"
+                      objectFit="cover"
+                    />
+                  </div>
+                ))}
+              </div>
+              {productDetails?.images?.length > 4 && (
+                <button
+                  onClick={nextImage}
+                  disabled={
+                    currentIndex === productDetails?.images?.length - 1
+                  }
+                  className="p-1.5 rounded-full border border-[#E7E5E4] transition-all duration-200 hover:bg-[#D1FAE5] hover:translate-x-0.5 disabled:opacity-40 disabled:hover:translate-x-0"
+                >
+                  <ChevronRight size={16} />
+                </button>
+              )}
             </div>
-            {productDetails?.images?.length > 4 && (
-              <button
-                onClick={nextImage}
-                disabled={currentIndex === productDetails?.images?.length - 1}
-                className="p-1.5 rounded-full border border-[#E7E5E4] hover:bg-[#D1FAE5] disabled:opacity-40 transition"
-              >
-                <ChevronRight size={16} />
-              </button>
-            )}
-          </div>
+          )}
         </div>
 
         {/* Middle — Product info */}
@@ -185,12 +201,13 @@ const ProductDetails = ({ productDetails }: { productDetails: any }) => {
                       deviceInfo,
                     )
               }
-              className="shrink-0 p-2 rounded-full hover:bg-[#FDBA74]/20 transition"
+              className="shrink-0 p-2 rounded-full transition-all duration-200 hover:bg-[#FDBA74]/20 hover:scale-110"
             >
               <Heart
                 size={20}
                 fill={isWishlisted ? "#FDBA74" : "transparent"}
                 color={isWishlisted ? "#FDBA74" : "#78716C"}
+                className="transition-colors duration-200"
               />
             </button>
           </div>
@@ -199,7 +216,7 @@ const ProductDetails = ({ productDetails }: { productDetails: any }) => {
             <Ratings rating={productDetails?.rating} />
             <Link
               href="#reviews"
-              className="text-sm text-[#059669] hover:text-[#047857] hover:underline"
+              className="text-sm text-[#059669] hover:text-[#047857] hover:underline transition-colors duration-150"
             >
               (0 Reviews)
             </Link>
@@ -239,7 +256,7 @@ const ProductDetails = ({ productDetails }: { productDetails: any }) => {
                     key={index}
                     style={{ backgroundColor: color }}
                     onClick={() => setIsSelected(color)}
-                    className={`w-7 h-7 rounded-full border-2 transition ${isSelected === color ? "border-[#059669] scale-110" : "border-[#E7E5E4]"}`}
+                    className={`w-7 h-7 rounded-full border-2 transition-all duration-200 hover:scale-110 ${isSelected === color ? "border-[#059669] scale-110" : "border-[#E7E5E4]"}`}
                   />
                 ))}
               </div>
@@ -255,7 +272,7 @@ const ProductDetails = ({ productDetails }: { productDetails: any }) => {
                   <button
                     key={index}
                     onClick={() => setIsSizeSelected(size)}
-                    className={`px-3 py-1 rounded-full text-sm font-medium border transition ${isSizeSelected === size ? "bg-[#059669] text-white border-[#059669]" : "bg-white text-[#78716C] border-[#E7E5E4] hover:border-[#059669]"}`}
+                    className={`px-3 py-1 rounded-full text-sm font-medium border transition-all duration-200 hover:-translate-y-0.5 ${isSizeSelected === size ? "bg-[#059669] text-white border-[#059669] shadow-[0_4px_14px_-4px_rgba(5,150,105,0.4)]" : "bg-white text-[#78716C] border-[#E7E5E4] hover:border-[#059669]"}`}
                   >
                     {size}
                   </button>
@@ -266,10 +283,10 @@ const ProductDetails = ({ productDetails }: { productDetails: any }) => {
 
           {/* Quantity + Stock + Cart */}
           <div className="flex items-center gap-4 pt-1">
-            <div className="flex items-center border border-[#E7E5E4] rounded-full overflow-hidden">
+            <div className="flex items-center border border-[#E7E5E4] rounded-full overflow-hidden transition-colors duration-200 hover:border-[#059669]/40">
               <button
                 onClick={() => setQuantity((p) => Math.max(1, p - 1))}
-                className="px-3 py-1.5 text-[#78716C] hover:bg-[#D1FAE5] transition"
+                className="px-3 py-1.5 text-[#78716C] hover:bg-[#D1FAE5] hover:text-[#059669] transition-colors duration-150"
               >
                 −
               </button>
@@ -278,7 +295,7 @@ const ProductDetails = ({ productDetails }: { productDetails: any }) => {
               </span>
               <button
                 onClick={() => setQuantity((p) => p + 1)}
-                className="px-3 py-1.5 text-[#78716C] hover:bg-[#D1FAE5] transition"
+                className="px-3 py-1.5 text-[#78716C] hover:bg-[#D1FAE5] hover:text-[#059669] transition-colors duration-150"
               >
                 +
               </button>
@@ -309,7 +326,7 @@ const ProductDetails = ({ productDetails }: { productDetails: any }) => {
               )
             }
             disabled={isInCart}
-            className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-semibold text-white transition shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)] ${isInCart ? "bg-[#78716C] cursor-not-allowed" : "bg-[#059669] hover:bg-[#047857]"}`}
+            className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-semibold text-white transition-all duration-200 shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)] ${isInCart ? "bg-[#78716C] cursor-not-allowed" : "bg-[#059669] hover:bg-[#047857] hover:-translate-y-0.5 hover:shadow-[0_10px_30px_-8px_rgba(5,150,105,0.4)] active:translate-y-0"}`}
           >
             <ShoppingCartIcon size={16} />
             {isInCart ? "Added to Cart" : "Add to Cart"}
@@ -319,7 +336,7 @@ const ProductDetails = ({ productDetails }: { productDetails: any }) => {
         {/* Right — Seller + Delivery */}
         <div className="w-64 shrink-0 space-y-4">
           {/* Delivery */}
-          <div className="bg-white border border-[#E7E5E4] rounded-2xl p-4 space-y-2 shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)]">
+          <div className="bg-white border border-[#E7E5E4] rounded-2xl p-4 space-y-2 shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)] transition-shadow duration-300 hover:shadow-[0_8px_30px_-8px_rgba(120,53,15,0.14)]">
             <p className="text-sm font-semibold text-[#292524]">
               Delivery Options
             </p>
@@ -330,7 +347,7 @@ const ProductDetails = ({ productDetails }: { productDetails: any }) => {
           </div>
 
           {/* Return & Warranty */}
-          <div className="bg-white border border-[#E7E5E4] rounded-2xl p-4 space-y-2 shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)]">
+          <div className="bg-white border border-[#E7E5E4] rounded-2xl p-4 space-y-2 shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)] transition-shadow duration-300 hover:shadow-[0_8px_30px_-8px_rgba(120,53,15,0.14)]">
             <p className="text-sm font-semibold text-[#292524]">
               Return & Warranty
             </p>
@@ -345,7 +362,7 @@ const ProductDetails = ({ productDetails }: { productDetails: any }) => {
           </div>
 
           {/* Seller */}
-          <div className="bg-white border border-[#E7E5E4] rounded-2xl p-4 space-y-3 shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)]">
+          <div className="bg-white border border-[#E7E5E4] rounded-2xl p-4 space-y-3 shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)] transition-shadow duration-300 hover:shadow-[0_8px_30px_-8px_rgba(120,53,15,0.14)]">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-[#78716C]">Sold by</p>
@@ -355,7 +372,7 @@ const ProductDetails = ({ productDetails }: { productDetails: any }) => {
               </div>
               <Link
                 href="#"
-                className="flex items-center gap-1 text-xs text-[#059669] border border-[#059669]/30 px-2.5 py-1 rounded-full hover:bg-[#D1FAE5] transition"
+                className="flex items-center gap-1 text-xs text-[#059669] border border-[#059669]/30 px-2.5 py-1 rounded-full transition-all duration-200 hover:bg-[#D1FAE5] hover:-translate-y-0.5"
               >
                 <MessageSquareText size={12} /> Chat
               </Link>
@@ -376,7 +393,7 @@ const ProductDetails = ({ productDetails }: { productDetails: any }) => {
 
             <Link
               href={`/shop/${productDetails?.Shop?.id}`}
-              className="block text-center text-sm text-[#059669] border border-[#059669]/30 py-1.5 rounded-full hover:bg-[#D1FAE5] transition"
+              className="block text-center text-sm text-[#059669] border border-[#059669]/30 py-1.5 rounded-full transition-all duration-200 hover:bg-[#D1FAE5] hover:-translate-y-0.5"
             >
               Go to Store
             </Link>
@@ -386,7 +403,7 @@ const ProductDetails = ({ productDetails }: { productDetails: any }) => {
 
       {/* Description + Reviews */}
       <div className="mt-10 grid grid-cols-1 gap-6">
-        <div className="bg-white border border-[#E7E5E4] rounded-2xl p-6 shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)]">
+        <div className="bg-white border border-[#E7E5E4] rounded-2xl p-6 shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)] transition-shadow duration-300 hover:shadow-[0_8px_30px_-8px_rgba(120,53,15,0.14)]">
           <h3 className="font-heading text-lg font-bold text-[#292524] mb-3">
             Product details of {productDetails?.title}
           </h3>
@@ -400,7 +417,7 @@ const ProductDetails = ({ productDetails }: { productDetails: any }) => {
 
         <div
           id="reviews"
-          className="bg-white border border-[#E7E5E4] rounded-2xl p-6 shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)]"
+          className="bg-white border border-[#E7E5E4] rounded-2xl p-6 shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)] transition-shadow duration-300 hover:shadow-[0_8px_30px_-8px_rgba(120,53,15,0.14)]"
         >
           <h3 className="font-heading text-lg font-bold text-[#292524] mb-2">
             Rating and Reviews

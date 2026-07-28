@@ -60,17 +60,17 @@ const ProductDetailsCard = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 animate-[fade-in_150ms_ease-out]"
       onClick={() => setOpen(false)}
     >
       <div
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto p-6 relative"
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto p-6 relative animate-[dropdown-in_200ms_ease-out]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close */}
         <button
           onClick={() => setOpen(false)}
-          className="absolute top-4 right-4 text-neutral-400 hover:text-neutral-600 transition"
+          className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 hover:rotate-90 transition-all duration-200"
         >
           <X size={20} />
         </button>
@@ -79,25 +79,24 @@ const ProductDetailsCard = ({
           {/* Images */}
           <div className="w-64 shrink-0 space-y-2">
             <div className="relative h-64 rounded-2xl overflow-hidden border border-neutral-200 bg-neutral-50">
-              {data?.images?.[activeImage]?.url && (
-                <Image
-                  src={data.images[activeImage].url}
-                  alt="product"
-                  layout="fill"
-                  objectFit="contain"
-                />
-              )}
+              <Image
+                src={data?.images?.[activeImage]?.url || "/product-backup.jpg"}
+                alt="product"
+                layout="fill"
+                objectFit="contain"
+                className="transition-opacity duration-200"
+              />
             </div>
             <div className="grid grid-cols-4 gap-1.5">
               {data?.images?.map((image: any, index: number) => (
                 <div
                   key={index}
                   onClick={() => setActiveImage(index)}
-                  className={`relative h-14 rounded-lg overflow-hidden border-2 cursor-pointer transition ${activeImage === index ? "border-emerald-500" : "border-neutral-200"}`}
+                  className={`relative h-14 rounded-lg overflow-hidden border-2 cursor-pointer transition-all duration-200 hover:scale-105 ${activeImage === index ? "border-emerald-500" : "border-neutral-200 hover:border-emerald-300"}`}
                 >
                   <Image
-                    src={image.url}
-                    alt={image.url}
+                    src={image?.url || "/product-backup.jpg"}
+                    alt={image?.url || "product"}
                     layout="fill"
                     objectFit="cover"
                   />
@@ -111,19 +110,17 @@ const ProductDetailsCard = ({
             {/* Seller */}
             <div className="flex items-center gap-2 pb-3 border-b border-neutral-100">
               <div className="relative w-8 h-8 rounded-full overflow-hidden border border-neutral-200">
-                {data?.Shop?.avatar?.url && (
-                  <Image
-                    src={data.Shop.avatar.url}
-                    alt="shop"
-                    layout="fill"
-                    objectFit="cover"
-                  />
-                )}
+                <Image
+                  src={data?.Shop?.avatar?.url || "/profile-backup.jpg"}
+                  alt="shop"
+                  layout="fill"
+                  objectFit="cover"
+                />
               </div>
               <div>
                 <Link
                   href={`/shop/${data?.Shop?.name}`}
-                  className="text-sm font-medium text-neutral-800 hover:text-emerald-600"
+                  className="text-sm font-medium text-neutral-800 hover:text-emerald-600 transition-colors duration-150"
                 >
                   {data?.Shop?.name}
                 </Link>
@@ -135,9 +132,10 @@ const ProductDetailsCard = ({
               <Ratings rating={data?.Shop?.ratings} />
               <button
                 onClick={() => handleChat()}
-                className="ml-auto text-xs border border-emerald-500 text-emerald-600 px-3 py-1 rounded-full hover:bg-emerald-50 transition"
+                disabled={isLoading}
+                className="ml-auto text-xs border border-emerald-500 text-emerald-600 px-3 py-1 rounded-full transition-all duration-200 hover:bg-emerald-50 hover:-translate-y-0.5 disabled:opacity-60 disabled:hover:translate-y-0"
               >
-                Chat with seller
+                {isLoading ? "Opening chat..." : "Chat with seller"}
               </button>
             </div>
 
@@ -166,7 +164,7 @@ const ProductDetailsCard = ({
                       key={index}
                       onClick={() => setIsSelected(color)}
                       style={{ backgroundColor: color }}
-                      className={`w-6 h-6 rounded-full border-2 transition ${isSelected === color ? "border-emerald-500 scale-110" : "border-neutral-300"}`}
+                      className={`w-6 h-6 rounded-full border-2 transition-all duration-200 hover:scale-110 ${isSelected === color ? "border-emerald-500 scale-110" : "border-neutral-300"}`}
                     />
                   ))}
                 </div>
@@ -182,7 +180,7 @@ const ProductDetailsCard = ({
                     <button
                       key={index}
                       onClick={() => setIsSizeSelected(size)}
-                      className={`px-2.5 py-1 rounded-full text-xs font-medium border transition ${isSizeSelected === size ? "bg-emerald-600 text-white border-emerald-600" : "bg-white text-neutral-600 border-neutral-300 hover:border-emerald-400"}`}
+                      className={`px-2.5 py-1 rounded-full text-xs font-medium border transition-all duration-200 hover:-translate-y-0.5 ${isSizeSelected === size ? "bg-emerald-600 text-white border-emerald-600" : "bg-white text-neutral-600 border-neutral-300 hover:border-emerald-400"}`}
                     >
                       {size}
                     </button>
@@ -218,7 +216,7 @@ const ProductDetailsCard = ({
                 <button
                   onClick={() => setQuantity(quantity - 1)}
                   disabled={quantity <= 1}
-                  className="px-3 py-1.5 text-neutral-600 hover:bg-neutral-100 disabled:opacity-40 transition"
+                  className="px-3 py-1.5 text-neutral-600 hover:bg-neutral-100 hover:text-emerald-600 disabled:opacity-40 disabled:hover:text-neutral-600 transition-colors duration-150"
                 >
                   −
                 </button>
@@ -226,7 +224,7 @@ const ProductDetailsCard = ({
                 <button
                   onClick={() => setQuantity(quantity + 1)}
                   disabled={quantity >= data?.stock}
-                  className="px-3 py-1.5 text-neutral-600 hover:bg-neutral-100 disabled:opacity-40 transition"
+                  className="px-3 py-1.5 text-neutral-600 hover:bg-neutral-100 hover:text-emerald-600 disabled:opacity-40 disabled:hover:text-neutral-600 transition-colors duration-150"
                 >
                   +
                 </button>
@@ -248,7 +246,7 @@ const ProductDetailsCard = ({
                     deviceInfo,
                   )
                 }
-                className="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium px-4 py-2 rounded-full transition"
+                className="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium px-4 py-2 rounded-full transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_30px_-8px_rgba(5,150,105,0.4)] active:translate-y-0 disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:shadow-none"
               >
                 <ShoppingCartIcon size={16} /> Add to cart
               </button>
@@ -270,7 +268,7 @@ const ProductDetailsCard = ({
                         deviceInfo,
                       )
                 }
-                className="w-9 h-9 flex items-center justify-center border border-neutral-300 rounded-full hover:bg-rose-50 hover:border-rose-300 transition"
+                className="w-9 h-9 flex items-center justify-center border border-neutral-300 rounded-full hover:bg-rose-50 hover:border-rose-300 hover:scale-110 transition-all duration-200"
               >
                 <Heart size={16} fill={isWishlisted ? "red" : "transparent"} />
               </button>

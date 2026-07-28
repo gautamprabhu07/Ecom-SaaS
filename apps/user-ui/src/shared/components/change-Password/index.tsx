@@ -6,8 +6,8 @@ import axiosInstance from "apps/user-ui/src/utils/axiosInstance";
 import { Eye, EyeOff, CheckCircle2, XCircle } from "lucide-react";
 
 const inputClass =
-  "w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500";
-const labelClass = "block text-sm font-medium text-gray-700 mb-1";
+  "w-full border border-[#E7E5E4] rounded-xl px-3 py-2.5 text-sm text-[#292524] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#059669] focus:border-[#059669]";
+const labelClass = "block text-sm font-medium text-[#292524] mb-1";
 const errorClass = "text-red-500 text-xs mt-1";
 
 const ChangePassword = () => {
@@ -60,7 +60,7 @@ const ChangePassword = () => {
             <button
               type="button"
               onClick={() => setShowCurrent(!showCurrent)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#A8A29E] hover:text-[#059669] transition-colors duration-200"
             >
               {showCurrent ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>
@@ -90,7 +90,7 @@ const ChangePassword = () => {
             <button
               type="button"
               onClick={() => setShowNew(!showNew)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#A8A29E] hover:text-[#059669] transition-colors duration-200"
             >
               {showNew ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>
@@ -116,7 +116,7 @@ const ChangePassword = () => {
             <button
               type="button"
               onClick={() => setShowConfirm(!showConfirm)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#A8A29E] hover:text-[#059669] transition-colors duration-200"
             >
               {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>
@@ -131,19 +131,19 @@ const ChangePassword = () => {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg text-sm transition disabled:opacity-60"
+          className="w-full bg-[#059669] hover:bg-[#047857] text-white font-medium py-2.5 rounded-full text-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_30px_-8px_rgba(5,150,105,0.35)] active:translate-y-0 disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:shadow-none"
         >
           {isSubmitting ? "Updating..." : "Update Password"}
         </button>
 
         {error && (
-          <div className="flex items-center gap-2 text-sm text-red-500 bg-red-50 px-3 py-2 rounded-lg">
+          <div className="flex items-center gap-2 text-sm text-red-500 bg-red-50 px-3 py-2 rounded-lg animate-[dropdown-in_200ms_ease-out]">
             <XCircle size={16} />
             {error}
           </div>
         )}
         {message && (
-          <div className="flex items-center gap-2 text-sm text-green-600 bg-green-50 px-3 py-2 rounded-lg">
+          <div className="flex items-center gap-2 text-sm text-[#059669] bg-[#D1FAE5] px-3 py-2 rounded-lg animate-[dropdown-in_200ms_ease-out]">
             <CheckCircle2 size={16} />
             {message}
           </div>

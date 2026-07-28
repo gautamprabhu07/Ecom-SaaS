@@ -56,7 +56,7 @@ const Page = () => {
   useEffect(() => {
     updateURL();
     fetchFilteredShops();
-  }, [selectedCategories, page]);
+  }, [selectedCategories, selectedCountries, page]);
 
   const toggleCategory = (label: string) => {
     setSelectedCategories((prev) =>
@@ -80,7 +80,10 @@ const Page = () => {
       <div className="mb-6">
         <h1 className="text-2xl font-semibold text-gray-800 mb-1">All Shops</h1>
         <div className="flex items-center gap-1.5 text-sm text-gray-500">
-          <Link href="/" className="hover:text-blue-600 transition">
+          <Link
+            href="/"
+            className="hover:text-blue-600 transition-colors duration-150"
+          >
             Home
           </Link>
           <span>/</span>
@@ -90,39 +93,45 @@ const Page = () => {
 
       <div className="flex gap-8 items-start">
         {/* Sidebar */}
-        <aside className="w-64 shrink-0 bg-white border border-gray-200 rounded-xl p-5 space-y-6">
+        <aside className="w-64 shrink-0 bg-white border border-gray-200 rounded-2xl p-5 space-y-6 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] transition-shadow duration-300 hover:shadow-[0_8px_30px_-8px_rgba(0,0,0,0.08)]">
           {/* Categories Filter */}
           <div>
             <h3 className="text-sm font-semibold text-gray-700 mb-3">
               Categories
             </h3>
-            <ul className="space-y-2">
+            <ul className="space-y-1">
               {categories.map((category: any) => (
                 <li key={category.label}>
-                  <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:text-gray-800">
+                  <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer rounded-lg px-1.5 py-1 -mx-1.5 transition-colors duration-150 hover:bg-gray-50 hover:text-gray-800">
                     <input
                       type="checkbox"
                       checked={selectedCategories.includes(category.value)}
                       onChange={() => toggleCategory(category.value)}
-                      className="accent-blue-600 w-3.5 h-3.5"
+                      className="accent-blue-600 w-3.5 h-3.5 cursor-pointer"
                     />
                     {category.value}
                   </label>
                 </li>
               ))}
             </ul>
+          </div>
 
-            {/* Countries Filter */}
-            <h3>Countries</h3>
-            <ul>
+          <hr className="border-gray-100" />
+
+          {/* Countries Filter */}
+          <div>
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">
+              Countries
+            </h3>
+            <ul className="space-y-1 max-h-64 overflow-y-auto pr-1">
               {countries.map((country: any) => (
                 <li key={country}>
-                  <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:text-gray-800">
+                  <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer rounded-lg px-1.5 py-1 -mx-1.5 transition-colors duration-150 hover:bg-gray-50 hover:text-gray-800">
                     <input
                       type="checkbox"
                       checked={selectedCountries.includes(country)}
                       onChange={() => toggleCountry(country)}
-                      className="accent-blue-600 w-3.5 h-3.5"
+                      className="accent-blue-600 w-3.5 h-3.5 cursor-pointer"
                     />
                     {country}
                   </label>
@@ -139,7 +148,7 @@ const Page = () => {
               {Array.from({ length: 12 }).map((_, index) => (
                 <div
                   key={index}
-                  className="aspect-square rounded-xl bg-gray-100 animate-pulse"
+                  className="aspect-square rounded-2xl bg-gray-100 animate-pulse"
                 ></div>
               ))}
             </div>
@@ -150,8 +159,11 @@ const Page = () => {
               ))}
             </div>
           ) : (
-            <div className="text-sm text-gray-500 text-center py-16">
-              No shops found.
+            <div className="flex flex-col items-center py-16 text-center">
+              <div className="mb-4 w-16 h-16 rounded-full bg-gray-50 flex items-center justify-center">
+                <span className="text-2xl">🏬</span>
+              </div>
+              <p className="text-sm text-gray-500">No shops found.</p>
             </div>
           )}
 
@@ -161,7 +173,7 @@ const Page = () => {
                 <button
                   key={i + 1}
                   onClick={() => setPage(i + 1)}
-                  className={`w-8 h-8 rounded-lg text-sm font-medium border transition ${page === i + 1 ? "bg-blue-600 text-white border-blue-600" : "bg-white text-gray-600 border-gray-300 hover:border-blue-400"}`}
+                  className={`w-8 h-8 rounded-lg text-sm font-medium border transition-all duration-200 hover:-translate-y-0.5 ${page === i + 1 ? "bg-blue-600 text-white border-blue-600 shadow-[0_4px_14px_-4px_rgba(37,99,235,0.4)]" : "bg-white text-gray-600 border-gray-300 hover:border-blue-400"}`}
                 >
                   {i + 1}
                 </button>

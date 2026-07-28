@@ -38,7 +38,7 @@ const ChatInput = ({
   return (
     <div className="relative border-t border-neutral-100 px-4 py-3">
       <form onSubmit={onSendMessage} className="flex items-center gap-2">
-        <label className="w-9 h-9 flex items-center justify-center rounded-full text-neutral-500 hover:bg-neutral-100 cursor-pointer transition shrink-0">
+        <label className="w-9 h-9 flex items-center justify-center rounded-full text-neutral-500 hover:bg-neutral-100 hover:text-emerald-600 hover:scale-110 cursor-pointer transition-all duration-200 shrink-0">
           <ImageIcon size={18} />
           <input
             type="file"
@@ -53,12 +53,12 @@ const ChatInput = ({
           <button
             type="button"
             onClick={() => setShowEmoji((prev) => !prev)}
-            className="w-9 h-9 flex items-center justify-center rounded-full text-neutral-500 hover:bg-neutral-100 transition"
+            className={`w-9 h-9 flex items-center justify-center rounded-full transition-all duration-200 hover:scale-110 ${showEmoji ? "bg-emerald-50 text-emerald-600" : "text-neutral-500 hover:bg-neutral-100 hover:text-emerald-600"}`}
           >
             <Smile size={18} />
           </button>
           {showEmoji && (
-            <div className="absolute bottom-12 left-0 z-10">
+            <div className="absolute bottom-12 left-0 z-10 animate-[dropdown-in_150ms_ease-out] origin-bottom-left">
               <EmojiPicker onEmojiClick={handleEmojiClick} />
             </div>
           )}
@@ -70,11 +70,12 @@ const ChatInput = ({
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder="Type a message..."
-          className="flex-1 border border-neutral-300 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          className="flex-1 border border-neutral-300 rounded-full px-4 py-2 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
         />
         <button
           type="submit"
-          className="w-9 h-9 flex items-center justify-center bg-emerald-600 hover:bg-emerald-700 text-white rounded-full transition shrink-0"
+          disabled={!message.trim()}
+          className="w-9 h-9 flex items-center justify-center bg-emerald-600 hover:bg-emerald-700 text-white rounded-full transition-all duration-200 hover:scale-110 active:scale-95 disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed shrink-0"
         >
           <Send size={16} />
         </button>

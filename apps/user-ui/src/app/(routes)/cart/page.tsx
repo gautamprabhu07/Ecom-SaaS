@@ -8,13 +8,13 @@ import useDeviceTracking from "../../../hooks/useDeviceTracking";
 import Link from "next/link";
 import { useStore } from "apps/user-ui/src/store";
 import Image from "next/image";
-import { ChevronRight, Loader2, X } from "lucide-react";
+import { ChevronDown, ChevronRight, Loader2, X } from "lucide-react";
 import axiosInstance from "apps/user-ui/src/utils/axiosInstance";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 const selectClass =
-  "w-full border border-neutral-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500";
+  "w-full appearance-none bg-white border border-neutral-300 rounded-xl pl-3 pr-9 py-2.5 text-sm text-neutral-800 cursor-pointer transition-all duration-200 hover:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500";
 
 const CartPage = () => {
   const router = useRouter();
@@ -147,9 +147,19 @@ const CartPage = () => {
     <div className="min-h-screen bg-[#FAF8F3] p-6">
       {/* Breadcrumb */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-neutral-900">Shopping Cart</h1>
+        <h1 className="text-2xl font-bold text-neutral-900">
+          Shopping Cart
+          {cart.length > 0 && (
+            <span className="ml-2 text-sm font-normal text-neutral-400">
+              ({cart.length} {cart.length === 1 ? "item" : "items"})
+            </span>
+          )}
+        </h1>
         <div className="flex items-center gap-1 text-sm text-neutral-500 mt-1">
-          <Link href="/" className="hover:text-neutral-700">
+          <Link
+            href="/"
+            className="hover:text-emerald-600 transition-colors duration-150"
+          >
             Home
           </Link>
           <ChevronRight size={14} />
@@ -158,22 +168,29 @@ const CartPage = () => {
       </div>
 
       {cart.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-neutral-200 p-16 text-center">
+        <div className="bg-white rounded-2xl border border-neutral-200 shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)] p-16 text-center">
+          <div className="mx-auto mb-4 w-16 h-16 rounded-full bg-neutral-50 flex items-center justify-center">
+            <X size={26} className="text-neutral-300" />
+          </div>
           <p className="text-neutral-400 text-sm">Your cart is empty.</p>
           <Link
             href="/"
-            className="mt-4 inline-block text-emerald-600 text-sm font-medium hover:underline"
+            className="group mt-4 inline-flex items-center gap-1 text-emerald-600 text-sm font-medium hover:text-emerald-700 transition-colors duration-150"
           >
             Continue Shopping
+            <ChevronRight
+              size={14}
+              className="transition-transform duration-200 group-hover:translate-x-1"
+            />
           </Link>
         </div>
       ) : (
         <div className="flex gap-6 items-start">
           {/* Cart table */}
-          <div className="flex-1 bg-white rounded-2xl border border-neutral-200 overflow-hidden">
+          <div className="flex-1 bg-white rounded-2xl border border-neutral-200 shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)] overflow-hidden">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-neutral-100 text-neutral-500 text-left">
+                <tr className="border-b border-neutral-100 text-neutral-500 text-left bg-neutral-50">
                   <th className="px-4 py-3 font-medium">Product</th>
                   <th className="px-4 py-3 font-medium">Price</th>
                   <th className="px-4 py-3 font-medium">Quantity</th>
@@ -182,19 +199,22 @@ const CartPage = () => {
               </thead>
               <tbody className="divide-y divide-neutral-50">
                 {cart?.map((item: any) => (
-                  <tr key={item.id} className="text-neutral-700">
+                  <tr
+                    key={item.id}
+                    className="group text-neutral-700 transition-colors duration-150 hover:bg-neutral-50/80"
+                  >
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="relative w-14 h-14 rounded-xl overflow-hidden border border-neutral-200 shrink-0">
+                        <div className="relative w-14 h-14 rounded-xl overflow-hidden border border-neutral-200 shrink-0 transition-transform duration-200 group-hover:scale-105 group-hover:border-emerald-300">
                           <Image
-                            src={item?.images[0]?.url}
+                            src={item?.images?.[0]?.url || "/product-backup.jpg"}
                             alt={item.title}
                             layout="fill"
                             objectFit="cover"
                           />
                         </div>
                         <div>
-                          <p className="font-medium text-neutral-800 line-clamp-1">
+                          <p className="font-medium text-neutral-800 line-clamp-1 transition-colors duration-150 group-hover:text-emerald-700">
                             {item.title}
                           </p>
                           {item?.selectedOptions && (
@@ -245,10 +265,10 @@ const CartPage = () => {
                       )}
                     </td>
                     <td className="px-4 py-3">
-                      <div className="flex items-center border border-neutral-300 rounded-full overflow-hidden w-fit">
+                      <div className="flex items-center border border-neutral-300 rounded-full overflow-hidden w-fit transition-colors duration-150 group-hover:border-emerald-300">
                         <button
                           onClick={() => decreaseQuantity(item?.id)}
-                          className="px-2.5 py-1 text-neutral-600 hover:bg-neutral-100 transition"
+                          className="px-2.5 py-1 text-neutral-600 hover:bg-neutral-100 hover:text-emerald-600 transition-colors duration-150"
                         >
                           −
                         </button>
@@ -257,7 +277,7 @@ const CartPage = () => {
                         </span>
                         <button
                           onClick={() => increaseQuantity(item?.id)}
-                          className="px-2.5 py-1 text-neutral-600 hover:bg-neutral-100 transition"
+                          className="px-2.5 py-1 text-neutral-600 hover:bg-neutral-100 hover:text-emerald-600 transition-colors duration-150"
                         >
                           +
                         </button>
@@ -266,7 +286,7 @@ const CartPage = () => {
                     <td className="px-4 py-3">
                       <button
                         onClick={() => removeItem(item?.id)}
-                        className="p-1.5 text-neutral-400 hover:text-rose-500 hover:bg-rose-50 rounded-full transition"
+                        className="p-1.5 text-neutral-400 hover:text-rose-500 hover:bg-rose-50 hover:scale-110 rounded-full transition-all duration-200"
                       >
                         <X size={15} />
                       </button>
@@ -278,7 +298,7 @@ const CartPage = () => {
           </div>
 
           {/* Order summary */}
-          <div className="w-80 shrink-0 bg-white rounded-2xl border border-neutral-200 p-5 space-y-4">
+          <div className="w-80 shrink-0 bg-white rounded-2xl border border-neutral-200 shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)] p-5 space-y-4 transition-shadow duration-300 hover:shadow-[0_8px_30px_-8px_rgba(120,53,15,0.14)]">
             {/* Discount row */}
             {discountAmount > 0 && (
               <div className="flex justify-between text-sm">
@@ -309,16 +329,20 @@ const CartPage = () => {
                   placeholder="Enter coupon code"
                   value={couponCode}
                   onChange={(e: any) => setCouponCode(e.target.value)}
-                  className="flex-1 border border-neutral-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="flex-1 border border-neutral-300 rounded-xl px-3 py-2 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                 />
                 <button
-                  className="px-4 py-2 bg-neutral-900 text-white text-sm font-medium rounded-full hover:bg-neutral-800 transition"
+                  className="px-4 py-2 bg-neutral-900 text-white text-sm font-medium rounded-full transition-all duration-200 hover:bg-neutral-800 hover:-translate-y-0.5 active:translate-y-0"
                   onClick={() => couponCodeApplyHandler()}
                 >
                   Apply
                 </button>
               </div>
-              {error && <p className="text-xs text-rose-500 mt-1">{error}</p>}
+              {error && (
+                <p className="text-xs text-rose-500 mt-1 animate-[dropdown-in_150ms_ease-out]">
+                  {error}
+                </p>
+              )}
             </div>
 
             <hr className="border-neutral-100" />
@@ -329,18 +353,24 @@ const CartPage = () => {
                 Shipping Address
               </h4>
               {addresses?.length !== 0 && (
-                <select
-                  value={selectedAddressId}
-                  onChange={(e) => setSelectedAddressId(e.target.value)}
-                  className={selectClass}
-                >
-                  {addresses.map((address: any) => (
-                    <option key={address.id} value={address.id}>
-                      {address.label} - {address.street}, {address.city},{" "}
-                      {address.country}
-                    </option>
-                  ))}
-                </select>
+                <div className="relative">
+                  <select
+                    value={selectedAddressId}
+                    onChange={(e) => setSelectedAddressId(e.target.value)}
+                    className={selectClass}
+                  >
+                    {addresses.map((address: any) => (
+                      <option key={address.id} value={address.id}>
+                        {address.label} - {address.street}, {address.city},{" "}
+                        {address.country}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown
+                    size={16}
+                    className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400"
+                  />
+                </div>
               )}
               {addresses?.length === 0 && (
                 <p className="text-xs text-neutral-400">
@@ -356,10 +386,16 @@ const CartPage = () => {
               <h4 className="text-sm font-medium text-neutral-700 mb-2">
                 Payment Method
               </h4>
-              <select className={selectClass}>
-                <option>Online Payment</option>
-                <option>Cash on Delivery</option>
-              </select>
+              <div className="relative">
+                <select className={selectClass}>
+                  <option>Online Payment</option>
+                  <option>Cash on Delivery</option>
+                </select>
+                <ChevronDown
+                  size={16}
+                  className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400"
+                />
+              </div>
             </div>
 
             <hr className="border-neutral-100" />
@@ -373,7 +409,7 @@ const CartPage = () => {
             <button
               disabled={loading}
               onClick={createPaymentSession}
-              className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 rounded-full text-sm transition disabled:opacity-60"
+              className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 rounded-full text-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_30px_-8px_rgba(5,150,105,0.4)] active:translate-y-0 disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:shadow-none"
             >
               {loading && <Loader2 size={15} className="animate-spin" />}
               {loading ? "Processing..." : "Proceed to Checkout"}

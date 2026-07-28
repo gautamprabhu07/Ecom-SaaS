@@ -119,7 +119,7 @@ const SignUp = () => {
       <div className="flex items-center justify-center py-12 px-4">
         <div className="bg-white rounded-2xl shadow-md w-full max-w-md p-8">
           <h3 className="text-xl font-semibold text-gray-800 mb-1">
-            Sign Up to Eshop
+            Sign Up to OutSource
           </h3>
           <p className="text-sm text-gray-500 mb-6">
             Already have an account?{" "}

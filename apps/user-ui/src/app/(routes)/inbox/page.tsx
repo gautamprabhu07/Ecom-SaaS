@@ -193,7 +193,7 @@ const Page = () => {
 
   return (
     <div className="min-h-screen bg-[#FAF8F3] p-6">
-      <div className="max-w-6xl mx-auto flex gap-4 h-[75vh] bg-white rounded-2xl border border-neutral-200 overflow-hidden">
+      <div className="max-w-6xl mx-auto flex gap-4 h-[75vh] bg-white rounded-2xl border border-neutral-200 shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)] overflow-hidden">
         {/* Sidebar */}
         <div className="w-72 shrink-0 border-r border-neutral-100 flex flex-col">
           <div className="px-4 py-3 border-b border-neutral-100 font-semibold text-neutral-900">
@@ -201,7 +201,14 @@ const Page = () => {
           </div>
           <div className="flex-1 overflow-y-auto">
             {isLoading ? (
-              <div className="p-4 text-sm text-neutral-400">Loading...</div>
+              <div className="p-3 space-y-2">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="h-14 bg-neutral-50 rounded-xl animate-pulse"
+                  />
+                ))}
+              </div>
             ) : chats.length === 0 ? (
               <div className="p-4 text-sm text-neutral-400">
                 No conversations found.
@@ -214,9 +221,12 @@ const Page = () => {
                   <button
                     key={chat.conversationId}
                     onClick={() => handleChatSelect(chat)}
-                    className={`w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-neutral-50 transition ${isActive ? "bg-emerald-50" : ""}`}
+                    className={`group relative w-full flex items-center gap-3 px-4 py-3 text-left transition-all duration-200 hover:bg-neutral-50 ${isActive ? "bg-emerald-50" : ""}`}
                   >
-                    <div className="relative w-9 h-9 rounded-full overflow-hidden bg-neutral-100 shrink-0">
+                    {isActive && (
+                      <span className="absolute left-0 top-1/2 -translate-y-1/2 h-8 w-1 rounded-r-full bg-emerald-500" />
+                    )}
+                    <div className="relative w-9 h-9 rounded-full overflow-hidden bg-neutral-100 shrink-0 transition-transform duration-200 group-hover:scale-105">
                       {chat.seller?.avatar && (
                         <Image
                           src={chat.seller.avatar}
@@ -226,17 +236,15 @@ const Page = () => {
                           className="object-cover"
                         />
                       )}
+                      {chat.seller?.isOnline && (
+                        <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white animate-[pulse-soft_2s_ease-in-out_infinite]" />
+                      )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5">
                         <span className="text-sm font-medium text-neutral-800 truncate">
                           {chat.seller?.name}
                         </span>
-                        {chat.seller?.isOnline && (
-                          <span className="text-[10px] text-emerald-500">
-                            ●
-                          </span>
-                        )}
                       </div>
                       <p className="text-xs text-neutral-500 truncate">
                         {getLastMessage(chat)}
@@ -269,6 +277,9 @@ const Page = () => {
                       className="object-cover"
                     />
                   )}
+                  {selectedChat.seller?.isOnline && (
+                    <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white animate-[pulse-soft_2s_ease-in-out_infinite]" />
+                  )}
                 </div>
                 <div>
                   <h2 className="text-sm font-semibold text-neutral-900">
@@ -288,7 +299,7 @@ const Page = () => {
                   <div className="text-center">
                     <button
                       onClick={loadMoreMessages}
-                      className="text-xs text-emerald-600 hover:underline"
+                      className="text-xs text-emerald-600 hover:text-emerald-700 hover:underline transition-colors duration-150"
                     >
                       Load previous messages
                     </button>
@@ -297,14 +308,14 @@ const Page = () => {
                 {messages.map((msg: any, index: number) => (
                   <div
                     key={index}
-                    className={`flex ${msg.senderType === "user" ? "justify-end" : "justify-start"}`}
+                    className={`flex animate-[dropdown-in_200ms_ease-out] ${msg.senderType === "user" ? "justify-end" : "justify-start"}`}
                   >
                     <div
-                      className={`max-w-[70%] rounded-2xl px-3 py-2 text-sm ${
+                      className={`max-w-[70%] rounded-2xl px-3 py-2 text-sm transition-transform duration-150 hover:-translate-y-0.5 ${
                         msg.senderType === "user"
-                          ? "bg-emerald-600 text-white"
-                          : "bg-white border border-neutral-200 text-neutral-800"
-                      }`}
+                          ? "bg-emerald-600 text-white shadow-sm shadow-emerald-600/20"
+                          : "bg-white border border-neutral-200 text-neutral-800 shadow-sm shadow-neutral-200/50"
+                      } ${msg.pending ? "opacity-60" : ""}`}
                     >
                       <div>{msg.text || msg.content}</div>
                       <div
@@ -329,7 +340,10 @@ const Page = () => {
               />
             </>
           ) : (
-            <div className="flex-1 flex items-center justify-center text-sm text-neutral-400">
+            <div className="flex-1 flex flex-col items-center justify-center text-sm text-neutral-400 gap-2">
+              <div className="w-14 h-14 rounded-full bg-neutral-50 flex items-center justify-center">
+                <span className="text-2xl">💬</span>
+              </div>
               Select a conversation
             </div>
           )}

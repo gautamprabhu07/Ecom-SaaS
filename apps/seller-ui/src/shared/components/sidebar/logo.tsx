@@ -44,7 +44,7 @@ const Logo = () => {
         fontSize="22"
         fill="#111110"
       >
-        Eshop
+        OutSource
       </text>
     </svg>
   );

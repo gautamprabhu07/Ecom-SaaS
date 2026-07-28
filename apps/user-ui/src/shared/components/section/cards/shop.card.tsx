@@ -54,27 +54,29 @@ const ShopCard: React.FC<ShopCardProps> = ({ shop }) => {
   };
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition">
-      <div className="relative h-28 bg-gray-100">
+    <div className="group bg-white rounded-xl border border-gray-200 shadow-sm shadow-gray-300/40 overflow-hidden transition-all duration-300 hover:-translate-y-1.5 hover:border-blue-300 hover:shadow-xl hover:shadow-gray-300/60">
+      <div className="relative h-28 bg-gray-100 overflow-hidden">
         {shop.coverBanner && (
           <Image
             src={shop.coverBanner}
             alt={shop.name}
             layout="fill"
             objectFit="cover"
+            className="transition-transform duration-500 ease-out group-hover:scale-110"
           />
         )}
+        <div className="absolute inset-0 bg-linear-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         <button
           onClick={toggleFollow}
           disabled={loading}
-          className={`absolute top-2 right-2 w-7 h-7 flex items-center justify-center rounded-full shadow transition ${isFollowing ? "bg-red-500 text-white" : "bg-white text-gray-500 hover:text-red-500"}`}
+          className={`absolute top-2 right-2 w-7 h-7 flex items-center justify-center rounded-full shadow-md transition-all duration-200 hover:scale-110 ${isFollowing ? "bg-red-500 text-white" : "bg-white text-gray-500 hover:text-red-500"}`}
         >
           <Heart size={13} fill={isFollowing ? "white" : "none"} />
         </button>
       </div>
 
       <div className="relative -mt-8 ml-4">
-        <div className="relative w-16 h-16 rounded-full overflow-hidden border-4 border-white shadow">
+        <div className="relative w-16 h-16 rounded-full overflow-hidden border-4 border-white shadow-md transition-transform duration-300 group-hover:scale-105">
           {shop.avatar?.[0]?.url && (
             <Image
               src={shop.avatar[0].url}
@@ -88,7 +90,7 @@ const ShopCard: React.FC<ShopCardProps> = ({ shop }) => {
 
       <div className="px-4 pt-2 pb-4 space-y-2">
         <div>
-          <h3 className="text-base font-semibold text-gray-800">
+          <h3 className="text-base font-semibold text-gray-800 group-hover:text-blue-600 transition-colors duration-200">
             {shop?.name}
           </h3>
           <p className="text-xs text-gray-400">
@@ -110,16 +112,20 @@ const ShopCard: React.FC<ShopCardProps> = ({ shop }) => {
         </div>
 
         {shop.category && (
-          <span className="inline-block text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">
+          <span className="inline-block text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full transition-colors duration-200 group-hover:bg-blue-50 group-hover:text-blue-600">
             {shop.category}
           </span>
         )}
 
         <Link
           href={`/shop/${shop.id}`}
-          className="flex items-center gap-1.5 text-sm text-blue-600 font-medium hover:underline mt-1"
+          className="group/link flex items-center gap-1.5 text-sm text-blue-600 font-medium mt-1"
         >
-          Visit Shop <ArrowRight size={14} />
+          Visit Shop
+          <ArrowRight
+            size={14}
+            className="transition-transform duration-200 group-hover/link:translate-x-1"
+          />
         </Link>
       </div>
     </div>

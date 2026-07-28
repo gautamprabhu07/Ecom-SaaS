@@ -74,9 +74,9 @@ const ShippingAddressSection = () => {
         </h2>
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-1.5 bg-[#059669] hover:bg-[#047857] text-white text-sm font-medium px-3.5 py-2 rounded-full transition shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)]"
+          className="group flex items-center gap-1.5 bg-[#059669] hover:bg-[#047857] text-white text-sm font-medium px-3.5 py-2 rounded-full transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_30px_-8px_rgba(5,150,105,0.35)] active:translate-y-0 shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)]"
         >
-          <Plus size={15} /> Add New Address
+          <Plus size={15} className="transition-transform duration-200 group-hover:rotate-90" /> Add New Address
         </button>
       </div>
 
@@ -91,7 +91,7 @@ const ShippingAddressSection = () => {
             {addresses.map((address: any) => (
               <div
                 key={address.id}
-                className="bg-[#FAF8F3] rounded-2xl px-4 py-3 mb-3 text-left"
+                className="group bg-[#FAF8F3] rounded-2xl px-4 py-3 mb-3 text-left border border-transparent transition-all duration-200 hover:-translate-y-0.5 hover:border-[#059669]/30 hover:shadow-[0_10px_30px_-8px_rgba(120,53,15,0.15)]"
               >
                 {address.isDefault && (
                   <span className="inline-block text-xs text-[#059669] font-semibold bg-[#D1FAE5] px-2 py-0.5 rounded-full mb-2">
@@ -101,7 +101,7 @@ const ShippingAddressSection = () => {
                 <div className="flex items-start gap-2">
                   <MapPin
                     size={16}
-                    className="text-[#059669] shrink-0 mt-0.5"
+                    className="text-[#059669] shrink-0 mt-0.5 transition-transform duration-200 group-hover:scale-110"
                   />
                   <div>
                     <p className="text-sm font-medium text-[#292524]">
@@ -118,7 +118,7 @@ const ShippingAddressSection = () => {
                     onClick={() => {
                       deleteAddress(address.id);
                     }}
-                    className="flex items-center gap-1 text-xs text-red-500 hover:text-red-600 transition"
+                    className="flex items-center gap-1 text-xs text-red-500 hover:text-red-600 hover:gap-1.5 transition-all duration-200"
                   >
                     <Trash2 size={13} />
                     Delete
@@ -132,14 +132,14 @@ const ShippingAddressSection = () => {
         {/* Modal */}
         {showModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#292524]/40">
-            <div className="bg-white rounded-2xl shadow-[0_4px_20px_-4px_rgba(120,53,15,0.15)] w-full max-w-md p-6">
+            <div className="bg-white rounded-2xl shadow-[0_4px_20px_-4px_rgba(120,53,15,0.15)] w-full max-w-md p-6 animate-[dropdown-in_200ms_ease-out]">
               <div className="flex items-center justify-between mb-5">
                 <h3 className="font-heading text-lg font-bold text-[#292524]">
                   Add New Address
                 </h3>
                 <button
                   onClick={() => setShowModal(false)}
-                  className="text-[#78716C] hover:text-[#292524] transition"
+                  className="text-[#78716C] hover:text-[#292524] hover:rotate-90 transition-all duration-200"
                 >
                   <X size={20} />
                 </button>
@@ -233,7 +233,7 @@ const ShippingAddressSection = () => {
 
                 <button
                   type="submit"
-                  className="w-full bg-[#059669] hover:bg-[#047857] text-white font-semibold py-2.5 rounded-full text-sm transition mt-1 shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)]"
+                  className="w-full bg-[#059669] hover:bg-[#047857] text-white font-semibold py-2.5 rounded-full text-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_30px_-8px_rgba(5,150,105,0.35)] active:translate-y-0 mt-1 shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)]"
                 >
                   Save Address
                 </button>

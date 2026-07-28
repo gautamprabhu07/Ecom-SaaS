@@ -124,7 +124,10 @@ const Page = () => {
           All Products
         </h1>
         <div className="flex items-center gap-1.5 text-sm text-[#78716C]">
-          <Link href="/" className="hover:text-[#059669] transition">
+          <Link
+            href="/"
+            className="hover:text-[#059669] transition-colors duration-150"
+          >
             Home
           </Link>
           <span>/</span>
@@ -134,7 +137,7 @@ const Page = () => {
 
       <div className="flex gap-8 items-start">
         {/* Sidebar */}
-        <aside className="w-64 shrink-0 bg-white border border-[#E7E5E4] rounded-2xl p-5 space-y-6 shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)]">
+        <aside className="w-64 shrink-0 bg-white border border-[#E7E5E4] rounded-2xl p-5 space-y-6 shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)] transition-shadow duration-300 hover:shadow-[0_8px_30px_-8px_rgba(120,53,15,0.14)]">
           {/* Price Filter */}
           <div>
             <h3 className="font-heading text-sm font-bold text-[#292524] mb-3">
@@ -173,7 +176,7 @@ const Page = () => {
                   <div
                     key={key}
                     {...rest}
-                    className="w-4 h-4 rounded-full bg-[#059669] border-2 border-white shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)]"
+                    className="w-4 h-4 rounded-full bg-[#059669] border-2 border-white shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)] transition-transform duration-150 hover:scale-125"
                   />
                 );
               }}
@@ -187,7 +190,7 @@ const Page = () => {
                   setPriceRange(tempPriceRange);
                   setPage(1);
                 }}
-                className="text-xs font-semibold text-[#059669] border border-[#059669]/30 px-2.5 py-1 rounded-full hover:bg-[#D1FAE5] transition"
+                className="text-xs font-semibold text-[#059669] border border-[#059669]/30 px-2.5 py-1 rounded-full transition-all duration-200 hover:bg-[#D1FAE5] hover:-translate-y-0.5"
               >
                 Apply
               </button>
@@ -205,12 +208,12 @@ const Page = () => {
               ) : (
                 data?.categories.map((category: any) => (
                   <li key={category}>
-                    <label className="flex items-center gap-2 text-sm text-[#78716C] cursor-pointer hover:text-[#292524]">
+                    <label className="flex items-center gap-2 text-sm text-[#78716C] cursor-pointer rounded-lg px-1.5 py-1 -mx-1.5 transition-colors duration-150 hover:bg-[#FAF8F3] hover:text-[#292524]">
                       <input
                         type="checkbox"
                         checked={selectedCategories.includes(category)}
                         onChange={() => toggleCategory(category)}
-                        className="accent-[#059669] w-3.5 h-3.5"
+                        className="accent-[#059669] w-3.5 h-3.5 cursor-pointer"
                       />
                       {category}
                     </label>
@@ -228,15 +231,15 @@ const Page = () => {
             <ul className="space-y-2">
               {colors.map((color) => (
                 <li key={color.name}>
-                  <label className="flex items-center gap-2 text-sm text-[#78716C] cursor-pointer hover:text-[#292524]">
+                  <label className="flex items-center gap-2 text-sm text-[#78716C] cursor-pointer rounded-lg px-1.5 py-1 -mx-1.5 transition-colors duration-150 hover:bg-[#FAF8F3] hover:text-[#292524]">
                     <input
                       type="checkbox"
                       checked={selectedColors.includes(color.name)}
                       onChange={() => toggleColor(color.name)}
-                      className="accent-[#059669] w-3.5 h-3.5"
+                      className="accent-[#059669] w-3.5 h-3.5 cursor-pointer"
                     />
                     <span
-                      className="w-3 h-3 rounded-full border border-[#E7E5E4]"
+                      className="w-3.5 h-3.5 rounded-full border border-[#E7E5E4] transition-transform duration-150 hover:scale-125"
                       style={{ backgroundColor: color.hex }}
                     />
                     {color.name}
@@ -256,7 +259,7 @@ const Page = () => {
                 <button
                   key={size}
                   onClick={() => toggleSize(size)}
-                  className={`px-2.5 py-1 rounded-full text-xs font-medium border transition ${selectedSizes.includes(size) ? "bg-[#059669] text-white border-[#059669]" : "bg-white text-[#78716C] border-[#E7E5E4] hover:border-[#059669]"}`}
+                  className={`px-2.5 py-1 rounded-full text-xs font-medium border transition-all duration-200 hover:-translate-y-0.5 ${selectedSizes.includes(size) ? "bg-[#059669] text-white border-[#059669] shadow-[0_4px_14px_-4px_rgba(5,150,105,0.4)]" : "bg-white text-[#78716C] border-[#E7E5E4] hover:border-[#059669]"}`}
                 >
                   {size}
                 </button>
@@ -283,8 +286,11 @@ const Page = () => {
               ))}
             </div>
           ) : (
-            <div className="text-sm text-[#78716C] text-center py-16">
-              No products found.
+            <div className="flex flex-col items-center py-16 text-center">
+              <div className="mb-4 w-16 h-16 rounded-full bg-[#FAF8F3] flex items-center justify-center">
+                <span className="text-2xl">🔍</span>
+              </div>
+              <p className="text-sm text-[#78716C]">No products found.</p>
             </div>
           )}
 
@@ -294,7 +300,7 @@ const Page = () => {
                 <button
                   key={i + 1}
                   onClick={() => setPage(i + 1)}
-                  className={`w-8 h-8 rounded-full text-sm font-medium border transition ${page === i + 1 ? "bg-[#059669] text-white border-[#059669]" : "bg-white text-[#78716C] border-[#E7E5E4] hover:border-[#059669]"}`}
+                  className={`w-8 h-8 rounded-full text-sm font-medium border transition-all duration-200 hover:-translate-y-0.5 ${page === i + 1 ? "bg-[#059669] text-white border-[#059669] shadow-[0_4px_14px_-4px_rgba(5,150,105,0.4)]" : "bg-white text-[#78716C] border-[#E7E5E4] hover:border-[#059669]"}`}
                 >
                   {i + 1}
                 </button>

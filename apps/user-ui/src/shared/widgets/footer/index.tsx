@@ -66,7 +66,7 @@ const Footer = () => {
         {/* Brand */}
         <div className="col-span-2">
           <Link href="/" className="text-xl font-bold text-amber-400">
-            Eshop
+            OUTSOURCE
           </Link>
           <p className="text-sm text-[#A8A29E] mt-3 max-w-xs">
             Your one-stop multi-vendor marketplace for quality products from

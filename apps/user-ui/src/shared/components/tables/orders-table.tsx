@@ -3,7 +3,7 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "apps/user-ui/src/utils/axiosInstance";
-import { Package } from "lucide-react";
+import { Package, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 const fetchOrders = async () => {
@@ -14,14 +14,14 @@ const fetchOrders = async () => {
 const statusBadgeClass = (status: string) => {
   switch (status) {
     case "Delivered":
-      return "bg-green-50 text-green-700";
+      return "bg-[#D1FAE5] text-[#059669]";
     case "Shipped":
     case "Out for Delivery":
       return "bg-blue-50 text-blue-700";
     case "Packed":
       return "bg-amber-50 text-amber-700";
     default:
-      return "bg-gray-100 text-gray-600";
+      return "bg-[#F5F5F4] text-[#78716C]";
   }
 };
 
@@ -33,66 +33,87 @@ const OrdersTable = () => {
   });
 
   if (isLoading) {
-    return <p className="text-sm text-gray-500">Loading orders...</p>;
+    return (
+      <div className="space-y-2">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div
+            key={i}
+            className="h-12 bg-[#FAF8F3] rounded-xl animate-pulse"
+          />
+        ))}
+      </div>
+    );
   }
 
   if (orders.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
-        <Package size={32} className="text-gray-300 mb-3" />
-        <p className="text-sm text-gray-400">
+        <div className="p-4 bg-[#FAF8F3] rounded-full mb-3">
+          <Package size={28} className="text-[#A8A29E]" />
+        </div>
+        <p className="text-sm text-[#78716C]">
           You haven&apos;t placed any orders yet.
         </p>
-        <Link href="/" className="mt-3 text-sm text-blue-600 hover:underline">
+        <Link
+          href="/"
+          className="group mt-3 flex items-center gap-1 text-sm text-[#059669] font-medium hover:text-[#047857] transition-colors duration-200"
+        >
           Start Shopping
+          <ArrowRight
+            size={14}
+            className="transition-transform duration-200 group-hover:translate-x-1"
+          />
         </Link>
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto rounded-2xl border border-[#E7E5E4]">
       <table className="w-full text-left text-sm">
         <thead>
-          <tr className="border-b border-gray-100 text-gray-500">
-            <th className="pb-3 font-medium">Order ID</th>
-            <th className="pb-3 font-medium">Date</th>
-            <th className="pb-3 font-medium">Items</th>
-            <th className="pb-3 font-medium">Total</th>
-            <th className="pb-3 font-medium">Payment</th>
-            <th className="pb-3 font-medium">Delivery Status</th>
+          <tr className="border-b border-[#E7E5E4] text-[#78716C] bg-[#FAF8F3]">
+            <th className="py-3 px-4 font-medium">Order ID</th>
+            <th className="py-3 px-4 font-medium">Date</th>
+            <th className="py-3 px-4 font-medium">Items</th>
+            <th className="py-3 px-4 font-medium">Total</th>
+            <th className="py-3 px-4 font-medium">Payment</th>
+            <th className="py-3 px-4 font-medium">Delivery Status</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-50">
+        <tbody className="divide-y divide-[#F5F5F4]">
           {orders.map((order: any) => (
-            <tr key={order.id} className="text-gray-700">
-              <td className="py-3 font-mono text-xs text-gray-600">
+            <tr
+              key={order.id}
+              className="text-[#292524] transition-colors duration-150 hover:bg-[#FAF8F3]"
+            >
+              <td className="py-3 px-4 font-mono text-xs text-[#78716C]">
                 #{order.id.slice(-6).toUpperCase()}
               </td>
-              <td className="py-3 text-gray-500">
+              <td className="py-3 px-4 text-[#78716C]">
                 {new Date(order.createdAt).toLocaleDateString()}
               </td>
-              <td className="py-3 text-gray-500">
+              <td className="py-3 px-4 text-[#78716C]">
                 {order.items?.length ?? 0} item
                 {order.items?.length === 1 ? "" : "s"}
               </td>
-              <td className="py-3 font-medium text-gray-800">
+              <td className="py-3 px-4 font-medium text-[#292524]">
                 ${order.total.toFixed(2)}
               </td>
-              <td className="py-3">
+              <td className="py-3 px-4">
                 <span
-                  className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+                  className={`text-xs font-medium px-2 py-0.5 rounded-full transition-transform duration-150 hover:scale-105 inline-block ${
                     order.status === "Paid"
-                      ? "bg-green-50 text-green-700"
-                      : "bg-gray-100 text-gray-600"
+                      ? "bg-[#D1FAE5] text-[#059669]"
+                      : "bg-[#F5F5F4] text-[#78716C]"
                   }`}
                 >
                   {order.status}
                 </span>
               </td>
-              <td className="py-3">
+              <td className="py-3 px-4">
                 <span
-                  className={`text-xs font-medium px-2 py-0.5 rounded-full ${statusBadgeClass(order.deliveryStatus)}`}
+                  className={`text-xs font-medium px-2 py-0.5 rounded-full transition-transform duration-150 hover:scale-105 inline-block ${statusBadgeClass(order.deliveryStatus)}`}
                 >
                   {order.deliveryStatus}
                 </span>
