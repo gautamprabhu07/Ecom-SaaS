@@ -3,8 +3,9 @@
 import axiosInstance from "apps/user-ui/src/utils/axiosInstance";
 import { useQuery } from "@tanstack/react-query";
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { X } from "lucide-react";
 import { Range } from "react-range";
 import ProductCard from "apps/user-ui/src/shared/components/section/cards/product-card";
 
@@ -13,11 +14,13 @@ const MAX = 1199;
 
 const Page = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [isProductLoading, setProductLoading] = useState(false);
   const [priceRange, setPriceRange] = useState([0, 1199]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
+  const [searchTerm, setSearchTerm] = useState(searchParams.get("search") || "");
   const [page, setPage] = useState(1);
   const [products, setProducts] = useState<any[]>([]);
   const [totalPages, setTotalPages] = useState(1);
@@ -50,6 +53,9 @@ const Page = () => {
     if (selectedSizes.length > 0) {
       params.set("sizes", selectedSizes.join(","));
     }
+    if (searchTerm.trim()) {
+      params.set("search", searchTerm.trim());
+    }
     params.set("page", page.toString());
     router.replace(`/products?${decodeURIComponent(params.toString())}`);
   };
@@ -68,6 +74,9 @@ const Page = () => {
       if (selectedSizes.length > 0) {
         query.set("sizes", selectedSizes.join(","));
       }
+      if (searchTerm.trim()) {
+        query.set("search", searchTerm.trim());
+      }
       query.set("page", page.toString());
       query.set("limit", "12");
       const res = await axiosInstance.get(
@@ -82,10 +91,21 @@ const Page = () => {
     }
   };
 
+  //picks up a new ?search= value pushed from the header (e.g. searching again
+  //while already on this page) and resets pagination for the new query
+  useEffect(() => {
+    const urlSearch = searchParams.get("search") || "";
+    if (urlSearch !== searchTerm) {
+      setSearchTerm(urlSearch);
+      setPage(1);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
+
   useEffect(() => {
     updateURL();
     fetchFilteredProducts();
-  }, [priceRange, selectedCategories, selectedColors, selectedSizes, page]);
+  }, [priceRange, selectedCategories, selectedColors, selectedSizes, searchTerm, page]);
 
   const { data, isLoading } = useQuery({
     queryKey: ["categories"],
@@ -121,8 +141,20 @@ const Page = () => {
       {/* Breadcrumb */}
       <div className="mb-6">
         <h1 className="font-heading text-2xl font-extrabold text-[#292524] mb-1">
-          All Products
+          {searchTerm ? `Results for "${searchTerm}"` : "All Products"}
         </h1>
+        {searchTerm && (
+          <button
+            onClick={() => {
+              setSearchTerm("");
+              setPage(1);
+            }}
+            className="inline-flex items-center gap-1 text-xs font-medium text-[#059669] bg-[#D1FAE5] px-2.5 py-1 rounded-full mb-1.5 transition-colors duration-150 hover:bg-[#a7f3d0]"
+          >
+            Clear search
+            <X size={12} />
+          </button>
+        )}
         <div className="flex items-center gap-1.5 text-sm text-[#78716C]">
           <Link
             href="/"

@@ -92,62 +92,73 @@ const Page = () => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <p className="text-sm text-gray-400">Loading shop...</p>
+      <div className="min-h-screen bg-[#FAF8F3]">
+        <div className="max-w-5xl mx-auto px-6 pt-10 animate-pulse">
+          <div className="h-56 rounded-2xl bg-[#E7E5E4]" />
+          <div className="flex items-end gap-4 -mt-12 px-2">
+            <div className="w-24 h-24 rounded-full border-4 border-[#FAF8F3] bg-[#E7E5E4]" />
+            <div className="flex-1 pb-2 space-y-2">
+              <div className="h-5 w-40 bg-[#E7E5E4] rounded-full" />
+              <div className="h-3.5 w-64 bg-[#E7E5E4] rounded-full" />
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
 
   if (!shop) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <p className="text-sm text-gray-400">Shop not found.</p>
+      <div className="min-h-screen bg-[#FAF8F3] flex flex-col items-center justify-center gap-3">
+        <div className="w-16 h-16 rounded-full bg-white border border-[#E7E5E4] flex items-center justify-center shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)]">
+          <span className="text-2xl">🏬</span>
+        </div>
+        <p className="text-sm text-[#78716C] font-['Inter']">Shop not found.</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#FAF8F3] font-['Inter']">
       {/* Back */}
       <div className="px-6 pt-6">
         <button
           onClick={() => router.back()}
-          className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 transition"
+          className="group flex items-center gap-1.5 text-sm font-medium text-[#78716C] hover:text-[#059669] transition-colors duration-200"
         >
-          <ArrowLeft size={15} />
+          <ArrowLeft
+            size={15}
+            className="transition-transform duration-200 group-hover:-translate-x-1"
+          />
           Back
         </button>
       </div>
 
       {/* Cover banner */}
-      <div className="relative w-full h-56 bg-gray-200 mt-4 overflow-hidden">
-        {shop.coverBanner && (
-          <Image
-            src={shop.coverBanner}
-            alt="Cover banner"
-            fill
-            className="object-cover"
-          />
-        )}
+      <div className="relative w-full h-56 rounded-2xl mx-auto max-w-5xl bg-linear-to-br from-[#D1FAE5] to-[#FAF8F3] mt-4 overflow-hidden shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)]">
+        <Image
+          src={shop.coverBanner || "/product-backup.jpg"}
+          alt="Cover banner"
+          fill
+          className="object-cover transition-transform duration-700 ease-out hover:scale-105"
+        />
       </div>
 
       {/* Shop details */}
       <div className="max-w-5xl mx-auto px-6">
-        <div className="flex items-end gap-4 -mt-12 relative">
-          <div className="relative w-24 h-24 rounded-full border-4 border-white bg-gray-100 overflow-hidden shrink-0">
-            {shop.avatar && (
-              <Image
-                src={shop.avatar}
-                alt={shop.name}
-                fill
-                className="object-cover"
-              />
-            )}
+        <div className="flex items-end gap-4 relative">
+          <div className="relative w-24 h-24 -mt-12 rounded-full border-4 border-[#FAF8F3] bg-[#D1FAE5] overflow-hidden shrink-0 shadow-[0_4px_20px_-4px_rgba(120,53,15,0.15)] transition-transform duration-300 hover:scale-105">
+            <Image
+              src={shop.avatar || "/profile-backup.jpg"}
+              alt={shop.name}
+              fill
+              className="object-cover"
+            />
           </div>
 
-          <div className="flex-1 pb-2">
-            <div className="flex items-center justify-between">
-              <h1 className="text-xl font-semibold text-gray-800">
+          <div className="flex-1 pb-2 pt-3">
+            <div className="flex items-center justify-between flex-wrap gap-3">
+              <h1 className="text-xl font-extrabold text-[#292524] font-['Nunito']">
                 {shop.name}
               </h1>
               <button
@@ -155,27 +166,28 @@ const Page = () => {
                 disabled={
                   followMutation.isPending || unfollowMutation.isPending
                 }
-                className={`flex items-center gap-1.5 text-sm font-medium px-4 py-2 rounded-lg transition disabled:opacity-60 ${
+                className={`flex items-center gap-1.5 text-sm font-semibold px-4 py-2 rounded-full transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-60 disabled:hover:translate-y-0 ${
                   shop.isFollowing
-                    ? "bg-red-50 text-red-600 hover:bg-red-100"
-                    : "bg-blue-600 text-white hover:bg-blue-700"
+                    ? "bg-[#D1FAE5] text-[#047857] hover:bg-[#a7f3d0]"
+                    : "bg-[#059669] text-white hover:bg-[#047857] hover:shadow-[0_10px_30px_-8px_rgba(5,150,105,0.45)]"
                 }`}
               >
                 <Heart
                   size={14}
                   fill={shop.isFollowing ? "currentColor" : "none"}
+                  className="transition-transform duration-200"
                 />
                 {shop.isFollowing ? "Following" : "Follow"}
               </button>
             </div>
 
-            <div className="flex flex-wrap items-center gap-4 mt-2 text-sm text-gray-500">
+            <div className="flex flex-wrap items-center gap-4 mt-2.5 text-sm text-[#78716C]">
               <span className="flex items-center gap-1">
                 <Users size={14} />
                 {shop.followersCount ?? 0} followers
               </span>
-              <span className="flex items-center gap-1">
-                <Star size={14} className="text-amber-400 fill-amber-400" />
+              <span className="flex items-center gap-1 text-[#292524] font-medium">
+                <Star size={14} className="text-[#FDBA74] fill-[#FDBA74]" />
                 {shop.ratings?.toFixed(1) ?? "N/A"}
               </span>
               {shop.opening_hours && (
@@ -193,24 +205,31 @@ const Page = () => {
             </div>
 
             {shop.bio && (
-              <p className="text-sm text-gray-600 mt-2 max-w-2xl">{shop.bio}</p>
+              <p className="text-sm text-[#78716C] mt-2.5 max-w-2xl leading-relaxed">
+                {shop.bio}
+              </p>
             )}
           </div>
         </div>
 
         {/* Tabs */}
-        <div className="flex items-center gap-1 border-b border-gray-200 mt-8">
+        <div className="flex items-center gap-1 border-b border-[#E7E5E4] mt-8">
           {(["products", "offers", "reviews"] as const).map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2.5 text-sm font-medium capitalize border-b-2 transition ${
+              className={`relative px-4 py-2.5 text-sm font-semibold capitalize transition-colors duration-200 ${
                 activeTab === tab
-                  ? "border-blue-600 text-blue-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700"
+                  ? "text-[#059669]"
+                  : "text-[#78716C] hover:text-[#292524]"
               }`}
             >
               {tab}
+              <span
+                className={`absolute left-0 right-0 -bottom-px h-0.5 bg-[#059669] rounded-full transition-transform duration-300 origin-center ${
+                  activeTab === tab ? "scale-x-100" : "scale-x-0"
+                }`}
+              />
             </button>
           ))}
         </div>
@@ -224,32 +243,33 @@ const Page = () => {
                   <a
                     key={product.id}
                     href={`/product/${product.slug}`}
-                    className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition"
+                    className="group bg-white rounded-2xl border border-[#E7E5E4] shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)] overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:border-[#059669]/40 hover:shadow-[0_10px_30px_-6px_rgba(5,150,105,0.18)]"
                   >
-                    <div className="relative h-32 bg-gray-50">
-                      {product.images?.[0]?.url && (
-                        <Image
-                          src={product.images[0].url}
-                          alt={product.title}
-                          fill
-                          className="object-cover"
-                        />
-                      )}
+                    <div className="relative h-32 bg-[#D1FAE5]/40 overflow-hidden">
+                      <Image
+                        src={product.images?.[0]?.url || "/product-backup.jpg"}
+                        alt={product.title}
+                        fill
+                        className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+                      />
                     </div>
                     <div className="p-3">
-                      <p className="text-sm font-medium text-gray-800 line-clamp-1">
+                      <p className="text-sm font-medium text-[#292524] line-clamp-1 transition-colors duration-200 group-hover:text-[#059669]">
                         {product.title}
                       </p>
-                      <p className="text-sm text-gray-500 mt-0.5">
+                      <p className="text-sm text-[#78716C] mt-0.5">
                         ${product.sale_price}
                       </p>
                     </div>
                   </a>
                 ))
               ) : (
-                <p className="text-sm text-gray-400 col-span-full text-center py-10">
-                  No products yet.
-                </p>
+                <div className="col-span-full flex flex-col items-center py-12 text-center">
+                  <div className="mb-3 w-14 h-14 rounded-full bg-[#D1FAE5] flex items-center justify-center">
+                    <span className="text-xl">📦</span>
+                  </div>
+                  <p className="text-sm text-[#78716C]">No products yet.</p>
+                </div>
               )}
             </div>
           )}
@@ -261,35 +281,36 @@ const Page = () => {
                   <a
                     key={offer.id}
                     href={`/product/${offer.slug}`}
-                    className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition"
+                    className="group bg-white rounded-2xl border border-[#E7E5E4] shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)] overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:border-[#059669]/40 hover:shadow-[0_10px_30px_-6px_rgba(5,150,105,0.18)]"
                   >
-                    <div className="relative h-32 bg-gray-50">
-                      {offer.images?.[0]?.url && (
-                        <Image
-                          src={offer.images[0].url}
-                          alt={offer.title}
-                          fill
-                          className="object-cover"
-                        />
-                      )}
-                      <span className="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-semibold px-2 py-0.5 rounded">
+                    <div className="relative h-32 bg-[#D1FAE5]/40 overflow-hidden">
+                      <Image
+                        src={offer.images?.[0]?.url || "/product-backup.jpg"}
+                        alt={offer.title}
+                        fill
+                        className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+                      />
+                      <span className="absolute top-2 left-2 bg-[#FDBA74] text-[#292524] text-[10px] font-bold px-2 py-0.5 rounded-full shadow-[0_4px_12px_-2px_rgba(120,53,15,0.25)]">
                         OFFER
                       </span>
                     </div>
                     <div className="p-3">
-                      <p className="text-sm font-medium text-gray-800 line-clamp-1">
+                      <p className="text-sm font-medium text-[#292524] line-clamp-1 transition-colors duration-200 group-hover:text-[#059669]">
                         {offer.title}
                       </p>
-                      <p className="text-sm text-gray-500 mt-0.5">
+                      <p className="text-sm text-[#78716C] mt-0.5">
                         ${offer.sale_price}
                       </p>
                     </div>
                   </a>
                 ))
               ) : (
-                <p className="text-sm text-gray-400 col-span-full text-center py-10">
-                  No active offers.
-                </p>
+                <div className="col-span-full flex flex-col items-center py-12 text-center">
+                  <div className="mb-3 w-14 h-14 rounded-full bg-[#D1FAE5] flex items-center justify-center">
+                    <span className="text-xl">🏷️</span>
+                  </div>
+                  <p className="text-sm text-[#78716C]">No active offers.</p>
+                </div>
               )}
             </div>
           )}
@@ -300,29 +321,37 @@ const Page = () => {
                 data.reviews.map((review: any) => (
                   <div
                     key={review.id}
-                    className="bg-white rounded-xl border border-gray-200 p-4"
+                    className="bg-white rounded-2xl border border-[#E7E5E4] p-4 transition-all duration-300 hover:shadow-[0_10px_30px_-6px_rgba(120,53,15,0.12)] hover:border-[#059669]/30"
                   >
                     <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-sm font-medium text-gray-800">
+                      <span className="text-sm font-semibold text-[#292524]">
                         {review.user?.name ?? "Anonymous"}
                       </span>
-                      <span className="flex items-center gap-1 text-xs text-amber-500">
-                        <Star size={12} className="fill-amber-400" />
+                      <span className="flex items-center gap-1 text-xs font-medium text-[#78716C] bg-[#FDBA74]/20 px-2 py-0.5 rounded-full">
+                        <Star
+                          size={12}
+                          className="fill-[#FDBA74] text-[#FDBA74]"
+                        />
                         {review.rating}
                       </span>
                     </div>
                     {review.reviews && (
-                      <p className="text-sm text-gray-600">{review.reviews}</p>
+                      <p className="text-sm text-[#78716C] leading-relaxed">
+                        {review.reviews}
+                      </p>
                     )}
-                    <p className="text-xs text-gray-400 mt-1.5">
+                    <p className="text-xs text-[#A8A29E] mt-1.5">
                       {new Date(review.createdAt).toLocaleDateString()}
                     </p>
                   </div>
                 ))
               ) : (
-                <p className="text-sm text-gray-400 text-center py-10">
-                  No reviews yet.
-                </p>
+                <div className="flex flex-col items-center py-12 text-center">
+                  <div className="mb-3 w-14 h-14 rounded-full bg-[#D1FAE5] flex items-center justify-center">
+                    <span className="text-xl">⭐</span>
+                  </div>
+                  <p className="text-sm text-[#78716C]">No reviews yet.</p>
+                </div>
               )}
             </div>
           )}

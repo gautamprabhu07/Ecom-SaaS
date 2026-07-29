@@ -2,36 +2,25 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Search, CircleUserRound, ShoppingCartIcon, Heart } from "lucide-react";
 import HeaderBottom from "./header-bottom";
 import useUser from "../../../hooks/useUser";
 import { useStore } from "apps/user-ui/src/store";
-import axiosInstance from "../../../utils/axiosInstance";
 import Image from "next/image";
 
 const Header = () => {
   const { user, isLoading } = useUser();
   const wishlist = useStore((state: any) => state.wishlist);
   const cart = useStore((state: any) => state.cart);
+  const router = useRouter();
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [suggestions, setSuggestions] = useState<any[]>([]);
-  const [loadingSuggestions, setLoadingSuggestions] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
 
-  const handleSearchClick = async () => {
+  const handleSearchClick = () => {
     if (!searchQuery.trim()) return;
-    setLoadingSuggestions(true);
-    try {
-      const res = await axiosInstance.get(
-        `/products/search?query=${searchQuery}`,
-      );
-      setSuggestions(res.data.products.slice(0, 10));
-    } catch (error) {
-      console.error("Error fetching search suggestions:", error);
-    } finally {
-      setLoadingSuggestions(false);
-    }
+    router.push(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
   };
 
   return (
@@ -78,10 +67,9 @@ const Header = () => {
           <button
             type="button"
             onClick={handleSearchClick}
-            disabled={loadingSuggestions}
-            className="absolute right-1.5 flex items-center gap-1.5 px-5 py-2 text-sm font-semibold text-white bg-emerald-500 hover:bg-emerald-600 active:scale-95 transition-all duration-150 rounded-full cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-sm shadow-black/30"
+            className="absolute right-1.5 flex items-center gap-1.5 px-5 py-2 text-sm font-semibold text-white bg-emerald-500 hover:bg-emerald-600 active:scale-95 transition-all duration-150 rounded-full cursor-pointer shadow-sm shadow-black/30"
           >
-            {loadingSuggestions ? "..." : "Search"}
+            Search
           </button>
         </div>
 

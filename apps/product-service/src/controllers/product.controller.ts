@@ -515,6 +515,7 @@ export const getFilteredProducts = async (req: Request, res: Response, next: Nex
          categories = [],
          colors = [],
          sizes = [],
+         search = "",
          page = 1,
          limit = 12,
       } = req.query;
@@ -526,28 +527,56 @@ export const getFilteredProducts = async (req: Request, res: Response, next: Nex
 
       const skip = (parsedPage - 1) * parsedLimit;
 
-      const filters: Record<string, any> = {
-   sale_price: {
-      gte: parsedPriceRange[0],
-      lte: parsedPriceRange[1],
-   },
-   OR: [
-      { starting_date: { equals: null } },
-      { starting_date: { isSet: false } },
-   ],
-};
+      //each entry is AND-ed together; using an array (rather than reusing the
+      //`OR` key directly on the filters object) lets the date-availability OR
+      //and the search-term OR coexist without one overwriting the other
+      const conditions: Record<string, any>[] = [
+         {
+            sale_price: {
+               gte: parsedPriceRange[0],
+               lte: parsedPriceRange[1],
+            },
+         },
+         {
+            OR: [
+               { starting_date: { equals: null } },
+               { starting_date: { isSet: false } },
+            ],
+         },
+      ];
 
       if(categories && (categories as string).length > 0) {
-         filters.category = { in: Array.isArray(categories) ? categories : (categories as string).split(",") };
+         conditions.push({
+            category: { in: Array.isArray(categories) ? categories : (categories as string).split(",") },
+         });
       }
 
       if(colors && (colors as string).length > 0) {
-         filters.colors = { hasSome: Array.isArray(colors) ? colors : [colors] };
+         conditions.push({
+            colors: { hasSome: Array.isArray(colors) ? colors : [colors] },
+         });
       }
 
       if(sizes && (sizes as string).length > 0) {
-         filters.sizes = { hasSome: Array.isArray(sizes) ? sizes : [sizes] };
+         conditions.push({
+            sizes: { hasSome: Array.isArray(sizes) ? sizes : [sizes] },
+         });
       }
+
+      const searchTerm = (search as string).trim();
+      if (searchTerm) {
+         conditions.push({
+            OR: [
+               { title: { contains: searchTerm, mode: "insensitive" } },
+               { category: { contains: searchTerm, mode: "insensitive" } },
+               { subCategory: { contains: searchTerm, mode: "insensitive" } },
+               { short_description: { contains: searchTerm, mode: "insensitive" } },
+               { brand: { contains: searchTerm, mode: "insensitive" } },
+            ],
+         });
+      }
+
+      const filters: Record<string, any> = { AND: conditions };
 
       const [products, total] = await Promise.all([
          prisma.products.findMany({
@@ -666,7 +695,18 @@ export const getFilteredShops = async (req: Request, res: Response, next: NextFu
       const parsedLimit = Number(limit);
       const skip = (parsedPage - 1) * parsedLimit;
 
-      const filters: Record<string, any> = {};
+      //only consider shops belonging to sellers that actually exist —
+     //seeded/dummy shops (used for recommendation training data) may
+     //reference sellerIds with no matching seller record
+     const realSellers = await prisma.sellers.findMany({
+        select: { id: true },
+     });
+     const realSellerIds = realSellers.map((s) => s.id);
+
+
+      const filters: Record<string, any> = {
+        sellerId: { in: realSellerIds },
+     };
 
       if(categories && (categories as string).length > 0) {
          filters.category = { in: Array.isArray(categories) ? categories : (categories as string).split(",") };
