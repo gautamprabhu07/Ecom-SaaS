@@ -42,7 +42,9 @@ const Hero = () => {
 
           <div className="mt-9 flex flex-wrap items-center gap-4">
             <button
-              onClick={() => router.push("/signup?role=seller")}
+              onClick={() =>
+                (window.location.href = `${process.env.NEXT_PUBLIC_SELLER_SERVER_URL}/signup`)
+              }
               className="group inline-flex items-center gap-2 rounded-full bg-emerald-600 px-6 py-3.5 text-sm font-semibold text-white shadow-md shadow-emerald-600/20 transition-all duration-200 hover:-translate-y-0.5 hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-600/30 active:translate-y-0"
             >
               Start selling
