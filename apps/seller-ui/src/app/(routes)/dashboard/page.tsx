@@ -45,9 +45,9 @@ const revenueData = [
 ];
 
 const deviceData = [
-  { name: "Desktop", value: 54, color: "#2563eb" },
-  { name: "Mobile", value: 38, color: "#60a5fa" },
-  { name: "Tablet", value: 8, color: "#bfdbfe" },
+  { name: "Desktop", value: 54, color: "#059669" },
+  { name: "Mobile", value: 38, color: "#34d399" },
+  { name: "Tablet", value: 8, color: "#FDBA74" },
 ];
 
 const visitorCountries = [
@@ -115,9 +115,9 @@ const recentOrders: {
 ];
 
 const statusStyles: Record<OrderStatus, string> = {
-  Delivered: "bg-green-50 text-green-700 border-green-200",
+  Delivered: "bg-[#D1FAE5] text-[#047857] border-[#059669]/20",
   Shipped: "bg-blue-50 text-blue-700 border-blue-200",
-  Processing: "bg-amber-50 text-amber-700 border-amber-200",
+  Processing: "bg-[#FDBA74]/20 text-[#9a5b1f] border-[#FDBA74]/40",
   Cancelled: "bg-red-50 text-red-700 border-red-200",
 };
 
@@ -139,17 +139,17 @@ const StatPill = ({
   positive: boolean;
   icon: React.ReactNode;
 }) => (
-  <div className="flex items-center gap-3 bg-white rounded-xl border border-gray-200 px-4 py-3">
-    <div className="w-9 h-9 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+  <div className="group flex items-center gap-3 bg-white rounded-2xl border border-[#E7E5E4] shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)] px-4 py-3 transition-all duration-300 hover:-translate-y-1 hover:border-[#059669]/30 hover:shadow-[0_10px_30px_-6px_rgba(5,150,105,0.18)]">
+    <div className="w-9 h-9 rounded-full bg-[#D1FAE5] text-[#059669] flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
       {icon}
     </div>
     <div>
-      <p className="text-xs text-gray-500">{label}</p>
+      <p className="text-xs text-[#78716C]">{label}</p>
       <div className="flex items-center gap-1.5">
-        <span className="text-sm font-semibold text-gray-800">{value}</span>
+        <span className="text-sm font-semibold text-[#292524]">{value}</span>
         <span
           className={`flex items-center text-[11px] font-medium ${
-            positive ? "text-green-600" : "text-red-500"
+            positive ? "text-[#059669]" : "text-red-500"
           }`}
         >
           {positive ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
@@ -162,11 +162,13 @@ const StatPill = ({
 
 const Page = () => {
   return (
-    <div className="min-h-screen bg-gray-50 p-6 space-y-6">
+    <div className="min-h-screen bg-[#FAF8F3] p-6 space-y-6 font-['Inter']">
       {/* Header */}
       <div>
-        <h1 className="text-xl font-semibold text-gray-800">Overview</h1>
-        <p className="text-sm text-gray-500 mt-0.5">
+        <h1 className="font-['Nunito'] text-xl font-extrabold text-[#292524]">
+          Overview
+        </h1>
+        <p className="text-sm text-[#78716C] mt-0.5">
           A snapshot of how your shop is performing.
         </p>
       </div>
@@ -206,13 +208,15 @@ const Page = () => {
       {/* Main grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Revenue chart — top left */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="bg-white rounded-2xl border border-[#E7E5E4] shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)] p-5 transition-shadow duration-300 hover:shadow-[0_8px_30px_-8px_rgba(120,53,15,0.14)]">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-sm font-semibold text-gray-800">Revenue</h2>
-              <p className="text-xs text-gray-400">Last 6 months</p>
+              <h2 className="font-['Nunito'] text-sm font-bold text-[#292524]">
+                Revenue
+              </h2>
+              <p className="text-xs text-[#78716C]">Last 6 months</p>
             </div>
-            <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">
+            <span className="text-xs font-medium text-[#059669] bg-[#D1FAE5] px-2 py-1 rounded-full">
               +26.4%
             </span>
           </div>
@@ -224,23 +228,23 @@ const Page = () => {
               >
                 <defs>
                   <linearGradient id="revenueFill" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#2563eb" stopOpacity={0.28} />
-                    <stop offset="100%" stopColor="#2563eb" stopOpacity={0} />
+                    <stop offset="0%" stopColor="#059669" stopOpacity={0.28} />
+                    <stop offset="100%" stopColor="#059669" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid
                   strokeDasharray="3 3"
-                  stroke="#f1f5f9"
+                  stroke="#E7E5E4"
                   vertical={false}
                 />
                 <XAxis
                   dataKey="month"
-                  tick={{ fontSize: 12, fill: "#9ca3af" }}
+                  tick={{ fontSize: 12, fill: "#78716C" }}
                   axisLine={false}
                   tickLine={false}
                 />
                 <YAxis
-                  tick={{ fontSize: 12, fill: "#9ca3af" }}
+                  tick={{ fontSize: 12, fill: "#78716C" }}
                   axisLine={false}
                   tickLine={false}
                   tickFormatter={(v) => `$${v / 1000}k`}
@@ -251,16 +255,16 @@ const Page = () => {
                     "Revenue",
                   ]}
                   contentStyle={{
-                    borderRadius: 10,
-                    border: "1px solid #e5e7eb",
+                    borderRadius: 12,
+                    border: "1px solid #E7E5E4",
                     fontSize: 12,
-                    boxShadow: "0 4px 12px -2px rgba(0,0,0,0.08)",
+                    boxShadow: "0 4px 20px -4px rgba(120,53,15,0.15)",
                   }}
                 />
                 <Area
                   type="monotone"
                   dataKey="revenue"
-                  stroke="#2563eb"
+                  stroke="#059669"
                   strokeWidth={2}
                   fill="url(#revenueFill)"
                 />
@@ -270,10 +274,12 @@ const Page = () => {
         </div>
 
         {/* Device pie chart — top right */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="bg-white rounded-2xl border border-[#E7E5E4] shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)] p-5 transition-shadow duration-300 hover:shadow-[0_8px_30px_-8px_rgba(120,53,15,0.14)]">
           <div className="mb-4">
-            <h2 className="text-sm font-semibold text-gray-800">Devices</h2>
-            <p className="text-xs text-gray-400">Sessions by device type</p>
+            <h2 className="font-['Nunito'] text-sm font-bold text-[#292524]">
+              Devices
+            </h2>
+            <p className="text-xs text-[#78716C]">Sessions by device type</p>
           </div>
           <div className="h-64 flex items-center">
             <ResponsiveContainer width="100%" height="100%">
@@ -297,9 +303,10 @@ const Page = () => {
                     name,
                   ]}
                   contentStyle={{
-                    borderRadius: 10,
-                    border: "1px solid #e5e7eb",
+                    borderRadius: 12,
+                    border: "1px solid #E7E5E4",
                     fontSize: 12,
+                    boxShadow: "0 4px 20px -4px rgba(120,53,15,0.15)",
                   }}
                 />
                 <Legend
@@ -307,7 +314,7 @@ const Page = () => {
                   iconType="circle"
                   iconSize={8}
                   formatter={(value) => (
-                    <span className="text-xs text-gray-600">{value}</span>
+                    <span className="text-xs text-[#78716C]">{value}</span>
                   )}
                 />
               </PieChart>
@@ -316,12 +323,12 @@ const Page = () => {
         </div>
 
         {/* Visitor world map — bottom left */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="bg-white rounded-2xl border border-[#E7E5E4] shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)] p-5 transition-shadow duration-300 hover:shadow-[0_8px_30px_-8px_rgba(120,53,15,0.14)]">
           <div className="mb-4">
-            <h2 className="text-sm font-semibold text-gray-800">
+            <h2 className="font-['Nunito'] text-sm font-bold text-[#292524]">
               Visitor Distribution
             </h2>
-            <p className="text-xs text-gray-400">
+            <p className="text-xs text-[#78716C]">
               Where your traffic comes from
             </p>
           </div>
@@ -342,12 +349,12 @@ const Page = () => {
                       <Geography
                         key={geo.rsmKey}
                         geography={geo}
-                        fill={isHighlighted ? "#bfdbfe" : "#f1f5f9"}
-                        stroke="#e5e7eb"
+                        fill={isHighlighted ? "#D1FAE5" : "#F5F5F4"}
+                        stroke="#E7E5E4"
                         strokeWidth={0.5}
                         style={{
                           default: { outline: "none" },
-                          hover: { outline: "none", fill: "#93c5fd" },
+                          hover: { outline: "none", fill: "#6ee7b7" },
                           pressed: { outline: "none" },
                         }}
                       />
@@ -359,7 +366,7 @@ const Page = () => {
                 <Marker key={c.name} coordinates={c.coordinates}>
                   <circle
                     r={Math.max(3, Math.sqrt(c.visitors) / 8)}
-                    fill="#2563eb"
+                    fill="#059669"
                     fillOpacity={0.75}
                     stroke="#fff"
                     strokeWidth={1}
@@ -371,13 +378,13 @@ const Page = () => {
         </div>
 
         {/* Recent orders — bottom right */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="bg-white rounded-2xl border border-[#E7E5E4] shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)] p-5 transition-shadow duration-300 hover:shadow-[0_8px_30px_-8px_rgba(120,53,15,0.14)]">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-sm font-semibold text-gray-800">
+              <h2 className="font-['Nunito'] text-sm font-bold text-[#292524]">
                 Recent Orders
               </h2>
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-[#78716C]">
                 Latest activity across your shop
               </p>
             </div>
@@ -385,24 +392,31 @@ const Page = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-xs text-gray-400 border-b border-gray-100">
+                <tr className="text-left text-xs text-[#78716C] border-b border-[#E7E5E4]">
                   <th className="pb-2 font-medium">Order ID</th>
                   <th className="pb-2 font-medium">Customer</th>
                   <th className="pb-2 font-medium">Amount</th>
                   <th className="pb-2 font-medium">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-50">
+              <tbody className="divide-y divide-[#F5F5F4]">
                 {recentOrders.map((order) => (
-                  <tr key={order.id} className="text-gray-700">
-                    <td className="py-2.5 font-medium text-gray-800">
+                  <tr
+                    key={order.id}
+                    className="text-[#292524] transition-colors duration-150 hover:bg-[#FAF8F3]"
+                  >
+                    <td className="py-2.5 font-medium text-[#292524]">
                       {order.id}
                     </td>
-                    <td className="py-2.5">{order.customer}</td>
-                    <td className="py-2.5">${order.amount.toFixed(2)}</td>
+                    <td className="py-2.5 text-[#78716C]">
+                      {order.customer}
+                    </td>
+                    <td className="py-2.5 font-medium">
+                      ${order.amount.toFixed(2)}
+                    </td>
                     <td className="py-2.5">
                       <span
-                        className={`inline-block px-2 py-0.5 rounded-full text-[11px] font-medium border ${statusStyles[order.status]}`}
+                        className={`inline-block px-2 py-0.5 rounded-full text-[11px] font-medium border transition-transform duration-150 hover:scale-105 ${statusStyles[order.status]}`}
                       >
                         {order.status}
                       </span>

@@ -54,10 +54,10 @@ const AiChatPage = () => {
   };
 
   return (
-    <div className="p-6">
+    <div className="p-6 font-['Inter']">
       <div className="flex items-center justify-between mb-1">
-        <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
-          <Sparkles size={20} className="text-emerald-600" />
+        <h2 className="font-['Nunito'] text-xl font-extrabold text-[#292524] flex items-center gap-2">
+          <Sparkles size={20} className="text-[#059669]" />
           AI Chat
         </h2>
       </div>
@@ -66,25 +66,30 @@ const AiChatPage = () => {
         <Breadcrumbs title="AI Chat" />
       </div>
 
-      <div className="rounded-lg border border-gray-200 bg-white flex flex-col h-[65vh]">
+      <div className="rounded-2xl border border-[#E7E5E4] bg-white shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)] flex flex-col h-[65vh]">
         <div className="flex-1 overflow-y-auto p-4 space-y-3">
           {messages.length === 0 && (
-            <p className="text-sm text-gray-400 text-center mt-10">
-              Ask about store performance — e.g. "What's the most sold product?" or
-              "Which shop has the most visitors?"
-            </p>
+            <div className="flex flex-col items-center text-center mt-10 gap-3">
+              <div className="w-14 h-14 rounded-full bg-[#D1FAE5] flex items-center justify-center">
+                <Sparkles size={22} className="text-[#059669]" />
+              </div>
+              <p className="text-sm text-[#78716C] max-w-xs">
+                Ask about store performance — e.g. "What's the most sold
+                product?" or "Which shop has the most visitors?"
+              </p>
+            </div>
           )}
 
           {messages.map((msg, index) => (
             <div
               key={index}
-              className={`flex ${msg.role === "admin" ? "justify-end" : "justify-start"}`}
+              className={`flex ${msg.role === "admin" ? "justify-end" : "justify-start"} animate-fade-in`}
             >
               <div
-                className={`max-w-[75%] rounded-lg px-3 py-2 text-sm whitespace-pre-wrap ${
+                className={`max-w-[75%] rounded-2xl px-3.5 py-2 text-sm whitespace-pre-wrap transition-shadow duration-200 ${
                   msg.role === "admin"
-                    ? "bg-emerald-600 text-white"
-                    : "bg-gray-100 text-gray-800"
+                    ? "bg-[#059669] text-white shadow-[0_4px_12px_-2px_rgba(5,150,105,0.3)]"
+                    : "bg-[#F5F5F4] text-[#292524]"
                 }`}
               >
                 {msg.content}
@@ -93,8 +98,8 @@ const AiChatPage = () => {
           ))}
 
           {isPending && (
-            <div className="flex justify-start">
-              <div className="max-w-[75%] rounded-lg px-3 py-2 text-sm bg-gray-100 text-gray-400">
+            <div className="flex justify-start animate-fade-in">
+              <div className="max-w-[75%] rounded-2xl px-3.5 py-2 text-sm bg-[#F5F5F4] text-[#78716C]">
                 Thinking...
               </div>
             </div>
@@ -103,7 +108,7 @@ const AiChatPage = () => {
           <div ref={bottomRef} />
         </div>
 
-        <div className="border-t border-gray-100 p-3 flex items-center gap-2">
+        <div className="border-t border-[#F5F5F4] p-3 flex items-center gap-2">
           <input
             type="text"
             value={input}
@@ -111,12 +116,12 @@ const AiChatPage = () => {
             onKeyDown={handleKeyDown}
             placeholder="Ask about products, shops, or user activity..."
             disabled={isPending}
-            className="flex-1 text-sm outline-none border border-gray-200 rounded-lg px-3 py-2 placeholder:text-gray-400 focus:ring-2 focus:ring-emerald-500 disabled:bg-gray-50"
+            className="flex-1 text-sm outline-none border border-[#E7E5E4] rounded-full px-4 py-2 text-[#292524] placeholder:text-[#A8A29E] transition-all duration-200 focus:ring-2 focus:ring-[#059669] focus:border-[#059669] disabled:bg-[#FAF8F3]"
           />
           <button
             onClick={handleSend}
             disabled={isPending || !input.trim()}
-            className="flex items-center gap-1.5 text-sm font-medium bg-emerald-600 text-white px-3 py-2 rounded-lg hover:bg-emerald-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-1.5 text-sm font-medium bg-[#059669] text-white px-4 py-2 rounded-full hover:bg-[#047857] hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
           >
             <Send size={14} />
             Send

@@ -43,16 +43,24 @@ const Page = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <Loader2 className="animate-spin text-gray-400" size={28} />
+      <div className="min-h-screen bg-[#FAF8F3]">
+        <div className="max-w-4xl mx-auto px-6 pt-10 animate-pulse space-y-4">
+          <div className="h-4 w-40 bg-[#E7E5E4] rounded-full" />
+          <div className="h-7 w-64 bg-[#E7E5E4] rounded-full" />
+          <div className="h-24 bg-[#E7E5E4] rounded-2xl" />
+          <div className="h-40 bg-[#E7E5E4] rounded-2xl" />
+        </div>
       </div>
     );
   }
 
   if (!order) {
     return (
-      <div className="p-6 text-center text-sm text-gray-400">
-        Order not found.
+      <div className="min-h-screen bg-[#FAF8F3] flex flex-col items-center justify-center gap-3">
+        <div className="w-16 h-16 rounded-full bg-white border border-[#E7E5E4] flex items-center justify-center shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)]">
+          <span className="text-2xl">📦</span>
+        </div>
+        <p className="text-sm text-[#78716C]">Order not found.</p>
       </div>
     );
   }
@@ -60,29 +68,32 @@ const Page = () => {
   const currentIndex = statusSteps.indexOf(order.deliveryStatus);
 
   return (
-    <div className="p-6 max-w-4xl mx-auto space-y-6">
+    <div className="p-6 max-w-4xl mx-auto space-y-6 bg-[#FAF8F3] font-['Inter']">
       {/* Back link */}
       <button
         onClick={() => router.push("/dashboard/orders")}
-        className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 transition"
+        className="group flex items-center gap-1.5 text-sm font-medium text-[#78716C] hover:text-[#059669] transition-colors duration-200"
       >
-        <ArrowLeft size={15} />
+        <ArrowLeft
+          size={15}
+          className="transition-transform duration-200 group-hover:-translate-x-1"
+        />
         Back to Orders
       </button>
 
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <h3 className="text-xl font-semibold text-gray-800">
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <h3 className="font-['Nunito'] text-xl font-extrabold text-[#292524]">
           Order #{order.id.slice(-6).toUpperCase()}
         </h3>
 
-        <span className="text-xs font-medium px-3 py-1.5 rounded-full bg-blue-50 text-blue-700">
+        <span className="text-xs font-medium px-3 py-1.5 rounded-full bg-[#D1FAE5] text-[#047857]">
           {order.deliveryStatus}
         </span>
       </div>
 
       {/* Delivery progress (read-only) */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
+      <div className="bg-white rounded-2xl border border-[#E7E5E4] shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)] p-6 transition-shadow duration-300 hover:shadow-[0_8px_30px_-8px_rgba(120,53,15,0.14)]">
         <div className="flex items-center">
           {statusSteps.map((step, index) => {
             const passed = currentIndex >= index;
@@ -91,22 +102,22 @@ const Page = () => {
               <React.Fragment key={step}>
                 <div className="flex flex-col items-center shrink-0">
                   <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold transition ${
+                    className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold transition-all duration-300 ${
                       passed
-                        ? "bg-green-500 text-white"
-                        : "bg-gray-200 text-gray-500"
+                        ? "bg-[#059669] text-white shadow-[0_4px_12px_-2px_rgba(5,150,105,0.4)]"
+                        : "bg-[#E7E5E4] text-[#78716C]"
                     }`}
                   >
                     {passed ? "✓" : index + 1}
                   </div>
-                  <span className="text-xs text-gray-600 mt-1.5 text-center w-20">
+                  <span className="text-xs text-[#78716C] mt-1.5 text-center w-20">
                     {step}
                   </span>
                 </div>
                 {!isLast && (
                   <div
-                    className={`flex-1 h-1 mx-1 rounded transition ${
-                      currentIndex > index ? "bg-green-500" : "bg-gray-200"
+                    className={`flex-1 h-1 mx-1 rounded transition-colors duration-300 ${
+                      currentIndex > index ? "bg-[#059669]" : "bg-[#E7E5E4]"
                     }`}
                   />
                 )}
@@ -117,28 +128,28 @@ const Page = () => {
       </div>
 
       {/* Summary info */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-3 text-sm">
+      <div className="bg-white rounded-2xl border border-[#E7E5E4] shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)] p-6 space-y-3 text-sm transition-shadow duration-300 hover:shadow-[0_8px_30px_-8px_rgba(120,53,15,0.14)]">
         <div className="flex justify-between">
-          <span className="text-gray-500">Shop</span>
-          <span className="font-medium text-gray-800">
+          <span className="text-[#78716C]">Shop</span>
+          <span className="font-medium text-[#292524]">
             {order.shops?.name ?? "Unknown shop"}
           </span>
         </div>
 
         <div className="flex justify-between">
-          <span className="text-gray-500">Buyer</span>
-          <span className="font-medium text-gray-800">
+          <span className="text-[#78716C]">Buyer</span>
+          <span className="font-medium text-[#292524]">
             {order.user?.name ?? "Guest"}
           </span>
         </div>
 
         <div className="flex justify-between">
-          <span className="text-gray-500">Payment Status</span>
+          <span className="text-[#78716C]">Payment Status</span>
           <span
             className={`font-medium px-2 py-0.5 rounded-full text-xs ${
               order.status === "Paid"
-                ? "bg-green-50 text-green-700"
-                : "bg-gray-100 text-gray-600"
+                ? "bg-[#D1FAE5] text-[#047857]"
+                : "bg-[#F5F5F4] text-[#78716C]"
             }`}
           >
             {order.status}
@@ -146,19 +157,19 @@ const Page = () => {
         </div>
 
         <div className="flex justify-between">
-          <span className="text-gray-500">Total Paid</span>
-          <span className="font-semibold text-gray-800">
+          <span className="text-[#78716C]">Total Paid</span>
+          <span className="font-semibold text-[#292524]">
             ${order.total.toFixed(2)}
           </span>
         </div>
 
         {order.discountAmount > 0 && (
           <div className="flex justify-between">
-            <span className="text-gray-500">Discount Applied</span>
-            <span className="text-green-600 font-medium">
+            <span className="text-[#78716C]">Discount Applied</span>
+            <span className="text-[#059669] font-medium">
               -${order.discountAmount.toFixed(2)}
               {order.couponCode && (
-                <span className="text-gray-400 font-normal ml-1">
+                <span className="text-[#A8A29E] font-normal ml-1">
                   (
                   {order.couponCode.discountType === "percentage"
                     ? `${order.couponCode.discountValue}%`
@@ -172,17 +183,17 @@ const Page = () => {
 
         {order.couponCode && (
           <div className="flex justify-between items-center">
-            <span className="text-gray-500">Coupon Used</span>
-            <span className="flex items-center gap-1 text-gray-700">
-              <Tag size={13} className="text-gray-400" />
+            <span className="text-[#78716C]">Coupon Used</span>
+            <span className="flex items-center gap-1 text-[#292524]">
+              <Tag size={13} className="text-[#78716C]" />
               {order.couponCode.public_name}
             </span>
           </div>
         )}
 
         <div className="flex justify-between">
-          <span className="text-gray-500">Date</span>
-          <span className="text-gray-700">
+          <span className="text-[#78716C]">Date</span>
+          <span className="text-[#292524]">
             {new Date(order.createdAt).toLocaleDateString()}
           </span>
         </div>
@@ -190,13 +201,13 @@ const Page = () => {
 
       {/* Shipping address */}
       {order.shippingAddress && (
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <h4 className="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-1.5">
-            <MapPin size={15} className="text-gray-400" />
+        <div className="bg-white rounded-2xl border border-[#E7E5E4] shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)] p-6 transition-shadow duration-300 hover:shadow-[0_8px_30px_-8px_rgba(120,53,15,0.14)]">
+          <h4 className="font-['Nunito'] text-sm font-bold text-[#292524] mb-3 flex items-center gap-1.5">
+            <MapPin size={15} className="text-[#059669]" />
             Shipping Address
           </h4>
-          <div className="text-sm text-gray-600 space-y-0.5">
-            <p className="font-medium text-gray-800">
+          <div className="text-sm text-[#78716C] space-y-0.5">
+            <p className="font-medium text-[#292524]">
               {order.shippingAddress.name}
             </p>
             <p>
@@ -209,8 +220,8 @@ const Page = () => {
       )}
 
       {/* Order items */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
-        <h2 className="text-sm font-semibold text-gray-800 mb-4">
+      <div className="bg-white rounded-2xl border border-[#E7E5E4] shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)] p-6 transition-shadow duration-300 hover:shadow-[0_8px_30px_-8px_rgba(120,53,15,0.14)]">
+        <h2 className="font-['Nunito'] text-sm font-bold text-[#292524] mb-4">
           Order Items
         </h2>
 
@@ -218,20 +229,20 @@ const Page = () => {
           {order.items.map((item: any) => (
             <div
               key={item.productId}
-              className="flex items-center gap-4 border-b border-gray-50 last:border-0 pb-4 last:pb-0"
+              className="group flex items-center gap-4 border-b border-[#F5F5F4] last:border-0 pb-4 last:pb-0 transition-colors duration-150 hover:bg-[#FAF8F3] rounded-xl px-2 -mx-2"
             >
               {item.product?.images?.[0]?.url && (
                 <img
                   src={item.product.images[0].url}
                   alt={item.product?.title || "Product"}
-                  className="w-16 h-16 rounded-lg object-cover border border-gray-200 shrink-0"
+                  className="w-16 h-16 rounded-xl object-cover border border-[#E7E5E4] shrink-0 transition-transform duration-300 group-hover:scale-105"
                 />
               )}
               <div className="flex-1">
-                <p className="font-medium text-gray-800">
+                <p className="font-medium text-[#292524]">
                   {item.product?.title ?? "Unknown product"}
                 </p>
-                <p className="text-xs text-gray-500 mt-0.5">
+                <p className="text-xs text-[#78716C] mt-0.5">
                   Quantity: {item.quantity}
                 </p>
                 {item.selectedOptions &&
@@ -242,7 +253,7 @@ const Page = () => {
                           value && (
                             <span
                               key={key}
-                              className="text-xs text-gray-500 capitalize"
+                              className="text-xs text-[#78716C] capitalize"
                             >
                               {key}: {value}
                             </span>
@@ -251,7 +262,7 @@ const Page = () => {
                     </div>
                   )}
               </div>
-              <p className="font-medium text-gray-800">
+              <p className="font-medium text-[#292524]">
                 ${item.price.toFixed(2)}
               </p>
             </div>

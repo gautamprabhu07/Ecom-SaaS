@@ -15,11 +15,11 @@ type Props = InputProps | TextAreaProps;
 const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, Props>(
   ({ label, type = "text", className, ...props }, ref) => {
     const base =
-      "w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500";
+      "w-full border border-[#E7E5E4] rounded-2xl px-3 py-2.5 text-sm text-[#292524] placeholder:text-[#78716C] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#059669] focus:border-[#059669]";
     return (
       <div className="w-full">
         {label && (
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-[#292524] mb-1">
             {label}
           </label>
         )}

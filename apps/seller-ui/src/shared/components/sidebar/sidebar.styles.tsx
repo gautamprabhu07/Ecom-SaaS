@@ -5,15 +5,15 @@ import styled from "styled-components";
 export const SidebarWrapper = styled.div<{ collapsed?: boolean }>`
   width: ${(props) => (props.collapsed ? "80px" : "260px")};
   height: 100vh;
-  background: #ffffff;
-  color: #292524;
+  background: #171717;
+  color: #ffffff;
   display: flex;
   flex-direction: column;
   position: fixed;
   top: 0;
   left: 0;
   z-index: 100;
-  border-right: 1px solid #e7e5e4;
+  border-right: 1px solid #262626;
   transition: width 0.3s ease;
   overflow-x: hidden;
   overflow-y: auto;
@@ -22,7 +22,7 @@ export const SidebarWrapper = styled.div<{ collapsed?: boolean }>`
     width: 4px;
   }
   &::-webkit-scrollbar-thumb {
-    background: #d1fae5;
+    background: #10b981;
     border-radius: 999px;
   }
   &::-webkit-scrollbar-track {
@@ -32,7 +32,7 @@ export const SidebarWrapper = styled.div<{ collapsed?: boolean }>`
   @media (max-width: 768px) {
     width: ${(props) => (props.collapsed ? "0px" : "260px")};
     box-shadow: ${(props) =>
-      props.collapsed ? "none" : "4px 0 20px -4px rgba(120,53,15,0.08)"};
+      props.collapsed ? "none" : "4px 0 20px -4px rgba(0,0,0,0.4)"};
   }
 `;
 
@@ -40,7 +40,7 @@ export const Overlay = styled.div<{ collapsed?: boolean }>`
   display: ${(props) => (props.collapsed ? "none" : "block")};
   position: fixed;
   inset: 0;
-  background: rgba(41, 37, 36, 0.4);
+  background: rgba(0, 0, 0, 0.5);
   z-index: 99;
 
   @media (min-width: 768px) {
@@ -53,7 +53,7 @@ export const Header = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 20px 16px;
-  border-bottom: 1px solid #e7e5e4;
+  border-bottom: 1px solid #262626;
   min-height: 64px;
   flex-shrink: 0;
 `;
@@ -71,7 +71,7 @@ export const Footer = styled.div`
   display: flex;
   align-items: center;
   padding: 16px;
-  border-top: 1px solid #e7e5e4;
+  border-top: 1px solid #262626;
   min-height: 64px;
   flex-shrink: 0;
   gap: 10px;

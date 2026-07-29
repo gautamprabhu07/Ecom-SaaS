@@ -6,7 +6,7 @@ const sizes = ["XS", "S", "M", "L", "XL", "XXL"];
 const SizeSelector = ({ control, errors }: any) => {
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 mb-2">
+      <label className="block text-sm font-medium text-[#292524] mb-2">
         Sizes
       </label>
       <Controller
@@ -27,7 +27,7 @@ const SizeSelector = ({ control, errors }: any) => {
                         : [...(field.value || []), size],
                     );
                   }}
-                  className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition ${isSelected ? "bg-blue-600 text-white border-blue-600" : "bg-white text-gray-600 border-gray-300 hover:border-blue-400"}`}
+                  className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-all duration-200 hover:-translate-y-0.5 ${isSelected ? "bg-[#059669] text-white border-[#059669] shadow-[0_4px_14px_-4px_rgba(5,150,105,0.4)]" : "bg-white text-[#78716C] border-[#E7E5E4] hover:border-[#059669]"}`}
                 >
                   {size}
                 </button>
@@ -37,7 +37,9 @@ const SizeSelector = ({ control, errors }: any) => {
         )}
       />
       {errors.sizes && (
-        <p className="text-red-500 text-xs mt-1">{errors.sizes.message}</p>
+        <p className="text-red-500 text-xs mt-1 animate-[dropdown-in_150ms_ease-out]">
+          {errors.sizes.message}
+        </p>
       )}
     </div>
   );

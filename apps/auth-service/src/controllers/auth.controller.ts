@@ -134,15 +134,15 @@ export const refreshToken = async (req: any, res: Response, next: NextFunction) 
       req.cookies["seller_refresh_token"]
       || req.headers.authorization?.split(" ")[1];
       if(!refreshToken) {
-         return new ValidationError("Refresh token not found");
+         return next(new ValidationError("Refresh token not found"));
       }
 
       const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET as string) as {id: string, role: string};
 
-      if(!decoded || !decoded.id || !decoded.role) { return new JsonWebTokenError("Invalid refresh token"); }
+      if(!decoded || !decoded.id || !decoded.role) { return next(new JsonWebTokenError("Invalid refresh token")); }
 
       let account;
-      if(decoded.role === "user") {
+      if(decoded.role === "user" || decoded.role === "admin") {
          account = await prisma.users.findUnique({where: {id: decoded.id}});
       }
       else if(decoded.role === "seller") {
@@ -153,12 +153,12 @@ export const refreshToken = async (req: any, res: Response, next: NextFunction) 
       }
 
       if(!account) {
-         return new AuthError("User not found");
+         return next(new AuthError("User not found"));
       }
 
       const newAccessToken=jwt.sign({id: decoded.id, role:decoded.role}, process.env.ACCESS_TOKEN_SECRET as string, {expiresIn: "15m"});
 
-      if(decoded.role === "user") {
+      if(decoded.role === "user" || decoded.role === "admin") {
          setCookie(res, "access_token", newAccessToken);
       }else if(decoded.role === "seller") {
          setCookie(res, "seller_access_token", newAccessToken);

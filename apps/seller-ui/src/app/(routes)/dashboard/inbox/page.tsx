@@ -192,18 +192,25 @@ const Page = () => {
   const getLastMessage = (chat: any) => chat.lastMessage || "";
 
   return (
-    <div className="min-h-screen bg-[#FAF8F3] p-6">
-      <div className="max-w-6xl mx-auto flex gap-4 h-[75vh] bg-white rounded-2xl border border-neutral-200 overflow-hidden">
+    <div className="min-h-screen bg-[#FAF8F3] p-6 font-['Inter']">
+      <div className="max-w-6xl mx-auto flex gap-4 h-[75vh] bg-white rounded-2xl border border-[#E7E5E4] shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)] overflow-hidden">
         {/* Sidebar */}
-        <div className="w-72 shrink-0 border-r border-neutral-100 flex flex-col">
-          <div className="px-4 py-3 border-b border-neutral-100 font-semibold text-neutral-900">
+        <div className="w-72 shrink-0 border-r border-[#E7E5E4] flex flex-col">
+          <div className="px-4 py-3 border-b border-[#E7E5E4] font-['Nunito'] font-bold text-[#292524]">
             Messages
           </div>
           <div className="flex-1 overflow-y-auto">
             {isLoading ? (
-              <div className="p-4 text-sm text-neutral-400">Loading...</div>
+              <div className="p-3 space-y-2">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="h-14 bg-[#FAF8F3] rounded-xl animate-pulse"
+                  />
+                ))}
+              </div>
             ) : chats.length === 0 ? (
-              <div className="p-4 text-sm text-neutral-400">
+              <div className="p-4 text-sm text-[#78716C]">
                 No conversations found.
               </div>
             ) : (
@@ -214,9 +221,12 @@ const Page = () => {
                   <button
                     key={chat.conversationId}
                     onClick={() => handleChatSelect(chat)}
-                    className={`w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-neutral-50 transition ${isActive ? "bg-emerald-50" : ""}`}
+                    className={`group relative w-full flex items-center gap-3 px-4 py-3 text-left transition-all duration-200 hover:bg-[#FAF8F3] ${isActive ? "bg-[#D1FAE5]" : ""}`}
                   >
-                    <div className="relative w-9 h-9 rounded-full overflow-hidden bg-neutral-100 shrink-0">
+                    {isActive && (
+                      <span className="absolute left-0 top-1/2 -translate-y-1/2 h-8 w-1 rounded-r-full bg-[#059669]" />
+                    )}
+                    <div className="relative w-9 h-9 rounded-full overflow-hidden bg-[#F5F5F4] shrink-0 transition-transform duration-200 group-hover:scale-105">
                       {chat.user?.avatar && (
                         <Image
                           src={chat.user.avatar}
@@ -226,24 +236,22 @@ const Page = () => {
                           className="object-cover"
                         />
                       )}
+                      {chat.user?.isOnline && (
+                        <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-[#059669] border-2 border-white animate-[pulse-soft_2s_ease-in-out_infinite]" />
+                      )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5">
-                        <span className="text-sm font-medium text-neutral-800 truncate">
+                        <span className="text-sm font-medium text-[#292524] truncate">
                           {chat.user?.name}
                         </span>
-                        {chat.user?.isOnline && (
-                          <span className="text-[10px] text-emerald-500">
-                            ●
-                          </span>
-                        )}
                       </div>
-                      <p className="text-xs text-neutral-500 truncate">
+                      <p className="text-xs text-[#78716C] truncate">
                         {getLastMessage(chat)}
                       </p>
                     </div>
                     {chat.unreadCount > 0 && (
-                      <span className="text-[10px] bg-emerald-500 text-white rounded-full w-4 h-4 flex items-center justify-center shrink-0">
+                      <span className="text-[10px] bg-[#059669] text-white rounded-full w-4 h-4 flex items-center justify-center shrink-0">
                         {chat.unreadCount}
                       </span>
                     )}
@@ -258,8 +266,8 @@ const Page = () => {
         <div className="flex-1 flex flex-col">
           {selectedChat ? (
             <>
-              <div className="flex items-center gap-3 px-4 py-3 border-b border-neutral-100">
-                <div className="relative w-9 h-9 rounded-full overflow-hidden bg-neutral-100">
+              <div className="flex items-center gap-3 px-4 py-3 border-b border-[#E7E5E4]">
+                <div className="relative w-9 h-9 rounded-full overflow-hidden bg-[#F5F5F4]">
                   {selectedChat.user?.avatar && (
                     <Image
                       src={selectedChat.user.avatar}
@@ -269,12 +277,15 @@ const Page = () => {
                       className="object-cover"
                     />
                   )}
+                  {selectedChat.user?.isOnline && (
+                    <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-[#059669] border-2 border-white animate-[pulse-soft_2s_ease-in-out_infinite]" />
+                  )}
                 </div>
                 <div>
-                  <h2 className="text-sm font-semibold text-neutral-900">
+                  <h2 className="text-sm font-semibold text-[#292524]">
                     {selectedChat.user?.name}
                   </h2>
-                  <p className="text-xs text-neutral-500">
+                  <p className="text-xs text-[#78716C]">
                     {selectedChat.user?.isOnline ? "Online" : "Offline"}
                   </p>
                 </div>
@@ -282,13 +293,13 @@ const Page = () => {
 
               <div
                 ref={messageContainerRef}
-                className="flex-1 overflow-y-auto px-4 py-3 space-y-2 bg-[#FDFCF9]"
+                className="flex-1 overflow-y-auto px-4 py-3 space-y-2 bg-[#FAF8F3]"
               >
                 {hasMore && (
                   <div className="text-center">
                     <button
                       onClick={loadMoreMessages}
-                      className="text-xs text-emerald-600 hover:underline"
+                      className="text-xs text-[#059669] hover:text-[#047857] hover:underline transition-colors duration-150"
                     >
                       Load previous messages
                     </button>
@@ -297,18 +308,18 @@ const Page = () => {
                 {messages.map((msg: any, index: number) => (
                   <div
                     key={index}
-                    className={`flex ${msg.senderType === "seller" ? "justify-end" : "justify-start"}`}
+                    className={`flex animate-[dropdown-in_200ms_ease-out] ${msg.senderType === "seller" ? "justify-end" : "justify-start"}`}
                   >
                     <div
-                      className={`max-w-[70%] rounded-2xl px-3 py-2 text-sm ${
+                      className={`max-w-[70%] rounded-2xl px-3 py-2 text-sm transition-transform duration-150 hover:-translate-y-0.5 ${
                         msg.senderType === "seller"
-                          ? "bg-emerald-600 text-white"
-                          : "bg-white border border-neutral-200 text-neutral-800"
-                      }`}
+                          ? "bg-[#059669] text-white shadow-sm shadow-[#059669]/20"
+                          : "bg-white border border-[#E7E5E4] text-[#292524] shadow-sm shadow-black/5"
+                      } ${msg.pending ? "opacity-60" : ""}`}
                     >
                       <div>{msg.text || msg.content}</div>
                       <div
-                        className={`text-[10px] mt-0.5 ${msg.senderType === "seller" ? "text-emerald-100" : "text-neutral-400"}`}
+                        className={`text-[10px] mt-0.5 ${msg.senderType === "seller" ? "text-[#D1FAE5]" : "text-[#A8A29E]"}`}
                       >
                         {msg.time ||
                           new Date(msg.createdAt).toLocaleTimeString([], {
@@ -329,7 +340,10 @@ const Page = () => {
               />
             </>
           ) : (
-            <div className="flex-1 flex items-center justify-center text-sm text-neutral-400">
+            <div className="flex-1 flex flex-col items-center justify-center text-sm text-[#78716C] gap-2">
+              <div className="w-14 h-14 rounded-full bg-[#FAF8F3] flex items-center justify-center">
+                <span className="text-2xl">💬</span>
+              </div>
               Select a conversation
             </div>
           )}

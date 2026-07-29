@@ -62,21 +62,23 @@ const ManagementPage = () => {
         accessorKey: "name",
         header: "Name",
         cell: ({ row }: any) => (
-          <span className="font-medium text-gray-800">{row.original.name}</span>
+          <span className="font-medium text-[#292524]">
+            {row.original.name}
+          </span>
         ),
       },
       {
         accessorKey: "email",
         header: "Email",
         cell: ({ row }: any) => (
-          <span className="text-gray-600">{row.original.email}</span>
+          <span className="text-[#78716C]">{row.original.email}</span>
         ),
       },
       {
         accessorKey: "role",
         header: "Role",
         cell: ({ row }: any) => (
-          <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 capitalize">
+          <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-[#FDBA74]/20 text-[#9a5b1f] capitalize transition-transform duration-150 hover:scale-105">
             {row.original.role}
           </span>
         ),
@@ -92,14 +94,14 @@ const ManagementPage = () => {
   });
 
   return (
-    <div className="p-6">
+    <div className="p-6 font-['Inter']">
       <div className="flex items-center justify-between mb-1">
-        <h2 className="text-xl font-semibold text-gray-800">
+        <h2 className="font-['Nunito'] text-xl font-extrabold text-[#292524]">
           Admin Management
         </h2>
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition"
+          className="flex items-center gap-1.5 bg-[#059669] hover:bg-[#047857] text-white text-sm font-medium px-4 py-2 rounded-full transition-all duration-200 hover:-translate-y-0.5"
         >
           <Plus size={16} />
           Add Admin
@@ -110,18 +112,25 @@ const ManagementPage = () => {
         <Breadcrumbs title="Management" />
       </div>
 
-      <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
+      <div className="overflow-x-auto rounded-2xl border border-[#E7E5E4] bg-white shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)]">
         {isLoading ? (
-          <p className="p-6 text-sm text-gray-500">Loading admins...</p>
+          <div className="p-4 space-y-2">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div
+                key={i}
+                className="h-10 bg-[#FAF8F3] rounded-xl animate-pulse"
+              />
+            ))}
+          </div>
         ) : (
           <table className="w-full text-left text-sm">
-            <thead className="bg-gray-50">
+            <thead className="bg-[#FAF8F3]">
               {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
                     <th
                       key={header.id}
-                      className="px-4 py-3 font-medium text-gray-600"
+                      className="px-4 py-3 font-medium text-[#78716C]"
                     >
                       {flexRender(
                         header.column.columnDef.header,
@@ -136,7 +145,7 @@ const ManagementPage = () => {
               {table.getRowModel().rows.map((row) => (
                 <tr
                   key={row.id}
-                  className="border-t border-gray-100 hover:bg-gray-50"
+                  className="border-t border-[#F5F5F4] transition-colors duration-150 hover:bg-[#FAF8F3]"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <td key={cell.id} className="px-4 py-3 align-middle">
@@ -153,18 +162,21 @@ const ManagementPage = () => {
         )}
 
         {!isLoading && admins?.length === 0 && (
-          <p className="p-6 text-sm text-gray-400 text-center">
-            No admins found.
-          </p>
+          <div className="flex flex-col items-center py-12 text-center">
+            <div className="mb-3 w-14 h-14 rounded-full bg-[#D1FAE5] flex items-center justify-center">
+              <span className="text-xl">🛡️</span>
+            </div>
+            <p className="text-sm text-[#78716C]">No admins found.</p>
+          </div>
         )}
       </div>
 
       {/* Add Admin Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 animate-fade-in">
+          <div className="bg-white rounded-2xl shadow-[0_20px_60px_-15px_rgba(120,53,15,0.3)] w-full max-w-sm p-6 animate-dropdown-in">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-800">
+              <h3 className="font-['Nunito'] text-lg font-bold text-[#292524]">
                 Add New Admin
               </h3>
               <button
@@ -173,7 +185,7 @@ const ManagementPage = () => {
                   setError("");
                   setEmail("");
                 }}
-                className="text-gray-400 hover:text-gray-600 transition"
+                className="text-[#78716C] hover:text-[#292524] transition-colors duration-150"
               >
                 <X size={20} />
               </button>
@@ -181,7 +193,7 @@ const ManagementPage = () => {
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-[#292524] mb-1">
                   User Email
                 </label>
                 <input
@@ -189,9 +201,9 @@ const ManagementPage = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="user@example.com"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-[#E7E5E4] rounded-xl px-3 py-2.5 text-sm text-[#292524] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#059669] focus:border-[#059669]"
                 />
-                <p className="text-xs text-gray-400 mt-1">
+                <p className="text-xs text-[#78716C] mt-1">
                   This user must already have an account. They will be promoted
                   to admin.
                 </p>
@@ -206,14 +218,14 @@ const ManagementPage = () => {
                     setError("");
                     setEmail("");
                   }}
-                  className="flex-1 border border-gray-300 text-gray-700 font-medium py-2.5 rounded-lg text-sm hover:bg-gray-50 transition"
+                  className="flex-1 border border-[#E7E5E4] text-[#292524] font-medium py-2.5 rounded-full text-sm hover:bg-[#FAF8F3] transition-all duration-200"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={addAdminMutation.isPending}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg text-sm transition disabled:opacity-60"
+                  className="flex-1 bg-[#059669] hover:bg-[#047857] text-white font-medium py-2.5 rounded-full text-sm transition-all duration-200 hover:-translate-y-0.5 disabled:opacity-60 disabled:hover:translate-y-0"
                 >
                   {addAdminMutation.isPending ? "Adding..." : "Add Admin"}
                 </button>

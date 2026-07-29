@@ -6,7 +6,7 @@ export const Header = styled.div`
   display: flex;
   align-items: center;
   padding: 20px 16px;
-  border-bottom: 1px solid #e7e5e4;
+  border-bottom: 1px solid #262626;
   min-height: 64px;
   flex-shrink: 0;
 `;

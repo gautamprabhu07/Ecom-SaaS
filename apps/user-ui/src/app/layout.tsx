@@ -9,6 +9,9 @@ import Footer from "../shared/widgets/footer";
 export const metadata = {
   title: "OutSource",
   description: "Multi-vendor marketplace",
+  icons: {
+    icon: "/image.png",
+  },
 };
 
 const inter = Inter({

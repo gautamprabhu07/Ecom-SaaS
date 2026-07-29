@@ -16,9 +16,9 @@ import Sizeselector from "packages/components/size-selector";
 import { toast } from "react-hot-toast";
 
 const selectClass =
-  "w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500";
-const labelClass = "block text-sm font-medium text-gray-700 mb-1";
-const errorClass = "text-red-500 text-xs mt-1";
+  "w-full border border-[#E7E5E4] rounded-2xl px-3 py-2.5 text-sm text-[#292524] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#059669] focus:border-[#059669]";
+const labelClass = "block text-sm font-medium text-[#292524] mb-1";
+const errorClass = "text-red-500 text-xs mt-1 animate-[dropdown-in_150ms_ease-out]";
 
 interface UploadedImage {
   fileId: string;
@@ -185,24 +185,35 @@ const Page = () => {
   };
 
   if (productLoading) {
-    return <div className="p-6 text-sm text-gray-500">Loading product...</div>;
+    return (
+      <div className="p-6 max-w-5xl mx-auto animate-pulse space-y-4">
+        <div className="h-4 w-64 bg-[#E7E5E4] rounded-full" />
+        <div className="h-7 w-80 bg-[#E7E5E4] rounded-full" />
+        <div className="flex gap-6">
+          <div className="w-64 shrink-0 h-40 bg-[#E7E5E4] rounded-2xl" />
+          <div className="flex-1 h-64 bg-[#E7E5E4] rounded-2xl" />
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-[#FAF8F3] p-6 font-['Inter']">
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="mb-6">
-          <h2 className="text-2xl font-semibold text-gray-800">Edit Product</h2>
-          <div className="flex items-center gap-1 text-sm text-gray-500 mt-1">
+          <h2 className="font-['Nunito'] text-2xl font-extrabold text-[#292524]">
+            Edit Product
+          </h2>
+          <div className="flex items-center gap-1.5 text-sm text-[#78716C] mt-1">
             <span>Dashboard</span>
-            <ChevronRight size={14} />
-            <span className="text-gray-700">Edit Product</span>
+            <ChevronRight size={14} className="text-[#A8A29E]" />
+            <span className="text-[#292524] font-medium">Edit Product</span>
           </div>
         </div>
 
         <div className="flex gap-6">
           <div className="w-105 shrink-0 space-y-3">
-            <div className="bg-white rounded-xl border border-gray-200 p-3">
+            <div className="bg-white rounded-2xl border border-[#E7E5E4] shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)] p-3 transition-shadow duration-300 hover:shadow-[0_8px_30px_-8px_rgba(120,53,15,0.14)]">
               {images?.length > 0 && (
                 <ImagePlaceholder
                   setOpenImageModal={noop}
@@ -221,7 +232,7 @@ const Page = () => {
               {images.slice(1).map((_, index) => (
                 <div
                   key={index}
-                  className="bg-white rounded-lg border border-gray-200 p-1"
+                  className="bg-white rounded-xl border border-[#E7E5E4] p-1 transition-all duration-200 hover:border-[#059669]/40 hover:shadow-[0_4px_16px_-4px_rgba(120,53,15,0.1)]"
                 >
                   <ImagePlaceholder
                     setOpenImageModal={noop}
@@ -239,7 +250,7 @@ const Page = () => {
             </div>
           </div>
 
-          <div className="flex-1 bg-white rounded-xl border border-gray-200 p-6 space-y-5">
+          <div className="flex-1 bg-white rounded-2xl border border-[#E7E5E4] shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)] p-6 space-y-5 transition-shadow duration-300 hover:shadow-[0_8px_30px_-8px_rgba(120,53,15,0.14)]">
             <Input
               label="Product Title"
               placeholder="Input Product *"
@@ -356,7 +367,7 @@ const Page = () => {
             <div>
               <label className={labelClass}>Category *</label>
               {catLoading ? (
-                <p className="text-sm text-gray-500">Loading categories...</p>
+                <p className="text-sm text-[#78716C]">Loading categories...</p>
               ) : catError ? (
                 <p className="text-sm text-red-500">Error loading categories</p>
               ) : (
@@ -384,7 +395,7 @@ const Page = () => {
             <div>
               <label className={labelClass}>Subcategory *</label>
               {catLoading ? (
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-[#78716C]">
                   Loading subcategories...
                 </p>
               ) : catError ? (
@@ -532,7 +543,7 @@ const Page = () => {
                 Select Discount Codes (optional)
               </label>
               {discountLoading ? (
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-[#78716C]">
                   Loading discount codes...
                 </p>
               ) : (
@@ -556,7 +567,7 @@ const Page = () => {
                             : [...currentSelection, code.id];
                           setValue("discountCodes", updatedSelection);
                         }}
-                        className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition ${isSelected ? "bg-blue-600 text-white border-blue-600" : "bg-white text-gray-600 border-gray-300 hover:border-blue-400"}`}
+                        className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-all duration-200 hover:-translate-y-0.5 ${isSelected ? "bg-[#059669] text-white border-[#059669] shadow-[0_4px_14px_-4px_rgba(5,150,105,0.4)]" : "bg-white text-[#78716C] border-[#E7E5E4] hover:border-[#059669]"}`}
                       >
                         {code?.public_name} ({code.discountValue}
                         {code.discountType === "percentage" ? "%" : "$"})
@@ -571,7 +582,7 @@ const Page = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg text-sm transition disabled:opacity-60"
+                className="flex-1 bg-[#059669] hover:bg-[#047857] text-white font-medium py-2.5 rounded-full text-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_30px_-8px_rgba(5,150,105,0.4)] active:translate-y-0 disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:shadow-none"
               >
                 {loading ? "Saving..." : "Save Changes"}
               </button>

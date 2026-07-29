@@ -39,13 +39,13 @@ const CreateShop = ({
   const countWords = (text: string) => text.trim().split(/\s+/).length;
 
   const inputClass =
-    "w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500";
-  const labelClass = "block text-sm font-medium text-gray-700 mb-1";
-  const errorClass = "text-red-500 text-xs mt-1";
+    "w-full border border-[#E7E5E4] rounded-2xl px-3 py-2.5 text-sm text-[#292524] placeholder:text-[#78716C] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#059669] focus:border-[#059669]";
+  const labelClass = "block text-sm font-medium text-[#292524] mb-1";
+  const errorClass = "text-red-500 text-xs mt-1 animate-[dropdown-in_150ms_ease-out]";
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <h3 className="text-xl font-semibold text-gray-800 mb-2">
+      <h3 className="font-['Nunito'] text-xl font-bold text-[#292524] mb-2">
         Setup new shop
       </h3>
 
@@ -137,9 +137,10 @@ const CreateShop = ({
 
       <button
         type="submit"
-        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg text-sm transition"
+        disabled={shopCreateMutation.isPending}
+        className="w-full bg-[#059669] hover:bg-[#047857] text-white font-medium py-2.5 rounded-full text-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_30px_-8px_rgba(5,150,105,0.4)] active:translate-y-0 disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:shadow-none"
       >
-        Create
+        {shopCreateMutation.isPending ? "Creating..." : "Create"}
       </button>
     </form>
   );

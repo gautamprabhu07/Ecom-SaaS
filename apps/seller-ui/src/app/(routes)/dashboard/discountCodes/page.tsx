@@ -12,9 +12,9 @@ import Link from "next/link";
 import DeleteDiscountCodeModal from "../../../../shared/components/modals/delete-discount-codes";
 
 const selectClass =
-  "w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500";
-const labelClass = "block text-sm font-medium text-gray-700 mb-1";
-const errorClass = "text-red-500 text-xs mt-1";
+  "w-full border border-[#E7E5E4] rounded-2xl px-3 py-2.5 text-sm text-[#292524] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#059669] focus:border-[#059669]";
+const labelClass = "block text-sm font-medium text-[#292524] mb-1";
+const errorClass = "text-red-500 text-xs mt-1 animate-[dropdown-in_150ms_ease-out]";
 
 const Page = () => {
   const [showModal, setShowModal] = useState(false);
@@ -89,43 +89,60 @@ const Page = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-[#FAF8F3] p-6 font-['Inter']">
       {/* Header */}
       <div className="flex items-center justify-between mb-2">
-        <h1 className="text-2xl font-semibold text-gray-800">Discount Codes</h1>
+        <h1 className="font-['Nunito'] text-2xl font-extrabold text-[#292524]">
+          Discount Codes
+        </h1>
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition"
+          className="flex items-center gap-1.5 bg-[#059669] hover:bg-[#047857] text-white text-sm font-medium px-4 py-2.5 rounded-full transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_30px_-8px_rgba(5,150,105,0.4)]"
         >
           <Plus size={16} /> Create Discount Code
         </button>
       </div>
 
       {/* Breadcrumb */}
-      <div className="flex items-center gap-1 text-sm text-gray-500 mb-6">
-        <Link href="/dashboard" className="hover:text-gray-700">
+      <div className="flex items-center gap-1.5 text-sm text-[#78716C] mb-6">
+        <Link
+          href="/dashboard"
+          className="hover:text-[#059669] transition-colors duration-150"
+        >
           Dashboard
         </Link>
-        <ChevronRight size={14} />
-        <span className="text-gray-700">Discount Codes</span>
+        <ChevronRight size={14} className="text-[#A8A29E]" />
+        <span className="text-[#292524] font-medium">Discount Codes</span>
       </div>
 
       {/* Table card */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
-        <h3 className="text-base font-semibold text-gray-800 mb-4">
+      <div className="bg-white rounded-2xl border border-[#E7E5E4] shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)] p-6 transition-shadow duration-300 hover:shadow-[0_8px_30px_-8px_rgba(120,53,15,0.14)]">
+        <h3 className="font-['Nunito'] text-base font-bold text-[#292524] mb-4">
           Your Discount Codes
         </h3>
 
         {isLoading ? (
-          <p className="text-sm text-gray-500">Loading...</p>
+          <div className="space-y-2">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div
+                key={i}
+                className="h-10 bg-[#FAF8F3] rounded-xl animate-pulse"
+              />
+            ))}
+          </div>
         ) : discountCodes?.length === 0 ? (
-          <p className="text-sm text-gray-400 text-center py-8">
-            No discount codes available
-          </p>
+          <div className="flex flex-col items-center py-8 text-center">
+            <div className="mb-3 w-14 h-14 rounded-full bg-[#D1FAE5] flex items-center justify-center">
+              <span className="text-xl">🏷️</span>
+            </div>
+            <p className="text-sm text-[#78716C]">
+              No discount codes available
+            </p>
+          </div>
         ) : (
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-gray-100 text-gray-500 text-left">
+              <tr className="border-b border-[#E7E5E4] text-[#78716C] text-left">
                 <th className="pb-3 font-medium">Title</th>
                 <th className="pb-3 font-medium">Type</th>
                 <th className="pb-3 font-medium">Value</th>
@@ -133,25 +150,28 @@ const Page = () => {
                 <th className="pb-3 font-medium">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-50">
+            <tbody className="divide-y divide-[#F5F5F4]">
               {discountCodes?.map((discount: any) => (
-                <tr key={discount?.id} className="text-gray-700">
+                <tr
+                  key={discount?.id}
+                  className="text-[#292524] transition-colors duration-150 hover:bg-[#FAF8F3]"
+                >
                   <td className="py-3">{discount?.public_name}</td>
                   <td className="py-3 capitalize">{discount?.discountType}</td>
-                  <td className="py-3">
+                  <td className="py-3 font-medium">
                     {discount.discountType === "percentage"
                       ? `${discount.discountValue}%`
                       : `$${discount.discountValue}`}
                   </td>
                   <td className="py-3">
-                    <span className="px-2 py-0.5 bg-gray-100 rounded font-mono text-xs">
+                    <span className="px-2 py-0.5 bg-[#D1FAE5] text-[#047857] rounded-full font-mono text-xs">
                       {discount?.discountCode}
                     </span>
                   </td>
                   <td className="py-3">
                     <button
                       onClick={() => handleDeleteClick(discount)}
-                      className="p-1.5 text-gray-400 hover:text-red-500 transition rounded-lg hover:bg-red-50"
+                      className="p-1.5 text-[#78716C] hover:text-red-500 hover:bg-red-50 hover:scale-110 transition-all duration-200 rounded-full"
                     >
                       <Trash size={16} />
                     </button>
@@ -165,15 +185,15 @@ const Page = () => {
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#292524]/40 animate-[fade-in_150ms_ease-out]">
+          <div className="bg-white rounded-2xl shadow-[0_4px_20px_-4px_rgba(120,53,15,0.15)] w-full max-w-md p-6 animate-[dropdown-in_200ms_ease-out]">
             <div className="flex items-center justify-between mb-5">
-              <h3 className="text-lg font-semibold text-gray-800">
+              <h3 className="font-['Nunito'] text-lg font-bold text-[#292524]">
                 Create Discount Code
               </h3>
               <button
                 onClick={() => setShowModal(false)}
-                className="text-gray-400 hover:text-gray-600 transition"
+                className="text-[#78716C] hover:text-[#292524] hover:rotate-90 transition-all duration-200"
               >
                 <X size={20} />
               </button>
@@ -245,7 +265,7 @@ const Page = () => {
               <button
                 type="submit"
                 disabled={createDiscountCodeMutation.isPending}
-                className="w-full flex items-center justify-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg text-sm transition disabled:opacity-60"
+                className="w-full flex items-center justify-center gap-1.5 bg-[#059669] hover:bg-[#047857] text-white font-medium py-2.5 rounded-full text-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_30px_-8px_rgba(5,150,105,0.4)] active:translate-y-0 disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:shadow-none"
               >
                 <Plus size={16} />
                 {createDiscountCodeMutation.isPending

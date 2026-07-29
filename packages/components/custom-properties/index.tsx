@@ -40,23 +40,23 @@ const CustomProperties = ({ control, errors }: any) => {
 
           return (
             <div className="space-y-3">
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-[#292524]">
                 Custom Properties
               </label>
 
               {properties.map((property, index) => (
                 <div
                   key={index}
-                  className="border border-gray-200 rounded-lg p-3 space-y-2"
+                  className="border border-[#E7E5E4] rounded-2xl p-3 space-y-2 transition-all duration-200 hover:border-[#059669]/30 hover:shadow-[0_4px_16px_-4px_rgba(120,53,15,0.1)]"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-700">
+                    <span className="text-sm font-medium text-[#292524]">
                       {property.label}
                     </span>
                     <button
                       type="button"
                       onClick={() => removeProperty(index)}
-                      className="text-gray-400 hover:text-red-500 transition"
+                      className="text-[#78716C] hover:text-red-500 hover:scale-110 transition-all duration-200"
                     >
                       <X size={16} />
                     </button>
@@ -68,12 +68,12 @@ const CustomProperties = ({ control, errors }: any) => {
                       placeholder="Enter value"
                       value={newValue}
                       onChange={(e) => setNewValue(e.target.value)}
-                      className="flex-1 border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="flex-1 border border-[#E7E5E4] rounded-2xl px-3 py-1.5 text-sm text-[#292524] placeholder:text-[#78716C] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#059669] focus:border-[#059669]"
                     />
                     <button
                       type="button"
                       onClick={() => addValue(index)}
-                      className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition"
+                      className="px-3 py-1.5 bg-[#059669] hover:bg-[#047857] text-white text-sm rounded-full transition-all duration-200 hover:-translate-y-0.5"
                     >
                       Add
                     </button>
@@ -83,7 +83,7 @@ const CustomProperties = ({ control, errors }: any) => {
                     {property.values.map((val, i) => (
                       <span
                         key={i}
-                        className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded-full"
+                        className="px-2 py-0.5 bg-[#D1FAE5] text-[#047857] text-xs rounded-full"
                       >
                         {val}
                       </span>
@@ -101,14 +101,14 @@ const CustomProperties = ({ control, errors }: any) => {
                 <button
                   type="button"
                   onClick={addProperty}
-                  className="flex items-center gap-1 px-3 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition shrink-0"
+                  className="flex items-center gap-1 px-3 py-2 bg-[#059669] hover:bg-[#047857] text-white text-sm rounded-full transition-all duration-200 hover:-translate-y-0.5 shrink-0"
                 >
                   <PlusCircleIcon size={16} /> Add
                 </button>
               </div>
 
               {errors.customProperties && (
-                <p className="text-red-500 text-xs">
+                <p className="text-red-500 text-xs animate-[dropdown-in_150ms_ease-out]">
                   {errors.customProperties.message as string}
                 </p>
               )}

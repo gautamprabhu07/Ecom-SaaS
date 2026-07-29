@@ -12,14 +12,14 @@ const CustomSpecifications = ({ control, errors }: any) => {
 
   return (
     <div className="space-y-3">
-      <label className="block text-sm font-medium text-gray-700">
+      <label className="block text-sm font-medium text-[#292524]">
         Custom Specifications
       </label>
 
       {fields?.map((item, index) => (
         <div
           key={item.id}
-          className="flex gap-2 items-start border border-gray-200 rounded-lg p-3"
+          className="flex gap-2 items-start border border-[#E7E5E4] rounded-2xl p-3 transition-all duration-200 hover:border-[#059669]/30 hover:shadow-[0_4px_16px_-4px_rgba(120,53,15,0.1)]"
         >
           <div className="flex-1">
             <Controller
@@ -44,7 +44,7 @@ const CustomSpecifications = ({ control, errors }: any) => {
           <button
             type="button"
             onClick={() => remove(index)}
-            className="mt-6 p-1.5 text-gray-400 hover:text-red-500 transition shrink-0"
+            className="mt-6 p-1.5 text-[#78716C] hover:text-red-500 hover:scale-110 transition-all duration-200 shrink-0"
           >
             <Trash2 size={18} />
           </button>
@@ -54,13 +54,13 @@ const CustomSpecifications = ({ control, errors }: any) => {
       <button
         type="button"
         onClick={() => append({ name: "", value: "" })}
-        className="flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-700 font-medium transition"
+        className="flex items-center gap-1.5 text-sm text-[#059669] hover:text-[#047857] font-medium transition-all duration-200 hover:translate-x-0.5"
       >
         <PlusCircleIcon size={16} /> Add Specification
       </button>
 
       {errors?.custom_specifications && (
-        <p className="text-red-500 text-xs">
+        <p className="text-red-500 text-xs animate-[dropdown-in_150ms_ease-out]">
           {errors.custom_specifications.message as string}
         </p>
       )}

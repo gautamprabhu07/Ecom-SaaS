@@ -7,7 +7,7 @@ import "react-quill-new/dist/quill.snow.css";
 const ReactQuill = dynamic(() => import("react-quill-new"), {
   ssr: false,
   loading: () => (
-    <div className="min-h-[160px] border border-gray-300 rounded-lg bg-gray-50 animate-pulse" />
+    <div className="min-h-[160px] border border-[#E7E5E4] rounded-2xl bg-[#FAF8F3] animate-pulse" />
   ),
 });
 
@@ -41,26 +41,33 @@ const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
     <div className="rich-text-editor">
       <style>{`
         .rich-text-editor .ql-container {
-          border-bottom-left-radius: 8px;
-          border-bottom-right-radius: 8px;
+          border-bottom-left-radius: 16px;
+          border-bottom-right-radius: 16px;
           font-size: 14px;
           min-height: 160px;
+          transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
         .rich-text-editor .ql-toolbar {
-          border-top-left-radius: 8px;
-          border-top-right-radius: 8px;
-          background: #f9fafb;
+          border-top-left-radius: 16px;
+          border-top-right-radius: 16px;
+          background: #FAF8F3;
+          transition: border-color 0.2s ease;
         }
         .rich-text-editor .ql-container, .rich-text-editor .ql-toolbar {
-          border-color: #d1d5db;
+          border-color: #E7E5E4;
         }
         .rich-text-editor .ql-editor {
           min-height: 140px;
+          color: #292524;
         }
         .rich-text-editor .ql-container:focus-within {
           outline: none;
-          box-shadow: 0 0 0 2px #3b82f6;
-          border-color: #3b82f6;
+          box-shadow: 0 0 0 2px #059669;
+          border-color: #059669;
+        }
+        .rich-text-editor:hover .ql-toolbar,
+        .rich-text-editor:hover .ql-container {
+          border-color: #05966980;
         }
       `}</style>
       <ReactQuill

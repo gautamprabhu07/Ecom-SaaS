@@ -8,7 +8,7 @@ interface Props {
 const SidebarMenu = ({ title, children }: Props) => {
   return (
     <div className="mt-6">
-      <h3 className="px-5 mb-2 text-xs font-semibold uppercase tracking-wide text-[#78716C]">
+      <h3 className="px-5 mb-2 text-xs font-semibold uppercase tracking-wide text-neutral-500">
         {title}
       </h3>
       <div className="flex flex-col gap-1">{children}</div>

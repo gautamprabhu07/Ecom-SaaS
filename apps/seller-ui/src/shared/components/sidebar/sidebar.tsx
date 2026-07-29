@@ -47,22 +47,29 @@ const SidebarWrapper = () => {
   };
 
   return (
-    <Box css={{ height: "100vh" }} className="sidebar-wrapper">
+    <Box className="sidebar-wrapper h-full bg-neutral-900 text-white flex flex-col">
       <Sidebar.Header>
         <Box>
-          <Link href={"/dashboard/profile"} className="flex items-center gap-3">
-            <Image
-              src="/logoeshop.png"
-              alt="Eshop Logo"
-              width={52}
-              height={52}
-              priority
-            />
+          <Link
+            href={"/dashboard/profile"}
+            className="group flex items-center gap-3 transition-transform duration-200 hover:-translate-y-0.5"
+          >
+            <div className="relative">
+              <span className="absolute inset-0 rounded-full bg-emerald-400/30 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <Image
+                src="/logoeshop.png"
+                alt="Eshop Logo"
+                width={44}
+                height={44}
+                priority
+                className="relative"
+              />
+            </div>
             <Box>
-              <h3 className="font-heading text-sm font-bold text-[#292524]">
+              <h3 className="font-heading text-sm font-bold text-white">
                 {seller?.shop?.name}
               </h3>
-              <h5 className="text-xs text-[#78716C]">
+              <h5 className="text-xs text-neutral-400">
                 {seller?.shop?.address}
               </h5>
             </Box>
@@ -137,6 +144,7 @@ const SidebarWrapper = () => {
               <SidebarItem
                 title="Logout"
                 icon={<DoorOpen size={22} color="currentColor" />}
+                danger
                 onClick={handleLogout}
               />
             </SidebarMenu>

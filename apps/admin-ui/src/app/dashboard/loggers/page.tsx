@@ -15,19 +15,19 @@ type LogItem = {
 };
 
 const typeColorMap: Record<LogType, string> = {
-  success: "text-green-600",
+  success: "text-[#047857]",
   error: "text-red-600",
-  warning: "text-yellow-600",
-  info: "text-blue-600",
-  debug: "text-gray-600",
+  warning: "text-[#9a5b1f]",
+  info: "text-[#292524]",
+  debug: "text-[#78716C]",
 };
 
 const typeBadgeMap: Record<LogType, string> = {
-  success: "bg-green-50 text-green-700 border-green-200",
+  success: "bg-[#D1FAE5] text-[#047857] border-[#A7F3D0]",
   error: "bg-red-50 text-red-700 border-red-200",
-  warning: "bg-yellow-50 text-yellow-700 border-yellow-200",
-  info: "bg-blue-50 text-blue-700 border-blue-200",
-  debug: "bg-gray-50 text-gray-700 border-gray-200",
+  warning: "bg-[#FDBA74]/20 text-[#9a5b1f] border-[#FDBA74]/40",
+  info: "bg-[#F5F5F4] text-[#57534e] border-[#E7E5E4]",
+  debug: "bg-[#F5F5F4] text-[#78716C] border-[#E7E5E4]",
 };
 
 const Page = () => {
@@ -122,11 +122,11 @@ const Page = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-[#FAF8F3] p-6 font-['Inter']">
       {/* Header + Breadcrumb */}
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-800">
+          <h1 className="font-['Nunito'] text-2xl font-extrabold text-[#292524]">
             Application Logs
           </h1>
           {/*  Breadcrumbs */}
@@ -134,17 +134,21 @@ const Page = () => {
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5 text-xs text-gray-500">
+          <div className="flex items-center gap-1.5 text-xs font-medium text-[#78716C] bg-white border border-[#E7E5E4] rounded-full px-3 py-1.5">
             <Radio
               size={13}
-              className={isConnected ? "text-green-500" : "text-gray-300"}
+              className={
+                isConnected
+                  ? "text-[#059669] animate-pulse-soft"
+                  : "text-[#A8A29E]"
+              }
             />
             {isConnected ? "Live" : "Disconnected"}
           </div>
           <button
             onClick={downloadLogs}
             disabled={filteredLogs.length === 0}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium bg-gray-800 text-white hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium bg-[#059669] text-white hover:bg-[#047857] hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 transition-all duration-200"
           >
             <Download size={14} />
             Download
@@ -162,18 +166,18 @@ const Page = () => {
           <button
             key={f.key}
             onClick={() => applyFilter(f.key as "all" | "error" | "success")}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all duration-200 ${
               activeFilter === f.key
-                ? "bg-blue-600 text-white border-blue-600"
-                : "bg-white text-gray-600 border-gray-300 hover:border-blue-400"
+                ? "bg-[#059669] text-white border-[#059669]"
+                : "bg-white text-[#78716C] border-[#E7E5E4] hover:border-[#059669] hover:text-[#047857]"
             }`}
           >
             {f.label}
             <span
-              className={`text-[10px] px-1 rounded ${
+              className={`text-[10px] px-1 rounded-full ${
                 activeFilter === f.key
-                  ? "bg-blue-500 text-blue-100"
-                  : "bg-gray-100 text-gray-400"
+                  ? "bg-white/20 text-white"
+                  : "bg-[#F5F5F4] text-[#A8A29E]"
               }`}
             >
               {f.hint}
@@ -183,10 +187,13 @@ const Page = () => {
       </div>
 
       {/* Log list */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-2xl border border-[#E7E5E4] shadow-[0_4px_20px_-4px_rgba(120,53,15,0.08)] overflow-hidden">
         {filteredLogs.length === 0 ? (
-          <div className="p-16 text-center">
-            <p className="text-sm text-gray-400">
+          <div className="p-16 text-center flex flex-col items-center gap-3">
+            <div className="w-14 h-14 rounded-full bg-[#D1FAE5] flex items-center justify-center">
+              <span className="text-xl">📜</span>
+            </div>
+            <p className="text-sm text-[#78716C]">
               {logs.length === 0
                 ? "Waiting for logs..."
                 : "No logs match this filter."}
@@ -195,10 +202,10 @@ const Page = () => {
         ) : (
           <div
             ref={logContainerRef}
-            className="max-h-[70vh] overflow-y-auto divide-y divide-gray-50"
+            className="max-h-[70vh] overflow-y-auto divide-y divide-[#F5F5F4]"
           >
             {/* Table header */}
-            <div className="grid grid-cols-[110px_140px_90px_1fr] gap-3 px-4 py-2.5 bg-gray-50 text-xs font-medium text-gray-500 sticky top-0">
+            <div className="grid grid-cols-[110px_140px_90px_1fr] gap-3 px-4 py-2.5 bg-[#FAF8F3] text-xs font-medium text-[#78716C] sticky top-0">
               <span>Time</span>
               <span>Service</span>
               <span>Status</span>
@@ -208,17 +215,17 @@ const Page = () => {
             {filteredLogs.map((log, index) => (
               <div
                 key={index}
-                className="grid grid-cols-[110px_140px_90px_1fr] gap-3 px-4 py-2.5 text-sm hover:bg-gray-50 transition"
+                className="grid grid-cols-[110px_140px_90px_1fr] gap-3 px-4 py-2.5 text-sm transition-colors duration-150 hover:bg-[#FAF8F3]"
               >
-                <span className="text-xs text-gray-400 font-mono">
+                <span className="text-xs text-[#A8A29E] font-mono">
                   {formatTime(log.timestamp)}
                 </span>
-                <span className="text-xs text-gray-600 truncate">
+                <span className="text-xs text-[#78716C] truncate">
                   {log.source || "unknown-service"}
                 </span>
                 <span>
                   <span
-                    className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-medium border ${typeBadgeMap[log.type]}`}
+                    className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-medium border transition-transform duration-150 hover:scale-105 ${typeBadgeMap[log.type]}`}
                   >
                     {log.type.toUpperCase()}
                   </span>

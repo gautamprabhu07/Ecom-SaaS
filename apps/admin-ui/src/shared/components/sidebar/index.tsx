@@ -35,21 +35,28 @@ const SidebarWrapper = () => {
   }, [pathName, setActiveSidebar]);
 
   return (
-    <div className="w-[260px] h-screen bg-white border-r border-[#E7E5E4] overflow-y-auto">
+    <div className="w-[260px] h-full bg-neutral-900 text-white overflow-y-auto flex flex-col">
       <Sidebar.Header>
-        <Link href="/" className="flex items-center gap-3">
-          <Image
-            src="/logoeshop.png"
-            alt="Eshop Logo"
-            width={40}
-            height={40}
-            priority
-          />
+        <Link
+          href="/"
+          className="group flex items-center gap-3 transition-transform duration-200 hover:-translate-y-0.5"
+        >
+          <div className="relative">
+            <span className="absolute inset-0 rounded-full bg-emerald-400/30 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <Image
+              src="/logoeshop.png"
+              alt="Eshop Logo"
+              width={40}
+              height={40}
+              priority
+              className="relative"
+            />
+          </div>
           <div>
-            <h3 className="font-heading text-sm font-bold text-[#292524]">
+            <h3 className="font-heading text-sm font-bold text-white">
               {admin?.name}
             </h3>
-            <h5 className="text-xs text-[#78716C]">{admin?.email}</h5>
+            <h5 className="text-xs text-neutral-400">{admin?.email}</h5>
           </div>
         </Link>
       </Sidebar.Header>
@@ -124,6 +131,7 @@ const SidebarWrapper = () => {
                 title="Logout"
                 href="/logout"
                 icon={<LogOut size={22} color="currentColor" />}
+                danger
               />
             </SidebarMenu>
           </div>
