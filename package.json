@@ -95,7 +95,10 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@types/react-image-magnify": "^2.7.4",
+<<<<<<< HEAD
     "@types/react-simple-maps": "^3.0.6",
+=======
+>>>>>>> 8e6f03df1bed8880d94459fa06687a3233806394
     "@types/swagger-ui-express": "^4.1.8",
     "dotenv": "^17.4.2",
     "esbuild": "^0.27.0",

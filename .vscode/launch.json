@@ -120,6 +120,7 @@
         "${workspaceFolder}/apps/kafka-service/dist/**/*.(m|c|)js",
         "!**/node_modules/**"
       ]
+<<<<<<< HEAD
     },
     {
       "type": "node",
@@ -336,6 +337,8 @@
         "${workspaceFolder}/apps/seller-service/dist/**/*.(m|c|)js",
         "!**/node_modules/**"
       ]
+=======
+>>>>>>> 8e6f03df1bed8880d94459fa06687a3233806394
     }
   ]
 }

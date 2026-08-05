@@ -23,6 +23,7 @@
     },
     {
       "path": "./apps/kafka-service"
+<<<<<<< HEAD
     },
     {
       "path": "./apps/order-service"
@@ -44,6 +45,8 @@
     },
     {
       "path": "./apps/seller-service"
+=======
+>>>>>>> 8e6f03df1bed8880d94459fa06687a3233806394
     }
   ]
 }

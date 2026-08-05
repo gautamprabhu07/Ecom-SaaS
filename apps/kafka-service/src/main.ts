@@ -1,6 +1,10 @@
 //path: apps/kafka-service/src/main.ts
 import {kafka} from "@packages/utils/kafka";
+<<<<<<< HEAD
 import { updateUserAnalytics, updateShopAnalytics, updateProductAnalytics} from "./services/analytics.services";
+=======
+import { updateUserAnalytics } from "./services/analytics.services";
+>>>>>>> 8e6f03df1bed8880d94459fa06687a3233806394
 
 const consumer = kafka.consumer({ groupId: "user-events-group" });
 
@@ -14,12 +18,16 @@ const processQueue = async() => {
 
    for(const event of events){
       if(event.action==="shop_visit"){
+<<<<<<< HEAD
          try {
             await updateShopAnalytics(event);
          } catch (err) {
             console.error(`Error processing shop_visit event: ${err}`);
          }
          continue;
+=======
+         //update shop analytics
+>>>>>>> 8e6f03df1bed8880d94459fa06687a3233806394
       }
 
       const validActions = ["add_to_wishlist", "product_view", "add_to_cart", "remove_from_wishlist","remove_from_cart" ];
@@ -43,7 +51,11 @@ setInterval(processQueue, 3000);
 //kafka consumer for user events
 export const consumerKafkaMessages = async () => {
    await consumer.connect();
+<<<<<<< HEAD
    await consumer.subscribe({ topic: "users-events", fromBeginning: false });
+=======
+   await consumer.subscribe({ topic: "user-events", fromBeginning: false });
+>>>>>>> 8e6f03df1bed8880d94459fa06687a3233806394
 
    await consumer.run({
       eachMessage: async ({message }) => {
@@ -55,5 +67,9 @@ export const consumerKafkaMessages = async () => {
 };
 
 consumerKafkaMessages().catch(err => {
+<<<<<<< HEAD
    console.error("Kafka consumer failed to start:", err);
+=======
+   console.error;
+>>>>>>> 8e6f03df1bed8880d94459fa06687a3233806394
 });

@@ -132,6 +132,7 @@ export const updateProductAnalytics = async (event: any) => {
    }
 };
 
+<<<<<<< HEAD
 //update shop analytics
 export const updateShopAnalytics = async (event: any) => {
    try {
@@ -194,3 +195,6 @@ export const updateShopAnalytics = async (event: any) => {
       console.error(`Error updating shop analytics: ${error}`);
    }
 };
+=======
+
+>>>>>>> 8e6f03df1bed8880d94459fa06687a3233806394

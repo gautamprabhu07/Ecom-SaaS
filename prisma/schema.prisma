@@ -175,12 +175,20 @@ model products {
   totalSales Int @default(0)
 }
 
+<<<<<<< HEAD
+=======
+}
+
+>>>>>>> 8e6f03df1bed8880d94459fa06687a3233806394
 model userAnalytics {
   id           String    @id @default(auto()) @map("_id") @db.ObjectId
   userId       String    @unique @db.ObjectId
   lastVisited  DateTime?
   lastTrained  DateTime?
+<<<<<<< HEAD
   reccomendations Json?
+=======
+>>>>>>> 8e6f03df1bed8880d94459fa06687a3233806394
   actions      Json[]
   country      String?
   city         String?
@@ -200,6 +208,7 @@ model productAnalytics {
   lastViewedAt DateTime?
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
+<<<<<<< HEAD
 }
 
 model shopAnalytics {
@@ -313,4 +322,6 @@ model message {
   createdAt DateTime @default(now())
 
   @@unique([conversationId, senderId, content, createdAt])
+=======
+>>>>>>> 8e6f03df1bed8880d94459fa06687a3233806394
 }

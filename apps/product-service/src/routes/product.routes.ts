@@ -1,7 +1,11 @@
 //Path: apps/product-service/src/routes/product.routes.ts
 import express, { Router } from 'express';
 const router: Router = express.Router();
+<<<<<<< HEAD
 import {getProductCategories, getDiscountCodes, createDiscountCode, deleteDiscountCode, uploadProductImage, deleteProductImage, createProduct, getShopProducts, deleteProduct, restoreProduct, getAllProducts, getProductDetails, getFilteredEvents, getFilteredProducts, getFilteredShops, searchProducts, topShops, followShop, unfollowShop, getAllEvents, getShopEvents, getSellerProductById, updateProduct, getShopDetails} from '../controllers/product.controller';
+=======
+import {getProductCategories, getDiscountCodes, createDiscountCode, deleteDiscountCode, uploadProductImage, deleteProductImage, createProduct, getShopProducts, deleteProduct, restoreProduct, getAllProducts, getProductDetails} from '../controllers/product.controller';
+>>>>>>> 8e6f03df1bed8880d94459fa06687a3233806394
 import  isAuthenticated from '@packages/middleware/isAuthenticated';
 import isOptionalAuth from '@packages/middleware/isOptionalAuth';
 
@@ -16,6 +20,7 @@ router.get('/get-shop-products', isAuthenticated, getShopProducts);
 router.delete('/delete-product/:productId', isAuthenticated, deleteProduct);
 router.put('/restore-product/:productId', isAuthenticated, restoreProduct);
 router.get('/get-all-products', getAllProducts);
+<<<<<<< HEAD
 router.get('/get-all-events', getAllEvents);
 router.get('/get-product/:slug', getProductDetails);
 router.get('/get-filtered-offers', getFilteredEvents);
@@ -29,5 +34,8 @@ router.post('/unfollow-shop', isAuthenticated, unfollowShop);
 router.get('/get-shop-events', isAuthenticated, getShopEvents);
 router.get('/get-seller-product/:productId', isAuthenticated, getSellerProductById);
 router.put('/update-product/:productId', isAuthenticated, updateProduct);
+=======
+router.get('/get-product/:slug', getProductDetails);
+>>>>>>> 8e6f03df1bed8880d94459fa06687a3233806394
 
 export default router;

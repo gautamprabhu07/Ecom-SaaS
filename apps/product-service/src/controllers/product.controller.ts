@@ -416,6 +416,7 @@ export const getAllProducts = async (req: Request, res: Response, next: NextFunc
    }
 };
 
+<<<<<<< HEAD
 //get all events
 export const getAllEvents = async (req: Request, res: Response, next: NextFunction) => {
    try {
@@ -482,10 +483,13 @@ export const getAllEvents = async (req: Request, res: Response, next: NextFuncti
       next(error);
    }
 };
+=======
+>>>>>>> 8e6f03df1bed8880d94459fa06687a3233806394
 
 //get product details
 export const getProductDetails = async (req: Request, res: Response, next: NextFunction) => {
    try {
+<<<<<<< HEAD
       const slug = req.params.slug as string;
       console.log("Looking up product with slug:", JSON.stringify(slug)); // temp debug
 
@@ -932,12 +936,21 @@ export const getSellerProductById = async (req: any, res: Response, next: NextFu
       const product = await prisma.products.findUnique({
          where: { id: productId },
          include: { images: true },
+=======
+      const product = await prisma.products.findUnique({
+         where: { slug: req.params.slug! },
+         include: {
+            images: true,
+            Shop: true,
+         },
+>>>>>>> 8e6f03df1bed8880d94459fa06687a3233806394
       });
 
       if (!product) {
          return next(new Error("Product not found."));
       }
 
+<<<<<<< HEAD
       if (product.shopId !== sellerShopId) {
          return next(new Error("You are not authorized to view this product."));
       }
@@ -1136,3 +1149,13 @@ export const getShopDetails = async (req: any, res: Response, next: NextFunction
       return next(error);
    }
 };
+=======
+      res.status(201).json({
+         success:true, product });
+   }
+   catch (error) {
+      next(error);
+   }
+};
+
+>>>>>>> 8e6f03df1bed8880d94459fa06687a3233806394
