@@ -145,9 +145,12 @@ Every buyer interaction (product view, cart/wishlist change, shop visit) is fire
 
 | Buyer storefront | Seller dashboard | Admin analytics |
 |---|---|---|
-| ![Buyer storefront](docs/screenshots/user-ui-home.png) | ![Seller dashboard](docs/screenshots/seller-ui-dashboard.png) | ![Admin analytics](docs/screenshots/admin-ui-dashboard.png) |
+| ![Buyer storefront](<img width="1917" height="1032" alt="image" src="https://github.com/user-attachments/assets/f3d036e3-8148-4a95-a6ea-bc47824cb981" />
+) | ![Seller dashboard](<img width="1917" height="1028" alt="image" src="https://github.com/user-attachments/assets/491e8bd8-d54f-46f0-98b7-a5a08e44fa1d" />
+) | ![Admin analytics](<img width="1916" height="1026" alt="image" src="https://github.com/user-attachments/assets/f9cbc908-43a7-4041-86a8-f49aff87c986" />
+) |
 
-**Live demo:** [add-deployed-url-here](#)
+
 
 ---
 
