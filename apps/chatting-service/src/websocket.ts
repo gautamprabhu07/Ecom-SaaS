@@ -1,10 +1,10 @@
 //Path: apps/chatting-service/src/websocket.ts
-import { kafka } from '@packages/utils/kafka';
+import { getProducer } from '@packages/utils/kafka/producer';
 import { WebSocketServer, WebSocket } from 'ws';
 import redis from '@packages/libs/redis';
 import { Server as HttpServer } from 'http';
 
-const producer = kafka.producer();
+let activeServer: WebSocketServer | null = null;
 const connectedUsers: Map<string, WebSocket> = new Map();
 const unseenCounts: Map<string, number> = new Map();
 
@@ -19,8 +19,9 @@ type IncomingMessage = {
 
 export async function createWebSocketServer(server: HttpServer) {
    const wss = new WebSocketServer({ server });
+   activeServer = wss;
 
-   await producer.connect();
+   await getProducer();
    console.log('Kafka producer connected');
 
    wss.on('connection', (ws: WebSocket) => {
@@ -105,6 +106,7 @@ export async function createWebSocketServer(server: HttpServer) {
                console.log(`Echoed message back to sender ${senderKey}`);
             }
 
+            const producer = await getProducer();
             await producer.send({
                topic: 'chat_new_message',
                messages: [
@@ -138,4 +140,13 @@ export async function createWebSocketServer(server: HttpServer) {
    });
 
    console.log('WebSocket server is running and ready to accept connections');
+}
+
+//part of graceful shutdown: tell connected clients we are going away (they reconnect on their own), then stop listening
+export async function closeWebSocketServer(): Promise<void> {
+   const wss = activeServer;
+   if (!wss) return;
+   activeServer = null;
+   for (const socket of wss.clients) socket.close(1001, 'server shutting down');
+   await new Promise<void>((resolve) => wss.close(() => resolve()));
 }

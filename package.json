@@ -15,7 +15,8 @@
     "db:clean-orphans": "tsx tools/db/clean-orphans.ts",
     "test:tools": "jest --config tools/jest.config.js --rootDir tools",
     "seed": "tsx prisma/seed.ts",
-    "eval:ml": "tsx tools/eval/run-eval.ts"
+    "eval:ml": "tsx tools/eval/run-eval.ts",
+    "test:integration:kafka": "jest --config apps/kafka-service/jest.integration.config.js --forceExit"
   },
   "private": true,
   "dependencies": {

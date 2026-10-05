@@ -1,5 +1,6 @@
 //path: apps/user-ui/src/actions/track-user.ts
 "use server";
+import { randomUUID } from "crypto";
 import {kafka} from "../../../../packages/utils/kafka/index";
 
 const producer = kafka.producer();
@@ -28,10 +29,14 @@ export async function sendKafkaEvent(eventData:{
 }) {
    try {
       await ensureConnected();
+      //eventId is created once per event, before the send. If the message is delivered more than once (a producer retry,
+      //or a consumer crash and redelivery) the consumer sees the same id again and skips the duplicate.
+      const payload = { ...eventData, eventId: randomUUID() };
       await producer.send({
          topic: "users-events",
          messages: [
-            { value: JSON.stringify(eventData) },
+            //keyed by buyer so all of one buyer's events land on the same partition and are processed in order
+            { key: eventData.userId ?? eventData.shopId, value: JSON.stringify(payload) },
          ],
       });
    }

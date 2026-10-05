@@ -1,59 +1,48 @@
 //path: apps/kafka-service/src/main.ts
-import {kafka} from "@packages/utils/kafka";
-import { updateUserAnalytics, updateShopAnalytics, updateProductAnalytics} from "./services/analytics.services";
+import express from "express";
+import prisma from "@packages/libs/prisma";
+import redis from "@packages/libs/redis";
+import { saveDeadLetter } from "@packages/libs/prisma/dead-letters";
+import { setDeadLetterFallback } from "@packages/utils/kafka/dlq";
+import { disconnectProducer } from "@packages/utils/kafka/producer";
+import { onShutdown } from "@packages/utils/kafka/shutdown";
+import { checkConsumerGroup, runChecks } from "@packages/utils/kafka/health";
+import { GROUP_ID, consumerState, startUserEventsConsumer, stopUserEventsConsumer } from "./user-events-consumer";
 
-const consumer = kafka.consumer({ groupId: "user-events-group" });
+//events that can't be published to the Kafka DLQ topic are kept in MongoDB instead of being lost
+setDeadLetterFallback(saveDeadLetter);
 
-const eventQueue: any[]=[];
+const app = express();
 
-const processQueue = async() => {
-   if(eventQueue.length===0) return;
-   
-   const events = [...eventQueue];
-   eventQueue.length=0;
+//liveness: is the process healthy? Only fails if the consumer has crashed (so an orchestrator should restart us)
+app.get("/health", (_req, res) => {
+   const state = consumerState();
+   res.status(state.crashed ? 503 : 200).json({ status: state.crashed ? "unhealthy" : "ok", service: "kafka-service", uptime: process.uptime(), consumer: state });
+});
 
-   for(const event of events){
-      if(event.action==="shop_visit"){
-         try {
-            await updateShopAnalytics(event);
-         } catch (err) {
-            console.error(`Error processing shop_visit event: ${err}`);
-         }
-         continue;
-      }
-
-      const validActions = ["add_to_wishlist", "product_view", "add_to_cart", "remove_from_wishlist","remove_from_cart" ];
-
-      if(!event.action || !validActions.includes(event.action)){
-         console.log(`Invalid event action: ${event.action}`);
-         continue;
-      }
-
-      try{
-         await updateUserAnalytics(event);
-      }
-      catch(err){
-         console.error(`Error processing event: ${err}`);
-      }
-   }
-};
-
-setInterval(processQueue, 3000);
-
-//kafka consumer for user events
-export const consumerKafkaMessages = async () => {
-   await consumer.connect();
-   await consumer.subscribe({ topic: "users-events", fromBeginning: false });
-
-   await consumer.run({
-      eachMessage: async ({message }) => {
-         if(!message.value) return;
-         const event = JSON.parse(message.value.toString());
-         eventQueue.push(event);
-      }
+//readiness: can we actually do our job right now? Needs the broker, our consumer group, MongoDB and Redis
+app.get("/ready", async (_req, res) => {
+   const report = await runChecks({
+      kafka: () => checkConsumerGroup(GROUP_ID),
+      database: async () => {
+         await prisma.$runCommandRaw({ ping: 1 });
+      },
+      redis: async () => {
+         await redis.ping();
+      },
    });
-};
+   res.status(report.ok ? 200 : 503).json({ status: report.ok ? "ready" : "not-ready", service: "kafka-service", ...report });
+});
 
-consumerKafkaMessages().catch(err => {
+const port = process.env.PORT || 6003;
+const server = app.listen(port, () => console.log(`kafka-service health endpoints on http://localhost:${port}/health and /ready`));
+server.on("error", console.error);
+
+startUserEventsConsumer().catch((err) => {
    console.error("Kafka consumer failed to start:", err);
 });
+
+//SIGTERM / SIGINT: stop taking events, finish and commit what is buffered, then disconnect and exit 0
+onShutdown("users-events consumer (drain buffer, commit offsets)", stopUserEventsConsumer);
+onShutdown("shared Kafka producer", disconnectProducer);
+onShutdown("health server", () => new Promise<void>((resolve) => server.close(() => resolve())));

@@ -1,6 +1,5 @@
-import {kafka} from "../kafka";
-
-const producer = kafka.producer();
+//Path: packages/utils/logs/index.ts
+import { getProducer } from "../kafka/producer";
 
 export async function sendLog({
   type = 'info',
@@ -18,10 +17,10 @@ export async function sendLog({
     timestamp: new Date().toISOString(),
   };
 
-  await producer.connect();
+  //the shared producer connects once and is reused: this used to connect and disconnect on every single log line
+  const producer = await getProducer();
   await producer.send({
     topic: 'logs',
     messages: [{ value: JSON.stringify(logPayload) }],
   });
-  await producer.disconnect();
 }

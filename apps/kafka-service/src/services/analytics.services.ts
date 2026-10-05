@@ -1,4 +1,8 @@
 //Path: apps/kafka-service/src/services/analytics.services.ts
+//Each function does ONE logical write and lets any error propagate: the consumer retries it with backoff and, if it
+//keeps failing, sends the event to the dead-letter queue. Swallowing errors here (as this file used to) would turn
+//every failure into a silently dropped event. Because a retry re-runs the whole function, each one must leave the
+//database unchanged when it fails, which is why the shop analytics writes are a single transaction.
 import prisma  from '@packages/libs/prisma';
 
 export const updateUserAnalytics = async (event: any) => {
@@ -74,10 +78,9 @@ export const updateUserAnalytics = async (event: any) => {
          },
       });
 
-      //also update the product analytics
-      await updateProductAnalytics(event);
    }catch (error) {
       console.error(`Error updating user analytics: ${error}`);
+      throw error;
    }
 };
 
@@ -129,6 +132,7 @@ export const updateProductAnalytics = async (event: any) => {
       });
    }catch (error) {
       console.error(`Error updating product analytics: ${error}`);
+      throw error;
    }
 };
 
@@ -148,12 +152,7 @@ export const updateShopAnalytics = async (event: any) => {
             },
          });
 
-         if (!existingVisit) {
-            await prisma.uniqueShopVisitors.create({
-               data: { shopId, userId },
-            });
-            isNewVisitor = true;
-         }
+         isNewVisitor = !existingVisit;
       }
 
       const existingAnalytics = await prisma.shopAnalytics.findUnique({
@@ -172,25 +171,30 @@ export const updateShopAnalytics = async (event: any) => {
       currentCityStats[cityKey] = (currentCityStats[cityKey] || 0) + 1;
       currentDeviceStats[deviceKey] = (currentDeviceStats[deviceKey] || 0) + 1;
 
-      await prisma.shopAnalytics.upsert({
-   where: { shopId },
-   update: {
-      ...(isNewVisitor && { totalVisitors: { increment: 1 } }),
-      countryStats: currentCountryStats,
-      cityStats: currentCityStats,
-      deviceStats: currentDeviceStats,
-      lastViewedAt: new Date(),
-   },
-   create: {
-      shopId,
-      totalVisitors: 1,
-      countryStats: currentCountryStats,
-      cityStats: currentCityStats,
-      deviceStats: currentDeviceStats,
-      lastViewedAt: new Date(),
-   },
-});
+      //one transaction: the visitor row and the counters change together or not at all, so a retry is safe
+      await prisma.$transaction([
+         ...(isNewVisitor ? [prisma.uniqueShopVisitors.create({ data: { shopId, userId } })] : []),
+         prisma.shopAnalytics.upsert({
+            where: { shopId },
+            update: {
+               ...(isNewVisitor && { totalVisitors: { increment: 1 } }),
+               countryStats: currentCountryStats,
+               cityStats: currentCityStats,
+               deviceStats: currentDeviceStats,
+               lastViewedAt: new Date(),
+            },
+            create: {
+               shopId,
+               totalVisitors: 1,
+               countryStats: currentCountryStats,
+               cityStats: currentCityStats,
+               deviceStats: currentDeviceStats,
+               lastViewedAt: new Date(),
+            },
+         }),
+      ]);
    } catch (error) {
       console.error(`Error updating shop analytics: ${error}`);
+      throw error;
    }
 };
