@@ -13,7 +13,8 @@
     "db:normalize": "tsx tools/db/normalize-taxonomy.ts",
     "db:dedupe-tags": "tsx tools/db/dedupe-tags.ts",
     "db:clean-orphans": "tsx tools/db/clean-orphans.ts",
-    "test:tools": "jest --config tools/jest.config.js --rootDir tools"
+    "test:tools": "jest --config tools/jest.config.js --rootDir tools",
+    "seed": "tsx prisma/seed.ts"
   },
   "private": true,
   "dependencies": {

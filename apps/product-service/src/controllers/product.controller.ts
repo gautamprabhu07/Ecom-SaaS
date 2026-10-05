@@ -787,6 +787,8 @@ export const topShops = async (req: Request, res: Response, next: NextFunction) 
    try {
       const topShopsData = await prisma.orders.groupBy({
          by: ['shopId'],
+         //only paid orders count as revenue (pending and failed payments must not inflate a shop's ranking)
+         where: { status: 'Paid' },
          _sum: {
             total : true,
          },

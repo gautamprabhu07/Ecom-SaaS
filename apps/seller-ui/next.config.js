@@ -8,6 +8,11 @@ const nextConfig = {
         protocol: "https",
         hostname: "ik.imagekit.io",
       },
+      {
+        //seeded demo catalog images (see prisma/seed.ts)
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
     ],
   },
 };
