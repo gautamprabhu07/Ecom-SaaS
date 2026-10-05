@@ -357,10 +357,11 @@ export const getAllProducts = async (req: Request, res: Response, next: NextFunc
       const skip = (page - 1) * limit;
       const type = req.query.type;
 
+      //soft-deleted products must never reach the storefront (sellers still see them in their own dashboard)
       const baseFilter = {
-         OR: [
-            { starting_date: { equals: null } },
-      { starting_date: { isSet: false } },
+         AND: [
+            { isDeleted: { not: true } },
+            { OR: [{ starting_date: { equals: null } }, { starting_date: { isSet: false } }] },
          ],
       };
 
@@ -426,8 +427,9 @@ export const getAllEvents = async (req: Request, res: Response, next: NextFuncti
 
       const baseFilter = {
          AND: [
+            { isDeleted: { not: true } },
             { starting_date: { not: null } },
-      { ending_date: { not: null } },
+            { ending_date: { not: null } },
          ],
       };
 
@@ -494,7 +496,7 @@ export const getProductDetails = async (req: Request, res: Response, next: NextF
          include: { images: true, Shop: true },
       });
 
-      if (!product) {
+      if (!product || product.isDeleted) {
          console.log("No product matched this slug"); // temp debug
          return next(new NotFoundError("Product not found."));
       }
@@ -531,6 +533,7 @@ export const getFilteredProducts = async (req: Request, res: Response, next: Nex
       //`OR` key directly on the filters object) lets the date-availability OR
       //and the search-term OR coexist without one overwriting the other
       const conditions: Record<string, any>[] = [
+         { isDeleted: { not: true } },
          {
             sale_price: {
                gte: parsedPriceRange[0],
@@ -629,6 +632,7 @@ export const getFilteredEvents = async (req: Request, res: Response, next: NextF
       const skip = (parsedPage - 1) * parsedLimit;
 
       const filters: Record<string, any> = {
+         isDeleted: { not: true },
          sale_price: {
             gte: parsedPriceRange[0],
             lte: parsedPriceRange[1],
@@ -760,6 +764,7 @@ export const searchProducts = async (req: Request, res: Response, next: NextFunc
 
       const products = await prisma.products.findMany({
          where: {
+            isDeleted: { not: true },
             OR: [
                { title: { contains: query, mode: "insensitive" } },
                { short_description: { contains: query, mode: "insensitive" } },

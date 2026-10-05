@@ -1,0 +1,107 @@
+[
+  {
+    "name": "Product listing: category + price range, paginated",
+    "source": "getFilteredProducts",
+    "p50": 184.8469,
+    "p95": 222.1177,
+    "mean": 192.28691333333336
+  },
+  {
+    "name": "Home listing: latest products, paginated",
+    "source": "getAllProducts",
+    "p50": 234.7636,
+    "p95": 240.4578,
+    "mean": 235.20586000000003
+  },
+  {
+    "name": "Product by slug",
+    "source": "getProductDetails",
+    "p50": 31.6525,
+    "p95": 37.0905,
+    "mean": 32.85281666666666
+  },
+  {
+    "name": "Products by shopId",
+    "source": "getShopProducts / getShopDetails",
+    "p50": 507.7813,
+    "p95": 524.7724,
+    "mean": 507.21018
+  },
+  {
+    "name": "Keyword search (title / short_description contains)",
+    "source": "searchProducts",
+    "p50": 320.9888,
+    "p95": 360.4498,
+    "mean": 326.1495433333333
+  },
+  {
+    "name": "Top shops: Paid orders grouped by shop, sum of total",
+    "source": "topShops",
+    "p50": 87.921,
+    "p95": 105.5836,
+    "mean": 92.52454666666667
+  },
+  {
+    "name": "Orders by shopId, newest first",
+    "source": "getSellerOrders",
+    "p50": 123.5941,
+    "p95": 242.4938,
+    "mean": 144.10053333333335
+  },
+  {
+    "name": "Orders by userId, newest first (with items)",
+    "source": "getUserOrders",
+    "p50": 219.9032,
+    "p95": 228.1165,
+    "mean": 220.83099666666675
+  },
+  {
+    "name": "Seller revenue: Paid orders in last 30 days",
+    "source": "analytics paidTotals",
+    "p50": 62.0128,
+    "p95": 63.7475,
+    "mean": 62.03634666666667
+  },
+  {
+    "name": "Order items by orderId",
+    "source": "orders include items",
+    "p50": 109.263,
+    "p95": 118.7279,
+    "mean": 110.46057666666668
+  },
+  {
+    "name": "Product images by productsId",
+    "source": "every product include",
+    "p50": 77.5075,
+    "p95": 81.3052,
+    "mean": 78.19505
+  },
+  {
+    "name": "Followers of a shop (count)",
+    "source": "getShopDetails / topShops",
+    "p50": 48.2182,
+    "p95": 53.6246,
+    "mean": 48.85971333333335
+  },
+  {
+    "name": "userAnalytics by userId",
+    "source": "recommendation / track-user",
+    "p50": 31.7386,
+    "p95": 36.6152,
+    "mean": 32.633866666666655
+  },
+  {
+    "name": "productAnalytics by productId",
+    "source": "kafka-service consumer",
+    "p50": 31.9945,
+    "p95": 33.0306,
+    "mean": 32.01381333333334
+  },
+  {
+    "name": "Messages by conversationId, newest 20",
+    "source": "chatting getMessages",
+    "p50": 34.3168,
+    "p95": 35.6965,
+    "mean": 34.22956
+  }
+]

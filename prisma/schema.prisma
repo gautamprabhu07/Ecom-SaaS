@@ -19,6 +19,9 @@ model images {
   shops   shops?  @relation(fields: [shopId], references: [id])
   productsId String? @db.ObjectId
   products  products? @relation(fields: [productsId], references: [id])
+
+  // every product query includes its images, which Prisma fetches with "productsId = ?"
+  @@index([productsId])
 }
 
 model users {
@@ -51,6 +54,9 @@ model shopReviews {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  // review list per shop, newest first (GET /shop/:shopId/reviews): equality on shopsId, then sort by createdAt
+  @@index([shopsId, createdAt])
 }
 
 model followers {
@@ -61,6 +67,9 @@ model followers {
   shops    shops   @relation(fields: [shopsId], references: [id])
 
   @@unique([userId, shopsId])
+
+  // the unique (userId, shopsId) pair only serves lookups by user; "who follows this shop / how many" filters on shopsId alone
+  @@index([shopsId])
 }
 
 model shops {
@@ -173,6 +182,15 @@ model products {
   shopId String @db.ObjectId
   Shop      shops   @relation(fields: [shopId], references: [id])
   totalSales Int @default(0)
+
+  // seller catalogue and shop page: "WHERE shopId = ?"
+  @@index([shopId])
+  // storefront filter: category IN (...) AND sale_price BETWEEN ...; equality field first, range field second
+  @@index([category, sale_price])
+  // home page "latest" listing sorts by createdAt desc
+  @@index([createdAt])
+  // home page "top sellers" listing sorts by totalSales desc
+  @@index([totalSales])
 }
 
 model userAnalytics {
@@ -200,6 +218,9 @@ model productAnalytics {
   lastViewedAt DateTime?
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
+
+  // dashboards sum and rank a shop's products ("WHERE shopId = ?"); productId is already indexed by its @unique
+  @@index([shopId])
 }
 
 model shopAnalytics {
@@ -221,6 +242,9 @@ model uniqueShopVisitors {
   visitedAt    DateTime  @default(now())
 
   @@unique([shopId, userId])
+
+  // dashboard counts first-time visitors per shop within a date range; (shopId, userId) unique only helps the shopId prefix
+  @@index([shopId, visitedAt])
 }
 
 model orders {
@@ -238,6 +262,11 @@ model orders {
   items orderItems[] @relation("OrderItemsRelation")
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
+
+  // seller order list and seller revenue: equality on shopId, then sort / range on createdAt
+  @@index([shopId, createdAt])
+  // buyer order history: equality on userId, newest first
+  @@index([userId, createdAt])
 }
 
 model orderItems {
@@ -249,6 +278,9 @@ model orderItems {
   selectedOptions Json?
   orders      orders   @relation(fields: [orderId], references: [id], name: "OrderItemsRelation")
   createdAt    DateTime  @default(now())
+
+  // loading an order's items ("orderId = ?"). The spec suggested productId, but no query filters on it
+  @@index([orderId])
 }
 
 enum addressType {
@@ -279,6 +311,9 @@ model notifications {
   title         String
   status        String    @default("Unread")
   createdAt     DateTime  @default(now())
+
+  // notification bell: the caller's own rows, newest first, plus an unread count
+  @@index([recieverId, createdAt])
 }
 
 model conversationGroup{
@@ -314,4 +349,8 @@ model message {
   createdAt DateTime @default(now())
 
   @@unique([conversationId, senderId, content, createdAt])
+
+  // chat history: equality on conversationId, newest first. The existing unique key starts with the same field but
+  // continues with senderId, so it cannot serve the createdAt sort
+  @@index([conversationId, createdAt])
 }
