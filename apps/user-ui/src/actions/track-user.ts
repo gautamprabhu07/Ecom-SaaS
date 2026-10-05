@@ -4,6 +4,19 @@ import {kafka} from "../../../../packages/utils/kafka/index";
 
 const producer = kafka.producer();
 
+//connect once and reuse the connection for every event; sharing the promise means concurrent
+//calls don't each open their own connection, and a failed attempt is retried on the next call
+let connection: Promise<void> | null = null;
+const ensureConnected = () => {
+   if (!connection) {
+      connection = producer.connect().catch((error) => {
+         connection = null;
+         throw error;
+      });
+   }
+   return connection;
+};
+
 export async function sendKafkaEvent(eventData:{
    userId? : string,
    productId? : string,
@@ -14,7 +27,7 @@ export async function sendKafkaEvent(eventData:{
    city? : string,
 }) {
    try {
-      await producer.connect();
+      await ensureConnected();
       await producer.send({
          topic: "users-events",
          messages: [
@@ -25,5 +38,5 @@ export async function sendKafkaEvent(eventData:{
    catch (error) {
       console.error(`Error sending Kafka event: ${error}`);
    }
-   
+
 };

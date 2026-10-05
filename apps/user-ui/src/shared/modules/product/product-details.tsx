@@ -10,7 +10,7 @@ import {
   ShoppingCartIcon,
   WalletMinimal,
 } from "lucide-react";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import InnerImageZoom from "react-inner-image-zoom";
 import "react-inner-image-zoom/lib/styles.min.css";
 import Image from "next/image";
@@ -22,11 +22,30 @@ import useLocationTracking from "apps/user-ui/src/hooks/useLocationTracking";
 import useDeviceTracking from "apps/user-ui/src/hooks/useDeviceTracking";
 import ProductCard from "../../components/section/cards/product-card";
 import axiosInstance from "apps/user-ui/src/utils/axiosInstance";
+import { sendKafkaEvent } from "apps/user-ui/src/actions/track-user";
 
 const ProductDetails = ({ productDetails }: { productDetails: any }) => {
   const { user } = useUser();
   const location = useLocationTracking();
   const deviceInfo = useDeviceTracking();
+
+  //fire product_view once per product per page visit (guards against re-renders and dev strict-mode double effects)
+  const viewedProductRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!user?.id || !location || !deviceInfo || !productDetails?.id) return;
+    if (viewedProductRef.current === productDetails.id) return;
+    viewedProductRef.current = productDetails.id;
+
+    sendKafkaEvent({
+      userId: user.id,
+      productId: productDetails.id,
+      shopId: productDetails.shopId ?? productDetails.Shop?.id,
+      action: "product_view",
+      country: location.country || "Unknown",
+      city: location.city || "Unknown",
+      device: deviceInfo || "Unknown Device",
+    });
+  }, [user?.id, location, deviceInfo, productDetails?.id]);
 
   const [currentImage, setCurrentImage] = useState(
     productDetails?.images?.[0]?.url || "/product-backup.jpg",
