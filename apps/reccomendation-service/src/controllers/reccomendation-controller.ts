@@ -1,5 +1,5 @@
 //Path: apps/recommendation-service/src/controllers/reccomendation-controller.ts
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
 import { ValidationError } from "@packages/error-handler";
 import { generateRecommendations, getCachedRecommendations } from "../services/reccomendationService";
 

@@ -1,5 +1,5 @@
 //Path: packages/middleware/isOptionalAuth.ts
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import prisma from "../libs/prisma";
 

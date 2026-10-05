@@ -1,6 +1,6 @@
 //Path: apps/user-ui/src/app/%28routes%29/checkout/page.tsx
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { loadStripe, Appearance } from "@stripe/stripe-js";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
@@ -13,7 +13,7 @@ const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY!);
 const appearance: Appearance = {
   theme: "stripe",
 };
-const Page = () => {
+const PageContent = () => {
   const [clientSecret, setClientSecret] = useState("");
   const [cartItems, setCartItems] = useState<any[]>([]);
   const [coupon, setCoupon] = useState();
@@ -127,5 +127,12 @@ const Page = () => {
     )
   );
 };
+
+//useSearchParams() needs a Suspense boundary or `next build` cannot prerender the page
+const Page = () => (
+  <Suspense fallback={null}>
+    <PageContent />
+  </Suspense>
+);
 
 export default Page;

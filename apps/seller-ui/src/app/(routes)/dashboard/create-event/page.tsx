@@ -1,6 +1,6 @@
 //Path: apps/seller-ui/src/app/%28routes%29/dashboard/create-event/page.tsx
 "use client";
-import { ChevronRight, X } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
@@ -13,7 +13,6 @@ import CustomSpecifications from "packages/components/custom-specifications";
 import CustomProperties from "packages/components/custom-properties";
 import RichTextEditor from "packages/components/rick-text-editor";
 import Sizeselector from "packages/components/size-selector";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 
@@ -66,8 +65,8 @@ const Page = () => {
   const [pictureUploadingLoader, setPictureUploadingLoader] = useState(false);
   const [images, setImages] = useState<(UploadedImage | null)[]>([null]);
   const [loading, setLoading] = useState(false);
-  const [openImageModal, setOpenImageModal] = useState(false);
-  const [selected, setSelected] = useState("");
+  const [, setOpenImageModal] = useState(false);
+  const [, setSelected] = useState("");
   const router = useRouter();
 
   const { data, isLoading, isError } = useQuery({

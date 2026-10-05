@@ -1,5 +1,6 @@
 //Path: apps/order-service/src/controllers/order.controller.ts
 import { ValidationError, ForbiddenError } from '@packages/error-handler';
+import { toCents, platformFeeCents, cartTotal, couponDiscount, shopOrderTotal, groupByShop, cartFingerprint } from '../utils/pricing';
 import { NextFunction, Response } from 'express';
 import Stripe from 'stripe';
 import redis  from '@packages/libs/redis';
@@ -23,8 +24,8 @@ export const createPayment = async(
 {
    const {amount, sellerStripeAccountId, sessionId}=req.body;
 
-   const customerAmount = Math.round(amount*100);
-   const platformFee = Math.floor(customerAmount*0.1);
+   const customerAmount = toCents(amount);
+   const platformFee = platformFeeCents(customerAmount);
 
    try
    {
@@ -67,16 +68,7 @@ export const createPaymentSession = async(
          return next(new ValidationError('Cart is empty or invalid'));
       }
 
-      const normalizedCart = JSON.stringify(
-         cart.map((item) => ({
-            id: item.id,
-            quantity: item.quantity,
-            sale_price: item.sale_price,
-            shopId : item.shopId,
-            selectedOptions: item.selectedOptions || {},
-         }))
-         .sort((a,b)=>a.id.localCompare(b.id))
-      );
+      const normalizedCart = cartFingerprint(cart);
 
       const keys = await redis.keys("payment_session:*");
       for(const key of keys)
@@ -87,15 +79,7 @@ export const createPaymentSession = async(
             const session=JSON.parse(data);
             if(session.userId === userId)
             {
-               const existingCart = JSON.stringify(session.cart.map((item:any) => ({
-                  id: item.id,
-                  quantity: item.quantity,
-                  sale_price: item.sale_price,
-                  shopId: item.shopId,
-                  selectedOptions: item.selectedOptions || {},
-               }))
-               .sort((a:any,b:any)=>a.id.localCompare(b.id))
-               );
+               const existingCart = cartFingerprint(session.cart);
                if(existingCart === normalizedCart)
                {
                   return res.status(200).json({
@@ -134,9 +118,7 @@ export const createPaymentSession = async(
       }));
 
       //calculate total
-      const totalAmount = cart.reduce((total:number, item:any) => {
-         return total + (item.sale_price * item.quantity);
-      }, 0);
+      const totalAmount = cartTotal(cart);
            
       //create session payload
       const sessionId = crypto.randomUUID();
@@ -244,36 +226,16 @@ export const createOrder = async(
       const user=await prisma.users.findUnique({
          where:{id:userId}
       });
-      const name=user?.name!;
-      const email=user?.email!;
+      const name=user?.name ?? 'Customer';
+      const email=user?.email;
 
-      const shopGrouped = cart.reduce((acc:any, item:any) => {
-         if (!acc[item.shopId]) {
-            acc[item.shopId] = [];
-         }
-         acc[item.shopId].push(item);
-         return acc;
-      }, {});
+      const shopGrouped = groupByShop<any>(cart);
 
       for(const shopId in shopGrouped)
       {
          const orderItems=shopGrouped[shopId];
 
-         let orderTotal=orderItems.reduce((sum:number, item:any) => sum + (item.sale_price * item.quantity), 0);
-
-         //apply discount if coupon is present
-      if(coupon && coupon.discountedProductId && orderItems.some((item:any) => item.id === coupon.discountedProductId))
-      {
-         const discountedItem=orderItems.find((item:any) => item.id === coupon.discountedProductId);
-
-         if(discountedItem)
-         {
-            const discount = coupon.discountPercent >0 ? (discountedItem.sale_price * discountedItem.quantity * coupon.discountPercent) / 100 : coupon.discountAmount;
-
-            orderTotal -= discount;
-         }
-
-      }
+         const orderTotal=shopOrderTotal(orderItems, coupon);
 
       //create order in database
       await prisma.orders.create({
@@ -361,6 +323,7 @@ export const createOrder = async(
     await redis.del(sessionKey);
 
     try {
+      if (!email) throw new Error('buyer has no email address');
       await sendEmail(
         email,
         "Your OutSource Confirmation",
@@ -619,19 +582,8 @@ export const verifyCouponCode = async(
                message:'Coupon code is not applicable to any product in the cart',
             });
          }
-         let discountAmount=0;
          const price = matchingProduct.sale_price * matchingProduct.quantity;
-
-         if(discount.discountType === 'percentage')
-         {
-            discountAmount = (price * discount.discountValue) / 100;
-         }
-         else if(discount.discountType === 'flat')
-         {
-            discountAmount = discount.discountValue;
-         }
-
-         discountAmount = Math.min(discountAmount, price);
+         const discountAmount = couponDiscount(price, discount.discountType, discount.discountValue);
 
          res.status(200).json({
             valid:true,

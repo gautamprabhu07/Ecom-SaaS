@@ -69,7 +69,7 @@ const ProductDetails = ({ productDetails }: { productDetails: any }) => {
     (item: any) => item.id === productDetails?.id,
   );
 
-  const [priceRange, setPriceRange] = useState([
+  const [priceRange] = useState([
     productDetails?.sale_price,
     1199,
   ]);

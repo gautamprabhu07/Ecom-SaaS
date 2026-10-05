@@ -4,14 +4,11 @@
  */
 //path: apps/api-gateway/src/main.ts
 import express from 'express';
-import * as path from 'path';
 import proxy from 'express-http-proxy';
 import morgan from 'morgan';
 import rateLimit, { ipKeyGenerator } from 'express-rate-limit';
 import RedisStore from 'rate-limit-redis';
 import redis from '@packages/libs/redis';
-import swaggerUi from 'swagger-ui-express';
-import axios from 'axios';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import initializeSiteConfig from './libs/initializeSiteConfig';

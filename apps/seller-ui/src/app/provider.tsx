@@ -23,7 +23,7 @@ const ProvidersWithWebSocket = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { seller, isLoading } = useSeller();
+  const { seller } = useSeller();
 
   return (
     <>

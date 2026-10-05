@@ -9,6 +9,8 @@
 [![Kafka](https://img.shields.io/badge/Kafka-231F20?style=flat&logo=apachekafka&logoColor=white)](https://kafka.apache.org/)
 [![Redis](https://img.shields.io/badge/Redis-DC382D?style=flat&logo=redis&logoColor=white)](https://redis.io/)
 [![Nx](https://img.shields.io/badge/Nx_Monorepo-143055?style=flat&logo=nx&logoColor=white)](https://nx.dev/)
+[![CI](https://github.com/gautamprabhu07/Ecom-SaaS/actions/workflows/ci.yml/badge.svg)](https://github.com/gautamprabhu07/Ecom-SaaS/actions/workflows/ci.yml)
+<!-- coverage-badge -->[![Coverage](https://img.shields.io/badge/coverage-96%25-brightgreen?style=flat)](CONTRIBUTING.md#running-the-tests)<!-- /coverage-badge -->
 
 ---
 

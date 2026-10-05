@@ -13,13 +13,10 @@ import {
   ListOrdered,
   Wallet,
   Package,
-  CalendarDays,
   Users,
   Store,
   FileText,
   Settings,
-  Bell,
-  Palette,
   LogOut,
   Sparkles,
 } from "lucide-react";

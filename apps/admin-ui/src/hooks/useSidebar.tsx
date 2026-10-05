@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import { activeSidebarAtom } from "../configs/constants";
 import { useAtom } from "jotai";
 

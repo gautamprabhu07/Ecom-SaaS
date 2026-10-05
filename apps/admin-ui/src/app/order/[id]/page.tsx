@@ -2,7 +2,7 @@
 //order details page for admin (read-only)
 "use client";
 import React, { useEffect, useState } from "react";
-import { ArrowLeft, Loader2, MapPin, Tag } from "lucide-react";
+import { ArrowLeft, MapPin, Tag } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import axiosInstance from "../../../utils/axiosInstance";
 

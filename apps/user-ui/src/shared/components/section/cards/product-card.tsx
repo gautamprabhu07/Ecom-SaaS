@@ -47,6 +47,7 @@ const ProductCard = ({
       }, 60000);
       return () => clearInterval(interval);
     }
+    return undefined;
   }, [isEvent, product?.ending_date]);
 
   //render the modal via a portal so its `fixed` positioning is anchored to the

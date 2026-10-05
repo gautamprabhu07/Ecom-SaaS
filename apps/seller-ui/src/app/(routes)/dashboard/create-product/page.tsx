@@ -38,7 +38,7 @@ const Page = () => {
   } = useForm();
 
   const [openImageModal, setOpenImageModal] = useState(false);
-  const [isChanged, setIsChanged] = useState(false);
+  const [isChanged] = useState(false);
   const [activeEffect, setActiveEffect] = useState<string | null>(null);
   const [selected, setSelected] = useState("");
   const [pictureUploadingLoader, setPictureUploadingLoader] = useState(false);

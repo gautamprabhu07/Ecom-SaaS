@@ -2,7 +2,7 @@
 "use client";
 import axiosInstance from "apps/user-ui/src/utils/axiosInstance";
 import { useQuery } from "@tanstack/react-query";
-import React, { useState, useEffect, useRef } from "react";
+import React, { Suspense, useState, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { X } from "lucide-react";
@@ -16,7 +16,7 @@ const parseCategories = (value: string | null): string[] =>
 const MIN = 0;
 const MAX = 1199;
 
-const Page = () => {
+const PageContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isProductLoading, setProductLoading] = useState(false);
@@ -119,7 +119,6 @@ const Page = () => {
       setSelectedCategories(urlCategories);
       setPage(1);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
   useEffect(() => {
@@ -364,5 +363,12 @@ const Page = () => {
     </div>
   );
 };
+
+//useSearchParams() needs a Suspense boundary or `next build` cannot prerender the page
+const Page = () => (
+  <Suspense fallback={null}>
+    <PageContent />
+  </Suspense>
+);
 
 export default Page;

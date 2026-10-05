@@ -13,6 +13,14 @@
     "db:normalize": "tsx tools/db/normalize-taxonomy.ts",
     "db:dedupe-tags": "tsx tools/db/dedupe-tags.ts",
     "db:clean-orphans": "tsx tools/db/clean-orphans.ts",
+    "lint": "eslint apps packages tools tests prisma",
+    "typecheck": "nx run-many -t typecheck && npm run typecheck:ui",
+    "typecheck:ui": "tsc --noEmit -p apps/user-ui/tsconfig.json && tsc --noEmit -p apps/seller-ui/tsconfig.json && tsc --noEmit -p apps/admin-ui/tsconfig.json",
+    "build": "nx run-many -t build",
+    "test:unit": "jest --config jest.unit.config.js",
+    "test:coverage": "jest --config jest.unit.config.js --coverage",
+    "test:integration": "jest --config jest.integration.config.js",
+    "coverage:badge": "tsx tools/coverage-badge.ts",
     "test:tools": "jest --config tools/jest.config.js --rootDir tools",
     "seed": "tsx prisma/seed.ts",
     "bench:db": "tsx tools/bench/query-bench.ts",
@@ -73,6 +81,7 @@
     "zustand": "^5.0.14"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.5",
     "@nx/docker": "23.0.0",
     "@nx/esbuild": "23.0.0",
     "@nx/express": "^23.0.2",
@@ -109,6 +118,7 @@
     "@types/swagger-ui-express": "^4.1.8",
     "dotenv": "^17.4.2",
     "esbuild": "^0.27.0",
+    "eslint": "^9.39.5",
     "jest": "~30.3.0",
     "jest-environment-node": "~30.3.0",
     "jest-util": "~30.3.0",
@@ -121,6 +131,7 @@
     "tslib": "^2.3.0",
     "tsx": "^4.23.15",
     "typescript": "~5.9.2",
+    "typescript-eslint": "^8.71.1",
     "webpack": "^5.101.3",
     "webpack-cli": "^7.0.0",
     "webpack-dev-server": "^5.2.1"

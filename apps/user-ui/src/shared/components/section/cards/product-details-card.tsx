@@ -35,8 +35,6 @@ const ProductDetailsCard = ({
   const { user } = useUser();
   const location = useLocationTracking();
   const deviceInfo = useDeviceTracking();
-  const wishlist = useStore((state: any) => state.wishlist);
-  const cart = useStore((state: any) => state.cart);
   const estimatedDelivery = new Date();
   estimatedDelivery.setDate(estimatedDelivery.getDate() + 5);
   const router = useRouter();

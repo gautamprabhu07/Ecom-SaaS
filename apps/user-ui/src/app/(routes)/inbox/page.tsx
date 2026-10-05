@@ -2,7 +2,7 @@
 "use client";
 import { useSearchParams, useRouter } from "next/navigation";
 import useRequireAuth from "../../../hooks/useRequiredAuth";
-import React, { useEffect, useRef, useState } from "react";
+import React, { Suspense, useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import axiosInstance from "../../../utils/axiosInstance";
@@ -10,7 +10,7 @@ import { isProtected } from "../../../utils/protected";
 import { useWebSocket } from "../../../context/web-socket-context";
 import ChatInput from "../../../shared/components/chats/chatinput";
 
-const Page = () => {
+const PageContent = () => {
   const searchParams = useSearchParams();
   const { user } = useRequireAuth();
   const router = useRouter();
@@ -352,5 +352,12 @@ const Page = () => {
     </div>
   );
 };
+
+//useSearchParams() needs a Suspense boundary or `next build` cannot prerender the page
+const Page = () => (
+  <Suspense fallback={null}>
+    <PageContent />
+  </Suspense>
+);
 
 export default Page;

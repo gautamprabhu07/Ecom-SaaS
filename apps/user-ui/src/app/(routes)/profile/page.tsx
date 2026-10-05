@@ -1,39 +1,31 @@
 //Path: apps/user-ui/src/app/%28routes%29/profile/page.tsx
 "use client";
 import {
-  BadgeCheck,
-  Bell,
   CheckCircle,
-  Gift,
   Lock,
   Inbox,
   Loader,
   LogOut,
   MapPin,
   Pencil,
-  PhoneCall,
-  ReceiptIcon,
-  Settings,
   ShoppingBag,
   Truck,
   User,
 } from "lucide-react";
-import React, { useState, useEffect } from "react";
-import useUser from "../../../hooks/useUser";
+import React, { Suspense, useState, useEffect } from "react";
 import StatCard from "../../../shared/components/cards/statcard";
 import { Clock } from "lucide-react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import axiosInstance from "apps/user-ui/src/utils/axiosInstance";
 import Image from "next/image";
-import QuickActionCard from "apps/user-ui/src/shared/components/cards/quickActionCard";
 import ShippingAddressSection from "apps/user-ui/src/shared/components/shippingAddress";
 import { useQuery } from "@tanstack/react-query";
 import useRequireAuth from "../../../hooks/useRequiredAuth";
 import OrdersTable from "apps/user-ui/src/shared/components/tables/orders-table";
 import ChangePassword from "apps/user-ui/src/shared/components/change-Password";
 
-const Page = () => {
+const PageContent = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -211,6 +203,13 @@ const Page = () => {
     </div>
   );
 };
+
+//useSearchParams() needs a Suspense boundary or `next build` cannot prerender the page
+const Page = () => (
+  <Suspense fallback={null}>
+    <PageContent />
+  </Suspense>
+);
 
 export default Page;
 

@@ -2,12 +2,12 @@
 "use client";
 
 import { useStore } from "apps/user-ui/src/store";
-import React, { useEffect } from "react";
+import React, { Suspense, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { CheckCircle2 } from "lucide-react";
 import confetti from "canvas-confetti";
 
-const PaymentSuccessPage = () => {
+const PaymentSuccessPageContent = () => {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("sessionId");
   const router = useRouter();
@@ -84,5 +84,12 @@ const PaymentSuccessPage = () => {
     </div>
   );
 };
+
+//useSearchParams() needs a Suspense boundary or `next build` cannot prerender the page
+const PaymentSuccessPage = () => (
+  <Suspense fallback={null}>
+    <PaymentSuccessPageContent />
+  </Suspense>
+);
 
 export default PaymentSuccessPage;

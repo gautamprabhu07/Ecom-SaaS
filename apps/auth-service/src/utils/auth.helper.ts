@@ -97,7 +97,7 @@ export const handleforgotPassword = async (req: Request, res: Response, next: Ne
 });
    }
    catch (error) {
-      next(error);
+      return next(error);
    }
 };
 

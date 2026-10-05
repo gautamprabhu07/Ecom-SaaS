@@ -1,7 +1,6 @@
 // Path: apps/user-ui/src/app/page.tsx
 "use client";
 import React from "react";
-import Header from "../shared/widgets/header";
 import Hero from "../shared/modules/hero";
 import { useQuery } from "@tanstack/react-query";
 import SectionTitle from "../shared/components/section/section-title";
