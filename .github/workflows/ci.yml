@@ -3,6 +3,7 @@ name: CI
 on:
   push:
     branches:
+      - main
       - master
   pull_request:
 
@@ -11,6 +12,18 @@ permissions:
   contents: read
 
 jobs:
+  # Separate job so a leaked-secret failure is reported on its own, independent of
+  # the build/lint/test job below. Scans the FULL git history (fetch-depth: 0).
+  secrets-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   main:
     runs-on: ubuntu-latest
     steps:

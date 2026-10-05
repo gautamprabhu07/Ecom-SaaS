@@ -4,7 +4,7 @@ import { Request, Response } from "express";
 import { PrismaClient, Prisma } from "@prisma/client";
 import { toFile } from "@imagekit/nodejs";
 import imagekit from "@packages/libs/imagekit";
-import { ValidationError } from "@packages/error-handler";
+import { ValidationError, NotFoundError, ForbiddenError } from "@packages/error-handler";
 
 const prisma = new PrismaClient();
 
@@ -36,7 +36,7 @@ export const createDiscountCode = async (req: any, res: Response, next: NextFunc
          },
       });
       if (isDiscountCodeExists) {
-         return next(new Error("Discount code already exists."));
+         return next(new ValidationError("Discount code already exists."));
       }
 
       const discountCodeData = await prisma.discount_codes.create({
@@ -87,11 +87,11 @@ export const deleteDiscountCode = async (req: any, res: Response, next: NextFunc
       });
 
       if (!discountCode) {
-         return next(new Error("Discount code not found."));
+         return next(new NotFoundError("Discount code not found."));
       }
 
       if (discountCode.sellerId !== sellerId) {
-         return next(new Error("You are not authorized to delete this discount code."));
+         return next(new ForbiddenError("You are not authorized to delete this discount code."));
       }
 
       await prisma.discount_codes.delete({
@@ -177,20 +177,20 @@ export const createProduct = async (req: any, res: Response, next: NextFunction)
        } = req.body;
 
        if(!title || !short_description || !slug || !category || !stock || !sale_price || !regular_price) {
-         return next(new Error("Missing required fields."));
+         return next(new ValidationError("Missing required fields."));
        }
 
        if (ending_date && !starting_date) {
-         return next(new Error("Starting date is required when an ending date is set."));
+         return next(new ValidationError("Starting date is required when an ending date is set."));
       }
 
       if (starting_date && ending_date && new Date(ending_date) <= new Date(starting_date)) {
-         return next(new Error("Ending date must be after the starting date."));
+         return next(new ValidationError("Ending date must be after the starting date."));
       }
 
        if(!req.seller.id)
        {
-         return next(new Error("Seller ID is required."));
+         return next(new ForbiddenError("Seller ID is required."));
        }
 
        const slugChecking = await prisma.products.findUnique({
@@ -284,21 +284,21 @@ export const deleteProduct = async (req: any, res: Response, next: NextFunction)
       });
 
       if (!product) {
-         return next(new Error("Product not found."));
+         return next(new NotFoundError("Product not found."));
       }
 
       if (product.shopId !== sellerId) {
-         return next(new Error("You are not authorized to delete this product."));
+         return next(new ForbiddenError("You are not authorized to delete this product."));
       }
 
       if (product.isDeleted) {
-         return next(new Error("Product is already deleted."));
+         return next(new ValidationError("Product is already deleted."));
       }
 
       const deletedProduct = await prisma.products.update({
          where: { id: productId },
          data: { isDeleted: true,
-            deletedAt: new Date(Date.now()*24*60*60*1000) },
+            deletedAt: new Date(Date.now() + 24*60*60*1000) },
       });
 
       return res.status(200).json({ message: "Product is scheduled for deletion in 24 hours.", deletedAt: deletedProduct.deletedAt });
@@ -321,11 +321,11 @@ export const restoreProduct = async (req: any, res: Response, next: NextFunction
       });
 
       if (!product) {
-         return next(new Error("Product not found."));
+         return next(new NotFoundError("Product not found."));
       }
 
       if (product.shopId !== sellerId) {
-         return next(new Error("You are not authorized to restore this product."));
+         return next(new ForbiddenError("You are not authorized to restore this product."));
       }
 
       if (!product.isDeleted) {
@@ -496,7 +496,7 @@ export const getProductDetails = async (req: Request, res: Response, next: NextF
 
       if (!product) {
          console.log("No product matched this slug"); // temp debug
-         return next(new Error("Product not found."));
+         return next(new NotFoundError("Product not found."));
       }
 
       res.status(201).json({ success: true, product });
@@ -848,7 +848,7 @@ export const followShop = async (req: any, res: Response, next: NextFunction) =>
 
       const shop = await prisma.shops.findUnique({ where: { id: shopId } });
       if (!shop) {
-         return next(new Error("Shop not found."));
+         return next(new NotFoundError("Shop not found."));
       }
 
        const existing = await prisma.followers.findUnique({
@@ -935,11 +935,11 @@ export const getSellerProductById = async (req: any, res: Response, next: NextFu
       });
 
       if (!product) {
-         return next(new Error("Product not found."));
+         return next(new NotFoundError("Product not found."));
       }
 
       if (product.shopId !== sellerShopId) {
-         return next(new Error("You are not authorized to view this product."));
+         return next(new ForbiddenError("You are not authorized to view this product."));
       }
 
       res.status(200).json({ success: true, product });
@@ -961,11 +961,11 @@ export const updateProduct = async (req: any, res: Response, next: NextFunction)
       });
 
       if (!existingProduct) {
-         return next(new Error("Product not found."));
+         return next(new NotFoundError("Product not found."));
       }
 
       if (existingProduct.shopId !== sellerShopId) {
-         return next(new Error("You are not authorized to update this product."));
+         return next(new ForbiddenError("You are not authorized to update this product."));
       }
 
       const {
@@ -1069,7 +1069,7 @@ export const getShopDetails = async (req: any, res: Response, next: NextFunction
       });
 
       if (!shop) {
-         return next(new Error("Shop not found."));
+         return next(new NotFoundError("Shop not found."));
       }
 
       const [products, offers, reviews] = await Promise.all([

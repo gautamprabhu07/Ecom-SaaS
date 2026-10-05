@@ -7,7 +7,9 @@ import express from 'express';
 import * as path from 'path';
 import proxy from 'express-http-proxy';
 import morgan from 'morgan';
-import rateLimit from 'express-rate-limit';
+import rateLimit, { ipKeyGenerator } from 'express-rate-limit';
+import RedisStore from 'rate-limit-redis';
+import redis from '@packages/libs/redis';
 import swaggerUi from 'swagger-ui-express';
 import axios from 'axios';
 import cookieParser from 'cookie-parser';
@@ -31,11 +33,18 @@ app.set('trust proxy', 1);
 
 const limiter=rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
+  // counters live in Redis so limits survive gateway restarts and are shared across instances
+  store: new RedisStore({
+    prefix: 'rl:gateway:',
+    sendCommand: (...args: string[]) => redis.call(args[0], ...args.slice(1)) as Promise<any>,
+  }),
+  // if Redis is unreachable, let requests through rather than failing every request
+  passOnStoreError: true,
   max: (req:any)=> (req.user ? 1000 : 100), // Limit each IP to 100 requests per `window` (here, per 15 minutes)
   message : {error: "Too many requests, please try again later."},
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: true, // enable the `X-RateLimit-*` headers
-  keyGenerator: (req:any) => req.ip, // Use user ID as key if authenticated, otherwise use IP address
+  keyGenerator: (req:any) => ipKeyGenerator(req.ip), // keyed by client IP; IPv6 clients are grouped by /56 subnet so they can't dodge limits by rotating addresses
 });
 
 app.use(limiter);
