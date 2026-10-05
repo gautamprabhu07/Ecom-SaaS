@@ -275,6 +275,7 @@ model notifications {
   creatorId     String    @db.ObjectId
   recieverId    String    @db.ObjectId
   redirect_link String?
+  message       String?
   title         String
   status        String    @default("Unread")
   createdAt     DateTime  @default(now())

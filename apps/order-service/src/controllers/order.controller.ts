@@ -1,5 +1,5 @@
 //Path: apps/order-service/src/controllers/order.controller.ts
-import { ValidationError } from '@packages/error-handler';
+import { ValidationError, ForbiddenError } from '@packages/error-handler';
 import { NextFunction, Response } from 'express';
 import Stripe from 'stripe';
 import redis  from '@packages/libs/redis';
@@ -354,57 +354,61 @@ export const createOrder = async(
    }
     }
 
-    //send email to user
-    await sendEmail(
-      email,
-      "Your OutSource Confirmation",
-      "order-confirmation",
-      {
-         name,
-         cart,
-         totalAmount: coupon?.discountAmount ? totalAmount - coupon?.discountAmount : totalAmount,
-         trackingUrl: `https://eshop.com/orders/${sessionId}`,
-   });
+    }
 
-   //create notification for sellers
-   const createShopIds=Object.keys(shopGrouped);
-   const sellerShops=await prisma.shops.findMany({
-      where:{id:{in:createShopIds}},
-      select:{id: true, sellerId:true, name:true},
-});
+    //the orders are saved: consume the session NOW so a Stripe webhook retry can never create them twice.
+    //Everything after this point (email, notifications) is best-effort and must never fail the webhook.
+    await redis.del(sessionKey);
 
-      for(const shop of sellerShops)
-      {
-         const firstProduct=shopGrouped[shop.id][0];
-         const productTitle=firstProduct?.title || "new item";
+    try {
+      await sendEmail(
+        email,
+        "Your OutSource Confirmation",
+        "order-confirmation",
+        {
+          name,
+          cart,
+          totalAmount: coupon?.discountAmount ? totalAmount - coupon?.discountAmount : totalAmount,
+          trackingUrl: `https://eshop.com/orders/${sessionId}`,
+        });
+    } catch (err) {
+      console.error('Order confirmation email failed:', err);
+    }
 
-         await prisma.notifications.create({
-            data:{
-               title: "New Order Received",
-               message: `You have received a new order for ${productTitle} from ${name}.`,
-               creatorId: userId,
-               recieverId: shop.sellerId,
-               redirectUrl: `https://eshop.com/seller/orders/${sessionId}`,
+    try {
+      const sellerShops = await prisma.shops.findMany({
+        where: { id: { in: Object.keys(shopGrouped) } },
+        select: { id: true, sellerId: true, name: true },
+      });
+
+      for (const shop of sellerShops) {
+        const productTitle = shopGrouped[shop.id][0]?.title || "new item";
+        await prisma.notifications.create({
+          data: {
+            title: "New Order Received",
+            message: `You have received a new order for ${productTitle} from ${name}.`,
+            creatorId: userId,
+            recieverId: shop.sellerId,
+            redirect_link: `/dashboard/orders`,
+          },
+        });
       }
-});
 
-
-}
-
-//create notification for admin
-await prisma.notifications.create({
-   data:{
-      title: "New Order Placed",
-      message: `A new order has been placed by ${name}.`,
-      creatorId: userId,
-      recieverId: "admin",
-      redirectUrl: `https://eshop.com/order/${sessionId}`,
-   }
-});
-
-await redis.del(sessionKey);
-
-}
+      const admin = await prisma.users.findFirst({ where: { role: "admin" }, select: { id: true } });
+      if (admin) {
+        await prisma.notifications.create({
+          data: {
+            title: "New Order Placed",
+            message: `A new order has been placed by ${name}.`,
+            creatorId: userId,
+            recieverId: admin.id,
+            redirect_link: `/order`,
+          },
+        });
+      }
+    } catch (err) {
+      console.error('Order notifications failed:', err);
+    }
 
 }
 res.status(200).json({received: true});
@@ -540,6 +544,11 @@ export const updateDeliveryStatus = async(
       {
          return next(new ValidationError('Order not found'));
       }
+      //a seller may only update orders that belong to their own shop
+      if(!req.seller?.shop?.id || existingOrder.shopId !== req.seller.shop.id)
+      {
+         return next(new ForbiddenError('You can only update orders from your own shop.'));
+      }
 
       const updatedOrder = await prisma.orders.update({
          where: { id: orderId},
@@ -547,6 +556,24 @@ export const updateDeliveryStatus = async(
             updatedAt: new Date(),
           },
       });
+
+      //tell the buyer; a failed notification must never fail the status update
+      if(updatedOrder.userId && existingOrder.deliveryStatus !== deliveryStatus)
+      {
+         try {
+            await prisma.notifications.create({
+               data:{
+                  title: "Order Status Updated",
+                  message: `Your order #${updatedOrder.id.slice(-6).toUpperCase()} is now: ${deliveryStatus}.`,
+                  creatorId: req.seller.id,
+                  recieverId: updatedOrder.userId,
+                  redirect_link: `/profile?active=My+Orders`,
+               },
+            });
+         } catch(err) {
+            console.error('Status notification failed:', err);
+         }
+      }
 
       res.status(200).json({
          success: true,

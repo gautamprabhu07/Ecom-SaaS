@@ -1,6 +1,7 @@
 //Path: apps/order-service/src/routes/order.route.ts
 import express, {Router} from 'express';
 import { createPayment, createPaymentSession, verifyPaymentSession, getSellerOrders, getOrderDetails, updateDeliveryStatus, verifyCouponCode, getUserOrders, getAdminOrders } from '../controllers/order.controller';
+import { getNotifications, markNotificationRead, markAllNotificationsRead } from '../controllers/notification.controller';
 import isAuthenticated  from '@packages/middleware/isAuthenticated';
 import { isSeller, isAdmin } from '@packages/middleware/authorizeRoles';
 
@@ -15,5 +16,9 @@ router.put("/update-status/:id", isAuthenticated, isSeller, updateDeliveryStatus
 router.post("/verify-coupon", isAuthenticated, verifyCouponCode);
 router.get("/get-user-orders", isAuthenticated, getUserOrders);
 router.get("/get-admin-orders", isAuthenticated, isAdmin, getAdminOrders);
+
+router.get("/notifications", isAuthenticated, getNotifications);
+router.patch("/notifications/read-all", isAuthenticated, markAllNotificationsRead);
+router.patch("/notifications/:id/read", isAuthenticated, markNotificationRead);
 
 export default router;

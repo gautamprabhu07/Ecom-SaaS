@@ -2,6 +2,7 @@
 "use client";
 import React from "react";
 import { usePathname } from "next/navigation";
+import NotificationBell from "../../../shared/components/notification-bell";
 import SidebarWrapper from "../../../shared/components/sidebar/sidebar";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
@@ -15,7 +16,12 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           <SidebarWrapper />
         </aside>
       )}
-      <main className="flex-1 min-w-0 p-6">{children}</main>
+      <main className="flex-1 min-w-0 p-6">
+        <div className="flex justify-end mb-2">
+          <NotificationBell />
+        </div>
+        {children}
+      </main>
     </div>
   );
 };

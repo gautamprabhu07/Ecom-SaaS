@@ -10,6 +10,7 @@ import { ArrowLeft, MapPin, Clock, Users, Star, Heart } from "lucide-react";
 import { useEffect } from "react";
 import useLocationTracking from "../../../../hooks/useLocationTracking";
 import useDeviceTracking from "../../../../hooks/useDeviceTracking";
+import ShopReviews from "../../../../shared/components/reviews/shop-reviews";
 import { sendKafkaEvent } from "../../../../actions/track-user";
 
 const fetchShopDetails = async (shopId: string) => {
@@ -316,44 +317,7 @@ const Page = () => {
           )}
 
           {activeTab === "reviews" && (
-            <div className="space-y-4">
-              {data?.reviews?.length ? (
-                data.reviews.map((review: any) => (
-                  <div
-                    key={review.id}
-                    className="bg-white rounded-2xl border border-[#E7E5E4] p-4 transition-all duration-300 hover:shadow-[0_10px_30px_-6px_rgba(120,53,15,0.12)] hover:border-[#059669]/30"
-                  >
-                    <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-sm font-semibold text-[#292524]">
-                        {review.user?.name ?? "Anonymous"}
-                      </span>
-                      <span className="flex items-center gap-1 text-xs font-medium text-[#78716C] bg-[#FDBA74]/20 px-2 py-0.5 rounded-full">
-                        <Star
-                          size={12}
-                          className="fill-[#FDBA74] text-[#FDBA74]"
-                        />
-                        {review.rating}
-                      </span>
-                    </div>
-                    {review.reviews && (
-                      <p className="text-sm text-[#78716C] leading-relaxed">
-                        {review.reviews}
-                      </p>
-                    )}
-                    <p className="text-xs text-[#A8A29E] mt-1.5">
-                      {new Date(review.createdAt).toLocaleDateString()}
-                    </p>
-                  </div>
-                ))
-              ) : (
-                <div className="flex flex-col items-center py-12 text-center">
-                  <div className="mb-3 w-14 h-14 rounded-full bg-[#D1FAE5] flex items-center justify-center">
-                    <span className="text-xl">⭐</span>
-                  </div>
-                  <p className="text-sm text-[#78716C]">No reviews yet.</p>
-                </div>
-              )}
-            </div>
+            <ShopReviews shopId={shopId} signedIn={!!user?.id} />
           )}
         </div>
       </div>

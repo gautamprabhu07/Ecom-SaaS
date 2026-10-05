@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Search, CircleUserRound, ShoppingCartIcon, Heart } from "lucide-react";
 import HeaderBottom from "./header-bottom";
+import NotificationBell from "./notification-bell";
 import useUser from "../../../hooks/useUser";
 import { useStore } from "apps/user-ui/src/store";
 import Image from "next/image";
@@ -99,6 +100,9 @@ const Header = () => {
               </span>
             </Link>
           )}
+
+          {/* Notifications (signed-in only) */}
+          {!isLoading && user && <NotificationBell />}
 
           {/* Wishlist */}
           <Link

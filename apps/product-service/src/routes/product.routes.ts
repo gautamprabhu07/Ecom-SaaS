@@ -4,6 +4,8 @@ const router: Router = express.Router();
 import {getProductCategories, getDiscountCodes, createDiscountCode, deleteDiscountCode, uploadProductImage, deleteProductImage, createProduct, getShopProducts, deleteProduct, restoreProduct, getAllProducts, getProductDetails, getFilteredEvents, getFilteredProducts, getFilteredShops, searchProducts, topShops, followShop, unfollowShop, getAllEvents, getShopEvents, getSellerProductById, updateProduct, getShopDetails} from '../controllers/product.controller';
 import  isAuthenticated from '@packages/middleware/isAuthenticated';
 import isOptionalAuth from '@packages/middleware/isOptionalAuth';
+import { isUser } from '@packages/middleware/authorizeRoles';
+import { createReview, updateReview, deleteReview, getShopReviews } from '../controllers/review.controller';
 
 router.get('/get-categories', getProductCategories);
 router.post('/create-discount-code', isAuthenticated ,createDiscountCode);
@@ -29,5 +31,10 @@ router.post('/unfollow-shop', isAuthenticated, unfollowShop);
 router.get('/get-shop-events', isAuthenticated, getShopEvents);
 router.get('/get-seller-product/:productId', isAuthenticated, getSellerProductById);
 router.put('/update-product/:productId', isAuthenticated, updateProduct);
+
+router.get('/shop/:shopId/reviews', isOptionalAuth, getShopReviews);
+router.post('/shop/:shopId/review', isAuthenticated, isUser, createReview);
+router.put('/shop/:shopId/review', isAuthenticated, isUser, updateReview);
+router.delete('/shop/:shopId/review', isAuthenticated, isUser, deleteReview);
 
 export default router;
