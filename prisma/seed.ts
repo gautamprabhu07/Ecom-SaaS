@@ -627,7 +627,14 @@ async function main() {
 
   for (const order of orders) {
     if (order.status !== "Paid") continue;
-    for (const item of order.items) productUnits[item.productId] = (productUnits[item.productId] || 0) + item.quantity;
+    for (const item of order.items) {
+      productUnits[item.productId] = (productUnits[item.productId] || 0) + item.quantity;
+      //in the real app every purchased unit was viewed and added to the cart first (each add-to-cart click fires an
+      //event), so count those too. Without this the conversion funnel could show more purchases than cart adds.
+      //The counters here are totals over ALL events; only the per-buyer actions array is capped at 100.
+      productViews[item.productId] = (productViews[item.productId] || 0) + item.quantity;
+      productCart[item.productId] = (productCart[item.productId] || 0) + item.quantity;
+    }
   }
 
   let totalActions = 0;
@@ -664,8 +671,10 @@ async function main() {
     totalActions += kept.length;
 
     const visited = new Set<string>();
+    const firstSeen: Record<string, number> = {}; //this buyer's earliest activity at each shop = their first visit
     for (const event of kept) {
       const at = new Date(event.timestamp).getTime();
+      firstSeen[event.shopId] = Math.min(firstSeen[event.shopId] ?? Infinity, at);
       productLast[event.productId] = Math.max(productLast[event.productId] || 0, at);
       if (event.action === "product_view") productViews[event.productId] = (productViews[event.productId] || 0) + 1;
       if (event.action === "add_to_cart") productCart[event.productId] = (productCart[event.productId] || 0) + 1;
@@ -673,11 +682,16 @@ async function main() {
       visited.add(event.shopId);
       shopLast[event.shopId] = Math.max(shopLast[event.shopId] || 0, at);
     }
-    for (const order of orders) if (order.userId === user.id) visited.add(order.shopId);
+    for (const order of orders) {
+      if (order.userId !== user.id) continue;
+      visited.add(order.shopId);
+      firstSeen[order.shopId] = Math.min(firstSeen[order.shopId] ?? Infinity, order.createdAt.getTime());
+    }
 
     for (const shopId of visited) {
       (shopVisitors[shopId] ||= new Set()).add(user.id);
-      visitorRows.push({ id: oid(), shopId, userId: user.id, visitedAt: new Date(shopLast[shopId] || NOW - rand() * 60 * DAY) });
+      visitorRows.push({ id: oid(), shopId, userId: user.id, visitedAt: new Date(firstSeen[shopId] ?? NOW) });
+      void (shopLast[shopId] ? 0 : rand()); //burns the draw the old expression sometimes made, so the random sequence (and every other number in the dataset) stays identical
       //every visit adds to the shop's country / city / device breakdowns
       const visits = 1 + randInt(0, 3);
       (shopCountry[shopId] ||= {})[user.country] = (shopCountry[shopId][user.country] || 0) + visits;

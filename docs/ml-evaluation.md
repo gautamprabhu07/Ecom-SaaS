@@ -6,11 +6,11 @@
 
 ## Headline
 
-On 50 buyers, ranking 175.3 candidate products per buyer, the production content-based recommender reached **precision@10 = 0.102** and **NDCG@10 = 0.281**, against 0.006 / 0.017 for recommending best sellers to everyone, 0.104 / 0.238 for a simple "best sellers in your favourite category" rule, and 0.012 / 0.026 for random order.
+On 50 buyers, ranking 175.3 candidate products per buyer, the production content-based recommender reached **precision@10 = 0.102** and **NDCG@10 = 0.281**, against 0.006 / 0.017 for recommending best sellers to everyone, 0.104 / 0.238 for a simple "best sellers in your favourite category" rule, and 0.018 / 0.039 for random order.
 
-Paired across the same buyers, the model's precision@10 is **better than** random (+0.090, 95% CI +0.062 to +0.116), **better than** popularity (+0.096, CI +0.070 to +0.122) and **no clear difference from** top-category popularity (-0.002, CI -0.026 to +0.022).
+Paired across the same buyers, the model's precision@10 is **better than** random (+0.084, 95% CI +0.058 to +0.112), **better than** popularity (+0.096, CI +0.070 to +0.122) and **no clear difference from** top-category popularity (-0.002, CI -0.026 to +0.024).
 
-**What this means.** The model clearly beats random and popularity, but it is **not statistically distinguishable from the top-category heuristic** (NDCG@10 difference +0.044, 95% CI -0.030 to +0.121). The honest reading is that the recommender picks up each buyer's category preference, which a one-line rule also does. A claim should therefore say it outperforms popularity and random baselines, **not** that it outperforms simple heuristics.
+**What this means.** The model clearly beats random and popularity, but it is **not statistically distinguishable from the top-category heuristic** (NDCG@10 difference +0.044, 95% CI -0.025 to +0.124). The honest reading is that the recommender picks up each buyer's category preference, which a one-line rule also does. A claim should therefore say it outperforms popularity and random baselines, **not** that it outperforms simple heuristics.
 
 ## Methodology
 
@@ -48,7 +48,7 @@ Paired across the same buyers, the model's precision@10 is **better than** rando
 | Content-based (production model) | 0.136 | 0.239 | 0.520 | 0.166 | 0.229 | 0.730 | 0.647 |
 | Popularity baseline | 0.008 | 0.025 | 0.040 | 0.008 | 0.014 | 0.045 | 0.927 |
 | Top-category popularity baseline | 0.124 | 0.212 | 0.480 | 0.109 | 0.173 | 0.670 | 0.620 |
-| Random baseline | 0.008 | 0.010 | 0.040 | 0.010 | 0.016 | 0.720 | 0.958 |
+| Random baseline | 0.012 | 0.020 | 0.060 | 0.011 | 0.019 | 0.715 | 0.957 |
 
 #### k = 10
 
@@ -57,7 +57,7 @@ Paired across the same buyers, the model's precision@10 is **better than** rando
 | Content-based (production model) | 0.102 | 0.353 | 0.680 | 0.193 | 0.281 | 0.945 | 0.721 |
 | Popularity baseline | 0.006 | 0.032 | 0.060 | 0.009 | 0.017 | 0.080 | 0.956 |
 | Top-category popularity baseline | 0.104 | 0.360 | 0.680 | 0.140 | 0.238 | 0.955 | 0.686 |
-| Random baseline | 0.012 | 0.031 | 0.120 | 0.013 | 0.026 | 0.935 | 0.962 |
+| Random baseline | 0.018 | 0.065 | 0.180 | 0.017 | 0.039 | 0.920 | 0.956 |
 
 #### k = 20
 
@@ -66,33 +66,33 @@ Paired across the same buyers, the model's precision@10 is **better than** rando
 | Content-based (production model) | 0.074 | 0.499 | 0.780 | 0.213 | 0.333 | 1.000 | 0.827 |
 | Popularity baseline | 0.013 | 0.099 | 0.240 | 0.014 | 0.039 | 0.150 | 0.957 |
 | Top-category popularity baseline | 0.083 | 0.553 | 0.820 | 0.167 | 0.307 | 1.000 | 0.819 |
-| Random baseline | 0.015 | 0.096 | 0.300 | 0.017 | 0.048 | 0.995 | 0.962 |
+| Random baseline | 0.014 | 0.103 | 0.260 | 0.021 | 0.052 | 1.000 | 0.960 |
 
 ### Precision, recall, NDCG and MAP at k = 10 with 95% confidence intervals
 
 | Strategy | Precision@10 | Recall@10 | NDCG@10 | MAP@10 |
 | --- | ---: | ---: | ---: | ---: |
-| Content-based (production model) | 0.102 (0.076 to 0.128) | 0.353 (0.260 to 0.445) | 0.281 (0.203 to 0.360) | 0.193 (0.125 to 0.265) |
-| Popularity baseline | 0.006 (0.000 to 0.012) | 0.032 (0.000 to 0.080) | 0.017 (0.000 to 0.042) | 0.009 (0.000 to 0.025) |
-| Top-category popularity baseline | 0.104 (0.080 to 0.128) | 0.360 (0.269 to 0.449) | 0.238 (0.172 to 0.305) | 0.140 (0.090 to 0.195) |
-| Random baseline | 0.012 (0.004 to 0.022) | 0.031 (0.009 to 0.056) | 0.026 (0.005 to 0.052) | 0.013 (0.001 to 0.028) |
+| Content-based (production model) | 0.102 (0.078 to 0.128) | 0.353 (0.266 to 0.444) | 0.281 (0.205 to 0.362) | 0.193 (0.129 to 0.264) |
+| Popularity baseline | 0.006 (0.000 to 0.014) | 0.032 (0.000 to 0.082) | 0.017 (0.000 to 0.044) | 0.009 (0.000 to 0.025) |
+| Top-category popularity baseline | 0.104 (0.080 to 0.128) | 0.360 (0.276 to 0.454) | 0.238 (0.176 to 0.309) | 0.140 (0.093 to 0.198) |
+| Random baseline | 0.018 (0.008 to 0.028) | 0.065 (0.027 to 0.107) | 0.039 (0.015 to 0.067) | 0.017 (0.005 to 0.035) |
 
 ### Is the model better than each baseline? (paired by buyer, k = 10)
 
 | Versus | Metric | Mean difference | 95% CI | Verdict |
 | --- | ---: | ---: | ---: | ---: |
 | Popularity baseline | Precision@10 | +0.096 | +0.070 to +0.122 | better |
-| Popularity baseline | Recall@10 | +0.322 | +0.211 to +0.425 | better |
-| Popularity baseline | NDCG@10 | +0.264 | +0.180 to +0.348 | better |
-| Popularity baseline | MAP@10 | +0.184 | +0.114 to +0.259 | better |
-| Top-category popularity baseline | Precision@10 | -0.002 | -0.026 to +0.022 | no clear difference |
-| Top-category popularity baseline | Recall@10 | -0.006 | -0.098 to +0.082 | no clear difference |
-| Top-category popularity baseline | NDCG@10 | +0.044 | -0.030 to +0.121 | no clear difference |
-| Top-category popularity baseline | MAP@10 | +0.053 | -0.013 to +0.120 | no clear difference |
-| Random baseline | Precision@10 | +0.090 | +0.062 to +0.116 | better |
-| Random baseline | Recall@10 | +0.323 | +0.224 to +0.421 | better |
-| Random baseline | NDCG@10 | +0.255 | +0.171 to +0.340 | better |
-| Random baseline | MAP@10 | +0.180 | +0.110 to +0.254 | better |
+| Popularity baseline | Recall@10 | +0.322 | +0.218 to +0.424 | better |
+| Popularity baseline | NDCG@10 | +0.264 | +0.184 to +0.352 | better |
+| Popularity baseline | MAP@10 | +0.184 | +0.117 to +0.261 | better |
+| Top-category popularity baseline | Precision@10 | -0.002 | -0.026 to +0.024 | no clear difference |
+| Top-category popularity baseline | Recall@10 | -0.006 | -0.096 to +0.087 | no clear difference |
+| Top-category popularity baseline | NDCG@10 | +0.044 | -0.025 to +0.124 | no clear difference |
+| Top-category popularity baseline | MAP@10 | +0.053 | -0.007 to +0.122 | no clear difference |
+| Random baseline | Precision@10 | +0.084 | +0.058 to +0.112 | better |
+| Random baseline | Recall@10 | +0.288 | +0.200 to +0.385 | better |
+| Random baseline | NDCG@10 | +0.243 | +0.162 to +0.325 | better |
+| Random baseline | MAP@10 | +0.176 | +0.107 to +0.249 | better |
 
 "better" means the whole interval is above zero; "no clear difference" means the interval includes zero.
 
@@ -116,9 +116,9 @@ Paired effect on NDCG@10, with 95% confidence intervals:
 
 | Variant | Δ NDCG | 95% CI | Verdict |
 | --- | ---: | ---: | ---: |
-| Without recency decay | +0.003 | -0.052 to +0.054 | no clear difference |
-| Without popularity boost | +0.003 | -0.015 to +0.022 | no clear difference |
-| Without either | -0.004 | -0.053 to +0.042 | no clear difference |
+| Without recency decay | +0.003 | -0.052 to +0.056 | no clear difference |
+| Without popularity boost | +0.003 | -0.017 to +0.021 | no clear difference |
+| Without either | -0.004 | -0.054 to +0.042 | no clear difference |
 
 **Neither recency decay nor the popularity boost shows a measurable contribution on this dataset** (every interval above includes zero). That is plausible rather than alarming: the data generator gives each buyer a fixed preference with no drift over time, so there is nothing for recency weighting to exploit, and the popularity term is small (at most 0.060 on this catalog, added to a similarity score that ranges from 0 to 1). It does mean these two features cannot be claimed to improve accuracy; they would need data with real preference drift, or more buyers, to justify themselves.
 
@@ -130,24 +130,24 @@ Scoring one buyer from an already-loaded catalog (50 buyers, one call each, mill
 
 | Strategy | Mean | p50 | p95 | p99 | Max |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| Content-based (production model) | 53.1 | 49.8 | 76.1 | 92.0 | 99.7 |
+| Content-based (production model) | 67.9 | 60.3 | 110.4 | 169.7 | 193.0 |
 | Popularity baseline | 0.1 | 0.0 | 0.1 | 0.2 | 0.2 |
-| Top-category popularity baseline | 0.2 | 0.1 | 0.3 | 0.6 | 0.9 |
-| Random baseline | 0.0 | 0.0 | 0.1 | 0.2 | 0.3 |
+| Top-category popularity baseline | 0.2 | 0.1 | 0.3 | 0.9 | 1.3 |
+| Random baseline | 0.1 | 0.1 | 0.2 | 0.7 | 1.0 |
 
 What a request really costs today, measured on 15 buyers: loading every candidate product with its images and shop from MongoDB, then scoring.
 
 | Step | Mean (ms) | p50 (ms) | p95 (ms) |
 | --- | ---: | ---: | ---: |
-| Database load (products + images + shop) | 350.3 | 325.9 | 476.2 |
-| Whole request (load + score) | 445.4 | 421.2 | 652.8 |
+| Database load (products + images + shop) | 327.9 | 319.0 | 391.3 |
+| Whole request (load + score) | 389.0 | 373.6 | 467.8 |
 
-78.6% of a request is spent loading data, not ranking. In production a retrain job caches each buyer's top 50, so the typical request is a cache read; the cost above is paid on cache misses and by the 30-minute retrain job.
+84.3% of a request is spent loading data, not ranking. In production a retrain job caches each buyer's top 50, so the typical request is a cache read; the cost above is paid on cache misses and by the 30-minute retrain job.
 
 ## Limitations
 
 - **Synthetic interaction data.** The histories come from `prisma/seed.ts`, which plants a 70% category preference. A model that recovers a planted preference is only evidence that the mechanism works. It says nothing about real shopper behaviour, which is noisier and less structured.
-- **Small sample.** 50 buyers and about 2.9 ground-truth products each. Treat differences smaller than the confidence intervals as noise. As a rough estimate only: if the observed NDCG@10 advantage over the heuristic (+0.044) were real, separating it from zero would take on the order of 160 buyers, because the interval narrows with the square root of the sample size. That is an extrapolation, not a result.
+- **Small sample.** 50 buyers and about 2.9 ground-truth products each. Treat differences smaller than the confidence intervals as noise. As a rough estimate only: if the observed NDCG@10 advantage over the heuristic (+0.044) were real, separating it from zero would take on the order of 150 buyers, because the interval narrows with the square root of the sample size. That is an extrapolation, not a result.
 - **Single domain, single dataset.** One synthetic marketplace, ten categories, 200 products.
 - **No online evaluation.** There is no A/B test, so nothing here measures clicks, conversion or revenue. Offline ranking metrics are not business outcomes.
 - **Cold-start buyers are excluded.** Buyers with little history get the popularity fallback in production and are not evaluated here.

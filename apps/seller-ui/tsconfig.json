@@ -34,6 +34,7 @@
   "include": [
     "src/**/*.ts",
     "src/global.d.ts",
+    "../../packages/**/*.ts",
     "../../packages/**/*.tsx",
     "src/**/*.tsx",
     "src/**/*.js",

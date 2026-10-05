@@ -99,7 +99,7 @@ export const getAllEvents = async (req: Request, res: Response, next: NextFuncti
                sale_price: true,
                stock: true,
                createdAt: true,
-               ratings: true,
+               rating: true,
                category: true,
                images: {
                   select: {
