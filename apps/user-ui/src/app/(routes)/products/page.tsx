@@ -2,12 +2,16 @@
 "use client";
 import axiosInstance from "apps/user-ui/src/utils/axiosInstance";
 import { useQuery } from "@tanstack/react-query";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { X } from "lucide-react";
 import { Range } from "react-range";
 import ProductCard from "apps/user-ui/src/shared/components/section/cards/product-card";
+
+//?categories=A,B in the URL -> ["A","B"]
+const parseCategories = (value: string | null): string[] =>
+  value ? value.split(",").filter(Boolean) : [];
 
 const MIN = 0;
 const MAX = 1199;
@@ -17,7 +21,14 @@ const Page = () => {
   const searchParams = useSearchParams();
   const [isProductLoading, setProductLoading] = useState(false);
   const [priceRange, setPriceRange] = useState([0, 1199]);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(() =>
+    parseCategories(searchParams.get("categories")),
+  );
+  //the categories string this page last wrote to the URL, so the sync effect can tell its own
+  //router.replace apart from an external navigation (e.g. a header category link)
+  const writtenCategories = useRef(
+    parseCategories(searchParams.get("categories")).join(","),
+  );
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState(searchParams.get("search") || "");
@@ -57,7 +68,9 @@ const Page = () => {
       params.set("search", searchTerm.trim());
     }
     params.set("page", page.toString());
-    router.replace(`/products?${decodeURIComponent(params.toString())}`);
+    writtenCategories.current = selectedCategories.join(",");
+    //keep the query string encoded: a category like "Home & Garden" would otherwise split into two params
+    router.replace(`/products?${params.toString()}`);
   };
 
   const fetchFilteredProducts = async () => {
@@ -97,6 +110,13 @@ const Page = () => {
     const urlSearch = searchParams.get("search") || "";
     if (urlSearch !== searchTerm) {
       setSearchTerm(urlSearch);
+      setPage(1);
+    }
+
+    //picks up ?categories= pushed from the header's category links
+    const urlCategories = parseCategories(searchParams.get("categories"));
+    if (urlCategories.join(",") !== writtenCategories.current) {
+      setSelectedCategories(urlCategories);
       setPage(1);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

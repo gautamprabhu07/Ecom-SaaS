@@ -9,7 +9,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { NavItem, navItems } from "../../../configs/constants";
-import { categories } from "../../../configs/categories";
+import { useQuery } from "@tanstack/react-query";
+import axiosInstance from "../../../utils/axiosInstance";
 import React, { useEffect, useState } from "react";
 import useUser from "../../../hooks/useUser";
 import { useStore } from "apps/user-ui/src/store";
@@ -20,6 +21,17 @@ const HeaderBottom = () => {
   const wishlist = useStore((state: any) => state.wishlist);
   const cart = useStore((state: any) => state.cart);
   const { user, isLoading } = useUser();
+
+  //same cached query the products and shops pages use
+  const { data: categoryData } = useQuery({
+    queryKey: ["categories"],
+    queryFn: async () => {
+      const res = await axiosInstance.get("/product/api/get-categories");
+      return res.data;
+    },
+    staleTime: 1000 * 60 * 5,
+  });
+  const categories: string[] = categoryData?.categories ?? [];
 
   useEffect(() => {
     const handleScroll = () => setIsSticky(window.scrollY > 100);
@@ -54,13 +66,14 @@ const HeaderBottom = () => {
             <div className="absolute top-full left-0 mt-2 bg-neutral-900 rounded-xl shadow-xl shadow-black/40 w-64 z-50 py-2 border border-neutral-700">
               <ul className="text-sm text-neutral-200 max-h-80 overflow-y-auto">
                 {categories.map((category) => (
-                  <li key={category.value}>
+                  <li key={category}>
                     <Link
-                      href="/products"
+                      href={`/products?categories=${encodeURIComponent(category)}`}
+                      onClick={() => setShow(false)}
                       className="group flex items-center px-4 py-2 hover:bg-white/10 hover:text-emerald-400 transition-colors duration-150"
                     >
                       <span className="transition-transform duration-150 group-hover:translate-x-1">
-                        {category.label}
+                        {category}
                       </span>
                     </Link>
                   </li>

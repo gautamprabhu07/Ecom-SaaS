@@ -2,9 +2,9 @@
 "use client";
 import axiosInstance from "apps/user-ui/src/utils/axiosInstance";
 import React, { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { categories } from "apps/user-ui/src/configs/categories";
 import { countries } from "apps/user-ui/src/utils/countries";
 import ShopCard from "apps/user-ui/src/shared/components/section/cards/shop.card";
 
@@ -17,6 +17,16 @@ const Page = () => {
   const [shops, setShops] = useState<any[]>([]);
   const [totalPages, setTotalPages] = useState(1);
 
+  //same source as the products page, so shops and products are filtered by identical categories
+  const { data: categoryData, isLoading: categoriesLoading } = useQuery({
+    queryKey: ["categories"],
+    queryFn: async () => {
+      const res = await axiosInstance.get("/product/api/get-categories");
+      return res.data;
+    },
+    staleTime: 1000 * 60 * 5,
+  });
+
   const updateURL = () => {
     const params = new URLSearchParams();
     if (selectedCategories.length > 0) {
@@ -26,7 +36,7 @@ const Page = () => {
       params.set("countries", selectedCountries.join(","));
     }
     params.set("page", page.toString());
-    router.replace(`/shops?${decodeURIComponent(params.toString())}`);
+    router.replace(`/shops?${params.toString()}`);
   };
 
   const fetchFilteredShops = async () => {
@@ -100,19 +110,23 @@ const Page = () => {
               Categories
             </h3>
             <ul className="space-y-1">
-              {categories.map((category: any) => (
-                <li key={category.label}>
+              {categoriesLoading ? (
+                <li className="text-sm text-gray-500">Loading...</li>
+              ) : (
+                categoryData?.categories?.map((category: string) => (
+                <li key={category}>
                   <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer rounded-lg px-1.5 py-1 -mx-1.5 transition-colors duration-150 hover:bg-gray-50 hover:text-gray-800">
                     <input
                       type="checkbox"
-                      checked={selectedCategories.includes(category.value)}
-                      onChange={() => toggleCategory(category.value)}
+                      checked={selectedCategories.includes(category)}
+                      onChange={() => toggleCategory(category)}
                       className="accent-blue-600 w-3.5 h-3.5 cursor-pointer"
                     />
-                    {category.value}
+                    {category}
                   </label>
                 </li>
-              ))}
+                ))
+              )}
             </ul>
           </div>
 

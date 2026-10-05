@@ -1,5 +1,6 @@
 //Path: apps/api-gateway/src/libs/initializeSiteConfig.ts
 import { PrismaClient } from "@prisma/client";
+import { CATEGORIES, CATEGORY_TREE } from "@packages/types/categories";
 
 const prisma = new PrismaClient();
 
@@ -10,51 +11,8 @@ const initializeSiteConfig = async () => {
     if (!existingConfig) {
       await prisma.site_config.create({
         data: {
-          categories: [
-            "Electronics",
-            "Fashion",
-            "Home & Garden",
-            "Sports & Outdoors",
-            "Health & Beauty",
-            "Toys & Games",
-          ],
-          subCategories: {
-            Electronics: [
-              "Mobile Phones",
-              "Laptops",
-              "Cameras",
-              "Audio Equipment",
-            ],
-            Fashion: [
-              "Men's Clothing",
-              "Women's Clothing",
-              "Shoes",
-              "Accessories",
-            ],
-            "Home & Garden": [
-              "Furniture",
-              "Kitchenware",
-              "Decor",
-              "Gardening Tools",
-            ],
-            "Sports & Outdoors": [
-              "Fitness Equipment",
-              "Outdoor Gear",
-              "Sportswear",
-            ],
-            "Health & Beauty": [
-              "Skincare",
-              "Makeup",
-              "Haircare",
-              "Wellness Products",
-            ],
-            "Toys & Games": [
-              "Action Figures",
-              "Board Games",
-              "Puzzles",
-              "Educational Toys",
-            ],
-          },
+          categories: CATEGORIES,
+          subCategories: CATEGORY_TREE,
         },
       });
     }
