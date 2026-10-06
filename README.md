@@ -9,10 +9,8 @@
 [![Kafka](https://img.shields.io/badge/Kafka-231F20?style=flat&logo=apachekafka&logoColor=white)](https://kafka.apache.org/)
 [![Redis](https://img.shields.io/badge/Redis-DC382D?style=flat&logo=redis&logoColor=white)](https://redis.io/)
 [![Nx](https://img.shields.io/badge/Nx_Monorepo-143055?style=flat&logo=nx&logoColor=white)](https://nx.dev/)
-[![CI](https://github.com/gautamprabhu07/Ecom-SaaS/actions/workflows/ci.yml/badge.svg)](https://github.com/gautamprabhu07/Ecom-SaaS/actions/workflows/ci.yml)
-<!-- coverage-badge -->[![Coverage](https://img.shields.io/badge/coverage-96%25-brightgreen?style=flat)](CONTRIBUTING.md#running-the-tests)<!-- /coverage-badge -->
 
-> **Running locally:** this project is built to be demoed on localhost, not hosted. Jump to [Run it locally](#run-it-locally) (about 10 minutes, free-tier accounts only) or to the [screenshots](#screenshots).
+
 
 ---
 
@@ -170,19 +168,20 @@ An API gateway reverse-proxies each path prefix to the service that owns it. All
 
 ## Screenshots
 
-> Add images to `docs/screenshots/` using the file names below; the table renders as soon as they exist.
+
 
 | Buyer storefront | Shop page with reviews | Checkout |
 |---|---|---|
-| ![Buyer storefront](docs/screenshots/user-home.png) | ![Shop reviews](docs/screenshots/user-shop-reviews.png) | ![Checkout](docs/screenshots/user-checkout.png) |
+| <img width="1896" height="902" alt="image" src="https://github.com/user-attachments/assets/bc67d08d-ab14-4a42-9fa2-d19dbf201ff3" /> | <img width="1896" height="902" alt="image" src="https://github.com/user-attachments/assets/c8e36730-c157-4a0c-826c-58fbf7e5852a" /> | <img width="1892" height="895" alt="image" src="https://github.com/user-attachments/assets/24476a08-cac2-4e01-8d37-e5d9c31c990f" />
+ 
 
-| Seller dashboard | Seller notifications | Product management |
+| Seller dashboard | Orders management | Product management |
 |---|---|---|
-| ![Seller dashboard](docs/screenshots/seller-dashboard.png) | ![Notifications](docs/screenshots/seller-notifications.png) | ![Products](docs/screenshots/seller-products.png) |
+|<img width="1900" height="908" alt="image" src="https://github.com/user-attachments/assets/ba53dd36-2eed-4a21-9de7-18edb2dd9c13" /> | <img width="1896" height="910" alt="image" src="https://github.com/user-attachments/assets/9f5a3604-cdc0-4f37-9704-714b9e6e328b" /> | <img width="1892" height="896" alt="image" src="https://github.com/user-attachments/assets/0d36f410-8a65-4950-9be7-2823c76873a9" /> |
 
 | Admin analytics | Live logs | AI assistant |
 |---|---|---|
-| ![Admin dashboard](docs/screenshots/admin-dashboard.png) | ![Live logs](docs/screenshots/admin-logs.png) | ![AI assistant](docs/screenshots/admin-ai-assistant.png) |
+| <img width="1900" height="901" alt="image" src="https://github.com/user-attachments/assets/702f954f-4be8-4ed8-8070-c64f139756cf" />  |<img width="1883" height="908" alt="image" src="https://github.com/user-attachments/assets/bfbee7d6-f893-41da-9bc1-b3a267e6bed6" />  | <img width="1903" height="898" alt="image" src="https://github.com/user-attachments/assets/b10f00ef-2365-46df-9a17-ecc8d9079dac" />
 
 ---
 
